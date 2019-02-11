@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html>
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="utf-8">
+  
+
+  
+  <title>x86汇编 函数调用 | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="函数调用一般有个模板。 push ebp mov ebp,esp //这里提升堆栈 sub esp,0x40   //这里是开辟缓冲区，不同编译器开辟的缓冲区大小不同。 push edi push esi push ebx //保留现场 lea edi, dword ptr ss:[ebp-0x40] mov ecx,0x10 mov eax,0xcccccccc rep stos dowrd p">
+<meta property="og:type" content="article">
+<meta property="og:title" content="x86汇编 函数调用">
+<meta property="og:url" content="http://yoursite.com/2019/02/11/x86汇编-函数调用/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="函数调用一般有个模板。 push ebp mov ebp,esp //这里提升堆栈 sub esp,0x40   //这里是开辟缓冲区，不同编译器开辟的缓冲区大小不同。 push edi push esi push ebx //保留现场 lea edi, dword ptr ss:[ebp-0x40] mov ecx,0x10 mov eax,0xcccccccc rep stos dowrd p">
+<meta property="og:locale" content="default">
+<meta property="og:image" content="http://yoursite.com/2019/02/11/x86汇编-函数调用/1.png">
+<meta property="og:updated_time" content="2019-02-11T09:12:13.127Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="x86汇编 函数调用">
+<meta name="twitter:description" content="函数调用一般有个模板。 push ebp mov ebp,esp //这里提升堆栈 sub esp,0x40   //这里是开辟缓冲区，不同编译器开辟的缓冲区大小不同。 push edi push esi push ebx //保留现场 lea edi, dword ptr ss:[ebp-0x40] mov ecx,0x10 mov eax,0xcccccccc rep stos dowrd p">
+<meta name="twitter:image" content="http://yoursite.com/2019/02/11/x86汇编-函数调用/1.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+</html>
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://yoursite.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-x86汇编-函数调用" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2019/02/11/x86汇编-函数调用/" class="article-date">
+  <time datetime="2019-02-11T09:05:59.000Z" itemprop="datePublished">2019-02-11</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      x86汇编 函数调用
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>函数调用一般有个模板。</p>
+<pre><code>push ebp
+mov ebp,esp
+//这里提升堆栈
+sub esp,0x40  
+//这里是开辟缓冲区，不同编译器开辟的缓冲区大小不同。
+push edi
+push esi
+push ebx
+//保留现场
+lea edi, dword ptr ss:[ebp-0x40]
+mov ecx,0x10
+mov eax,0xcccccccc
+rep stos dowrd ptr es:[edi]
+//填充缓冲区
+----------------
+这里是写函数的功能
+----------------
+    pop ebx
+    pop esi
+    pop edi
+    //恢复现场
+    mov esp,ebp
+    pop ebp
+    ret
+</code></pre><p>执行完上面代码，堆栈图差不多就是这个样子，（该图，下面是高址，上面是低址）<br>中间的ccc….就是填充缓冲区。填充后可以用来写入局部变量。<br>EBP后面的高址，存有恢复用的EIP，和call函数前push的参数。<br>EBP前面的低址，用来存局部变量。</p>
+<p><img src="/2019/02/11/x86汇编-函数调用/1.png" alt=""></p>
+<hr>
+<p>根据函数调用约定的不同，平衡堆栈的方式不同<br>如果是__cedcl约定，是在母函数中平衡堆栈，就是函数调用完返回后，在调用者的函数体内 add esp，xx 来平衡堆栈。<br>例如母函数体内：<br> <code>push xx
+ call 子函数
+ add esp,0x4</code></p>
+<p>有几种函数调用约定，不同的调用约定，参数的传递，堆栈的平衡方式不同。下面是三种常见的调用约定：<br><strong>__cedcl 约定</strong><br>参数从右往左，依次入栈。堆栈平衡在母函数中完成。<br>在函数调用前，将参数压栈。<br><code>push xxx
+push xxx
+...
+然后call 函数。
+//函数执行完毕
+add esp ，xx
+//在母函数中平衡堆栈</code></p>
+<p><strong>stdcall 约定</strong><br>参数从右往左依次入栈，在子函数中 平衡堆栈。<br>参数还是在调用前push 入栈。<br>平衡堆栈时，在 子函数 ret 后加个 xx  恢复堆栈<br>例如 ret   0x8，相当于 pop eip     add esp，0x8 </p>
+<p><strong>fastcall 约定</strong><br>参数从右往左依次入栈，在子函数中 平衡堆栈<br>参数1个或者两个用 寄存器 传参，多于两个，多余两个的部分还是压栈传参。<br>例如  func(int a,int b,int c)<br><code>push c
+mov eax,b
+mov ecx,a</code><br>然后再call 函数，最后在子函数中平衡堆栈。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2019/02/11/x86汇编-函数调用/" data-id="cjs04dg5900007ovhmsvx9yvq" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2019/02/11/深入理解little-endian/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">深入理解little-endian</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+
+  
+    
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/02/">February 2019</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2019/02/11/x86汇编-函数调用/">x86汇编 函数调用</a>
+          </li>
+        
+          <li>
+            <a href="/2019/02/11/深入理解little-endian/">深入理解little-endian</a>
+          </li>
+        
+          <li>
+            <a href="/2019/02/11/基本格式化字符串漏洞原理/">基本格式化字符串漏洞原理</a>
+          </li>
+        
+          <li>
+            <a href="/2019/02/11/基本栈溢出/">基本栈溢出</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2019 John Doe<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  <script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+<script src="/js/script.js"></script>
+
+
+
+  </div>
+</body>
+</html>

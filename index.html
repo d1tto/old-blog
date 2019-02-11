@@ -62,6 +62,84 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-x86汇编-函数调用" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2019/02/11/x86汇编-函数调用/" class="article-date">
+  <time datetime="2019-02-11T09:05:59.000Z" itemprop="datePublished">2019-02-11</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2019/02/11/x86汇编-函数调用/">x86汇编 函数调用</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>函数调用一般有个模板。</p>
+<pre><code>push ebp
+mov ebp,esp
+//这里提升堆栈
+sub esp,0x40  
+//这里是开辟缓冲区，不同编译器开辟的缓冲区大小不同。
+push edi
+push esi
+push ebx
+//保留现场
+lea edi, dword ptr ss:[ebp-0x40]
+mov ecx,0x10
+mov eax,0xcccccccc
+rep stos dowrd ptr es:[edi]
+//填充缓冲区
+----------------
+这里是写函数的功能
+----------------
+    pop ebx
+    pop esi
+    pop edi
+    //恢复现场
+    mov esp,ebp
+    pop ebp
+    ret
+</code></pre><p>执行完上面代码，堆栈图差不多就是这个样子，（该图，下面是高址，上面是低址）<br>中间的ccc….就是填充缓冲区。填充后可以用来写入局部变量。<br>EBP后面的高址，存有恢复用的EIP，和call函数前push的参数。<br>EBP前面的低址，用来存局部变量。</p>
+<p><img src="/2019/02/11/x86汇编-函数调用/1.png" alt=""></p>
+<hr>
+<p>根据函数调用约定的不同，平衡堆栈的方式不同<br>如果是__cedcl约定，是在母函数中平衡堆栈，就是函数调用完返回后，在调用者的函数体内 add esp，xx 来平衡堆栈。<br>例如母函数体内：<br> <code>push xx
+ call 子函数
+ add esp,0x4</code></p>
+<p>有几种函数调用约定，不同的调用约定，参数的传递，堆栈的平衡方式不同。下面是三种常见的调用约定：<br><strong>__cedcl 约定</strong><br>参数从右往左，依次入栈。堆栈平衡在母函数中完成。<br>在函数调用前，将参数压栈。<br><code>push xxx
+push xxx
+...
+然后call 函数。
+//函数执行完毕
+add esp ，xx
+//在母函数中平衡堆栈</code></p>
+<p><strong>stdcall 约定</strong><br>参数从右往左依次入栈，在子函数中 平衡堆栈。<br>参数还是在调用前push 入栈。<br>平衡堆栈时，在 子函数 ret 后加个 xx  恢复堆栈<br>例如 ret   0x8，相当于 pop eip     add esp，0x8 </p>
+<p><strong>fastcall 约定</strong><br>参数从右往左依次入栈，在子函数中 平衡堆栈<br>参数1个或者两个用 寄存器 传参，多于两个，多余两个的部分还是压栈传参。<br>例如  func(int a,int b,int c)<br><code>push c
+mov eax,b
+mov ecx,a</code><br>然后再call 函数，最后在子函数中平衡堆栈。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2019/02/11/x86汇编-函数调用/" data-id="cjs04dg5900007ovhmsvx9yvq" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-深入理解little-endian" class="article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-meta">
     <a href="/2019/02/11/深入理解little-endian/" class="article-date">
@@ -103,7 +181,7 @@
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/02/11/深入理解little-endian/" data-id="cjs040xqd00026wvhyxzhki0z" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2019/02/11/深入理解little-endian/" data-id="cjs04dg5v00037ovho2erm4ua" class="article-share-link">Share</a>
       
       
     </footer>
@@ -187,7 +265,7 @@ call printf
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/02/11/基本格式化字符串漏洞原理/" data-id="cjs040xpz00016wvh0m305c4f" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2019/02/11/基本格式化字符串漏洞原理/" data-id="cjs04dg5g00027ovhjqqk187n" class="article-share-link">Share</a>
       
       
     </footer>
@@ -243,7 +321,7 @@ call printf
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/02/11/基本栈溢出/" data-id="cjs040xpu00006wvhi6nzvy7z" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2019/02/11/基本栈溢出/" data-id="cjs04dg5e00017ovhkdhnfsk1" class="article-share-link">Share</a>
       
       
     </footer>
@@ -282,6 +360,10 @@ call printf
     <h3 class="widget-title">Recent Posts</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2019/02/11/x86汇编-函数调用/">x86汇编 函数调用</a>
+          </li>
         
           <li>
             <a href="/2019/02/11/深入理解little-endian/">深入理解little-endian</a>
