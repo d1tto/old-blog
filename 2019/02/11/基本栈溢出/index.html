@@ -5,15 +5,25 @@
   
 
   
-  <title>Hexo</title>
+  <title>基本栈溢出 | Hexo</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta property="og:type" content="website">
-<meta property="og:title" content="Hexo">
-<meta property="og:url" content="http://yoursite.com/index.html">
+  <meta name="description" content="ret2addr和ret2arg这两种利用手法在《黑手缓冲区溢出教程》里有所提及。这两种只是基本的利用手法，如果开启了NX（堆栈代码不可执行）或者ASLR就无用武之地了，需要更高级的利用手法，例如ret2libc，ret2plt，和ROP等高级利用手法，这篇笔记就只说下基本的利用手法及漏洞原理。 了解栈溢出漏洞，需要对汇编里的call指令（相当于push eip和jmp 函数首地址 ），ret指令">
+<meta property="og:type" content="article">
+<meta property="og:title" content="基本栈溢出">
+<meta property="og:url" content="http://yoursite.com/2019/02/11/基本栈溢出/index.html">
 <meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="ret2addr和ret2arg这两种利用手法在《黑手缓冲区溢出教程》里有所提及。这两种只是基本的利用手法，如果开启了NX（堆栈代码不可执行）或者ASLR就无用武之地了，需要更高级的利用手法，例如ret2libc，ret2plt，和ROP等高级利用手法，这篇笔记就只说下基本的利用手法及漏洞原理。 了解栈溢出漏洞，需要对汇编里的call指令（相当于push eip和jmp 函数首地址 ），ret指令">
 <meta property="og:locale" content="default">
+<meta property="og:image" content="http://yoursite.com/2019/02/11/基本栈溢出/1.png">
+<meta property="og:image" content="http://yoursite.com/2019/02/11/基本栈溢出/2.png">
+<meta property="og:image" content="http://yoursite.com/2019/02/11/基本栈溢出/3.png">
+<meta property="og:image" content="http://yoursite.com/2019/02/11/基本栈溢出/4.png">
+<meta property="og:image" content="http://yoursite.com/2019/02/11/基本栈溢出/5.png">
+<meta property="og:updated_time" content="2019-02-11T08:36:10.087Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Hexo">
+<meta name="twitter:title" content="基本栈溢出">
+<meta name="twitter:description" content="ret2addr和ret2arg这两种利用手法在《黑手缓冲区溢出教程》里有所提及。这两种只是基本的利用手法，如果开启了NX（堆栈代码不可执行）或者ASLR就无用武之地了，需要更高级的利用手法，例如ret2libc，ret2plt，和ROP等高级利用手法，这篇笔记就只说下基本的利用手法及漏洞原理。 了解栈溢出漏洞，需要对汇编里的call指令（相当于push eip和jmp 函数首地址 ），ret指令">
+<meta name="twitter:image" content="http://yoursite.com/2019/02/11/基本栈溢出/1.png">
   
     <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
   
@@ -60,9 +70,7 @@
   </div>
 </header>
       <div class="outer">
-        <section id="main">
-  
-    <article id="post-基本栈溢出" class="article article-type-post" itemscope="" itemprop="blogPost">
+        <section id="main"><article id="post-基本栈溢出" class="article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-meta">
     <a href="/2019/02/11/基本栈溢出/" class="article-date">
   <time datetime="2019-02-11T08:27:06.000Z" itemprop="datePublished">2019-02-11</time>
@@ -75,8 +83,8 @@
       <header class="article-header">
         
   
-    <h1 itemprop="name">
-      <a class="article-title" href="/2019/02/11/基本栈溢出/">基本栈溢出</a>
+    <h1 class="article-title" itemprop="name">
+      基本栈溢出
     </h1>
   
 
@@ -114,11 +122,9 @@
     </footer>
   </div>
   
-</article>
-
-
+    
   
-
+</article>
 
 </section>
         
