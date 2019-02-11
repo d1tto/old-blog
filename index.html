@@ -62,6 +62,57 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-深入理解little-endian" class="article article-type-post" itemscope="" itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2019/02/11/深入理解little-endian/" class="article-date">
+  <time datetime="2019-02-11T08:59:32.000Z" itemprop="datePublished">2019-02-11</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2019/02/11/深入理解little-endian/">深入理解little-endian</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>little-endian 简单来说即低位字节排放在内存的低地址端，高位字节排放在内存的高地址端。</p>
+<p>首先，明确一点，最小的单元都是字节；数据在内存中的存放是以字节为单位的。字节内的内容<strong>没有</strong>所谓的高位高址，低位低址。</p>
+<p>在内存中存放数据时，先将这个数据拆分为一个一个的字节。再将高位字节放在高址，低位字节放低址。</p>
+<p>要注意内存数据（数据在内存中实际位置）和 数值数据（实际应用的数值）的区别。真实内存中数据的存放是高位放高址，低位放低址。 而变为数值数据时是从高位到低位连起来的，例如 原本数据是int a=0x12345678，而实际放在内存中是  78 56 34 12 ，将其作为数值应用时，要将高位从低位连起来。更直观点是这样的。</p>
+<p><img src="/2019/02/11/深入理解little-endian/1.png" alt=""></p>
+<p>再来看看数值数据是如何转变的。</p>
+<p><img src="/2019/02/11/深入理解little-endian/2.png" alt=""></p>
+<p>内存中真实存储情况是这样的，但是应用为数据时（即这一格代表的数是多少）要从高址到低址读，即EBP-4这一格代表的数据是12345678。<br>在一些调试器上，例如ollydbg中，显示一格对应的数据时，一般已经转化为应用数据了（例如OD的堆栈窗口），而不是内存中的真实存储情况，这一点要清楚。</p>
+<p>还需要清楚知道的是little-endian的存放机制的对象是<strong>单个元素的数值在内存的存放</strong>。 <em>对数组的元素的存放需要区别。</em></p>
+<p><strong>数组的寻址公式是 ：首元素的地址+ n * 数组单个元素所占字节数。
+</strong>所以数组的存放是高位的<strong>元素</strong>在低址，低位的<strong>元素</strong>在高址。这里要和单个元素的存放区别开。<br>例如 char a[5]=”abcde”;<br>则元素在内存中的存储是</p>
+<p><img src="/2019/02/11/深入理解little-endian/3.png" alt=""></p>
+<p>再例如 int a[3]={0xaabbccdd,0xbbccddee,0xccddeeff};<br>则在内存中存储是</p>
+<p><img src="/2019/02/11/深入理解little-endian/4.png" alt=""></p>
+<p>这两个例子中都是真实存储情况，不是应用数值。<br>后者这个例子中，每个元素的存储方式还是按照little-endian的方式存储。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://yoursite.com/2019/02/11/深入理解little-endian/" data-id="cjs040xqd00026wvhyxzhki0z" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-基本格式化字符串漏洞原理" class="article article-type-post" itemscope="" itemprop="blogPost">
   <div class="article-meta">
     <a href="/2019/02/11/基本格式化字符串漏洞原理/" class="article-date">
@@ -136,7 +187,7 @@ call printf
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/02/11/基本格式化字符串漏洞原理/" data-id="cjs03tbqv0001n4vhjqpnxzsc" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2019/02/11/基本格式化字符串漏洞原理/" data-id="cjs040xpz00016wvh0m305c4f" class="article-share-link">Share</a>
       
       
     </footer>
@@ -192,7 +243,7 @@ call printf
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://yoursite.com/2019/02/11/基本栈溢出/" data-id="cjs03tbqm0000n4vhrm7bhejs" class="article-share-link">Share</a>
+      <a data-url="http://yoursite.com/2019/02/11/基本栈溢出/" data-id="cjs040xpu00006wvhi6nzvy7z" class="article-share-link">Share</a>
       
       
     </footer>
@@ -231,6 +282,10 @@ call printf
     <h3 class="widget-title">Recent Posts</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2019/02/11/深入理解little-endian/">深入理解little-endian</a>
+          </li>
         
           <li>
             <a href="/2019/02/11/基本格式化字符串漏洞原理/">基本格式化字符串漏洞原理</a>
