@@ -74,7 +74,7 @@
 
 
 
-  <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  <link rel="alternate" href="/atom.xml" title="ditto's blog" type="application/atom+xml">
 
 
 
@@ -85,7 +85,7 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="基本格式化字符串漏洞原理">
 <meta property="og:url" content="http://yoursite.com/2019/02/11/基本格式化字符串漏洞原理/index.html">
-<meta property="og:site_name" content="Hexo">
+<meta property="og:site_name" content="ditto&#39;s blog">
 <meta property="og:description" content="理解这个漏洞的原理，你需要有汇编层面的函数调用和函数的参数传递知识。如果你不清楚函数的参数是如何传递的，可以看《加密与解密》的逆向分析技术篇。 再说格式化字符串漏洞之前，先了解一下printf函数和利用该漏洞的重要 格式化字符串%n，利用他可以做到几乎任意内存写入。 函数原型int printf (“格式化字符串”,参量… )函数的返回值是正确输出的字符的个数，如果输出失败，返回负值。参量表中参数">
 <meta property="og:locale" content="default">
 <meta property="og:image" content="http://yoursite.com/2019/02/11/基本格式化字符串漏洞原理/1.png">
@@ -148,7 +148,7 @@
 
 
 
-  <title>基本格式化字符串漏洞原理 | Hexo</title>
+  <title>基本格式化字符串漏洞原理 | ditto's blog</title>
   
 
 
@@ -178,7 +178,7 @@
     <div class="custom-logo-site-title">
       <a href="/" class="brand" rel="start">
         <span class="logo-line-before"><i></i></span>
-        <span class="site-title">Hexo</span>
+        <span class="site-title">ditto's blog</span>
         <span class="logo-line-after"><i></i></span>
       </a>
     </div>
@@ -209,6 +209,16 @@
               <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
             
             Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            Tags
           </a>
         </li>
       
@@ -258,13 +268,13 @@
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/02/11/基本格式化字符串漏洞原理/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="John Doe">
+      <meta itemprop="name" content="ditto">
       <meta itemprop="description" content="">
       <meta itemprop="image" content="/images/avatar.gif">
     </span>
 
     <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Hexo">
+      <meta itemprop="name" content="ditto's blog">
     </span>
 
     
@@ -305,6 +315,37 @@
 
           
 
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Words count in article&#58;</span>
+                
+                <span title="Words count in article">
+                  
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Reading time &asymp;</span>
+                
+                <span title="Reading time">
+                  
+                </span>
+              
+            </div>
           
 
           
@@ -472,8 +513,8 @@ call printf
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
             
-              <p class="site-author-name" itemprop="name">John Doe</p>
-              <p class="site-description motion-element" itemprop="description"></p>
+              <p class="site-author-name" itemprop="name">ditto</p>
+              <p class="site-description motion-element" itemprop="description">pwn for fun</p>
           </div>
 
           <nav class="site-state motion-element">
@@ -551,8 +592,17 @@ call printf
   <span class="with-love">
     <i class="fa fa-user"></i>
   </span>
-  <span class="author" itemprop="copyrightHolder">John Doe</span>
+  <span class="author" itemprop="copyrightHolder">ditto</span>
 
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count"></span>
   
 </div>
 
@@ -612,6 +662,8 @@ call printf
   
 
 
+  
+
 
 
 
@@ -650,6 +702,11 @@ call printf
   
   
     <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
   
 
 

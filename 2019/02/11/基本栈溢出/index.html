@@ -74,7 +74,7 @@
 
 
 
-  <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  <link rel="alternate" href="/atom.xml" title="ditto's blog" type="application/atom+xml">
 
 
 
@@ -85,7 +85,7 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="基本栈溢出">
 <meta property="og:url" content="http://yoursite.com/2019/02/11/基本栈溢出/index.html">
-<meta property="og:site_name" content="Hexo">
+<meta property="og:site_name" content="ditto&#39;s blog">
 <meta property="og:description" content="ret2addr和ret2arg这两种利用手法在《黑手缓冲区溢出教程》里有所提及。这两种只是基本的利用手法，如果开启了NX（堆栈代码不可执行）或者ASLR就无用武之地了，需要更高级的利用手法，例如ret2libc，ret2plt，和ROP等高级利用手法，这篇笔记就只说下基本的利用手法及漏洞原理。 了解栈溢出漏洞，需要对汇编里的call指令（相当于push eip和jmp 函数首地址 ），ret指令">
 <meta property="og:locale" content="default">
 <meta property="og:image" content="http://yoursite.com/2019/02/11/基本栈溢出/1.png">
@@ -133,7 +133,7 @@
 
 
 
-  <title>基本栈溢出 | Hexo</title>
+  <title>基本栈溢出 | ditto's blog</title>
   
 
 
@@ -163,7 +163,7 @@
     <div class="custom-logo-site-title">
       <a href="/" class="brand" rel="start">
         <span class="logo-line-before"><i></i></span>
-        <span class="site-title">Hexo</span>
+        <span class="site-title">ditto's blog</span>
         <span class="logo-line-after"><i></i></span>
       </a>
     </div>
@@ -194,6 +194,16 @@
               <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
             
             Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            Tags
           </a>
         </li>
       
@@ -243,13 +253,13 @@
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/02/11/基本栈溢出/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="John Doe">
+      <meta itemprop="name" content="ditto">
       <meta itemprop="description" content="">
       <meta itemprop="image" content="/images/avatar.gif">
     </span>
 
     <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Hexo">
+      <meta itemprop="name" content="ditto's blog">
     </span>
 
     
@@ -290,6 +300,37 @@
 
           
 
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Words count in article&#58;</span>
+                
+                <span title="Words count in article">
+                  
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Reading time &asymp;</span>
+                
+                <span title="Reading time">
+                  
+                </span>
+              
+            </div>
           
 
           
@@ -425,8 +466,8 @@
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
             
-              <p class="site-author-name" itemprop="name">John Doe</p>
-              <p class="site-description motion-element" itemprop="description"></p>
+              <p class="site-author-name" itemprop="name">ditto</p>
+              <p class="site-description motion-element" itemprop="description">pwn for fun</p>
           </div>
 
           <nav class="site-state motion-element">
@@ -504,8 +545,17 @@
   <span class="with-love">
     <i class="fa fa-user"></i>
   </span>
-  <span class="author" itemprop="copyrightHolder">John Doe</span>
+  <span class="author" itemprop="copyrightHolder">ditto</span>
 
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count"></span>
   
 </div>
 
@@ -565,6 +615,8 @@
   
 
 
+  
+
 
 
 
@@ -603,6 +655,11 @@
   
   
     <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
   
 
 

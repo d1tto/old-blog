@@ -74,7 +74,7 @@
 
 
 
-  <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  <link rel="alternate" href="/atom.xml" title="ditto's blog" type="application/atom+xml">
 
 
 
@@ -85,7 +85,7 @@
 <meta property="og:type" content="article">
 <meta property="og:title" content="x86汇编 函数调用">
 <meta property="og:url" content="http://yoursite.com/2019/02/11/x86汇编-函数调用/index.html">
-<meta property="og:site_name" content="Hexo">
+<meta property="og:site_name" content="ditto&#39;s blog">
 <meta property="og:description" content="函数调用一般有个模板。 push ebp mov ebp,esp //这里提升堆栈 sub esp,0x40   //这里是开辟缓冲区，不同编译器开辟的缓冲区大小不同。 push edi push esi push ebx //保留现场 lea edi, dword ptr ss:[ebp-0x40] mov ecx,0x10 mov eax,0xcccccccc rep stos dowrd p">
 <meta property="og:locale" content="default">
 <meta property="og:image" content="http://yoursite.com/2019/02/11/x86汇编-函数调用/1.png">
@@ -129,7 +129,7 @@
 
 
 
-  <title>x86汇编 函数调用 | Hexo</title>
+  <title>x86汇编 函数调用 | ditto's blog</title>
   
 
 
@@ -159,7 +159,7 @@
     <div class="custom-logo-site-title">
       <a href="/" class="brand" rel="start">
         <span class="logo-line-before"><i></i></span>
-        <span class="site-title">Hexo</span>
+        <span class="site-title">ditto's blog</span>
         <span class="logo-line-after"><i></i></span>
       </a>
     </div>
@@ -190,6 +190,16 @@
               <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
             
             Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            Tags
           </a>
         </li>
       
@@ -239,13 +249,13 @@
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/02/11/x86汇编-函数调用/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="John Doe">
+      <meta itemprop="name" content="ditto">
       <meta itemprop="description" content="">
       <meta itemprop="image" content="/images/avatar.gif">
     </span>
 
     <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Hexo">
+      <meta itemprop="name" content="ditto's blog">
     </span>
 
     
@@ -286,6 +296,37 @@
 
           
 
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Words count in article&#58;</span>
+                
+                <span title="Words count in article">
+                  
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">Reading time &asymp;</span>
+                
+                <span title="Reading time">
+                  
+                </span>
+              
+            </div>
           
 
           
@@ -438,8 +479,8 @@ mov ecx,a</code><br>然后再call 函数，最后在子函数中平衡堆栈。<
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
             
-              <p class="site-author-name" itemprop="name">John Doe</p>
-              <p class="site-description motion-element" itemprop="description"></p>
+              <p class="site-author-name" itemprop="name">ditto</p>
+              <p class="site-description motion-element" itemprop="description">pwn for fun</p>
           </div>
 
           <nav class="site-state motion-element">
@@ -501,8 +542,17 @@ mov ecx,a</code><br>然后再call 函数，最后在子函数中平衡堆栈。<
   <span class="with-love">
     <i class="fa fa-user"></i>
   </span>
-  <span class="author" itemprop="copyrightHolder">John Doe</span>
+  <span class="author" itemprop="copyrightHolder">ditto</span>
 
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count"></span>
   
 </div>
 
@@ -562,6 +612,8 @@ mov ecx,a</code><br>然后再call 函数，最后在子函数中平衡堆栈。<
   
 
 
+  
+
 
 
 
@@ -600,6 +652,11 @@ mov ecx,a</code><br>然后再call 函数，最后在子函数中平衡堆栈。<
   
   
     <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
   
 
 

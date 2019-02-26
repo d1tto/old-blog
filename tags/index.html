@@ -73,6 +73,8 @@
 
 
 
+  
+
 
   <link rel="alternate" href="/atom.xml" title="ditto's blog" type="application/atom+xml">
 
@@ -81,22 +83,17 @@
 
 
 
-<meta name="description" content="little-endian 简单来说即低位字节排放在内存的低地址端，高位字节排放在内存的高地址端。 首先，明确一点，最小的单元都是字节；数据在内存中的存放是以字节为单位的。字节内的内容没有所谓的高位高址，低位低址。 在内存中存放数据时，先将这个数据拆分为一个一个的字节。再将高位字节放在高址，低位字节放低址。 要注意内存数据（数据在内存中实际位置）和 数值数据（实际应用的数值）的区别。真实内存中数据">
-<meta property="og:type" content="article">
-<meta property="og:title" content="深入理解little-endian">
-<meta property="og:url" content="http://yoursite.com/2019/02/11/深入理解little-endian/index.html">
+<meta name="description" content="pwn for fun">
+<meta property="og:type" content="website">
+<meta property="og:title" content="tags">
+<meta property="og:url" content="http://yoursite.com/tags/index.html">
 <meta property="og:site_name" content="ditto&#39;s blog">
-<meta property="og:description" content="little-endian 简单来说即低位字节排放在内存的低地址端，高位字节排放在内存的高地址端。 首先，明确一点，最小的单元都是字节；数据在内存中的存放是以字节为单位的。字节内的内容没有所谓的高位高址，低位低址。 在内存中存放数据时，先将这个数据拆分为一个一个的字节。再将高位字节放在高址，低位字节放低址。 要注意内存数据（数据在内存中实际位置）和 数值数据（实际应用的数值）的区别。真实内存中数据">
+<meta property="og:description" content="pwn for fun">
 <meta property="og:locale" content="default">
-<meta property="og:image" content="http://yoursite.com/2019/02/11/深入理解little-endian/1.png">
-<meta property="og:image" content="http://yoursite.com/2019/02/11/深入理解little-endian/2.png">
-<meta property="og:image" content="http://yoursite.com/2019/02/11/深入理解little-endian/3.png">
-<meta property="og:image" content="http://yoursite.com/2019/02/11/深入理解little-endian/4.png">
-<meta property="og:updated_time" content="2019-02-11T09:02:28.476Z">
+<meta property="og:updated_time" content="2019-02-26T11:34:25.966Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="深入理解little-endian">
-<meta name="twitter:description" content="little-endian 简单来说即低位字节排放在内存的低地址端，高位字节排放在内存的高地址端。 首先，明确一点，最小的单元都是字节；数据在内存中的存放是以字节为单位的。字节内的内容没有所谓的高位高址，低位低址。 在内存中存放数据时，先将这个数据拆分为一个一个的字节。再将高位字节放在高址，低位字节放低址。 要注意内存数据（数据在内存中实际位置）和 数值数据（实际应用的数值）的区别。真实内存中数据">
-<meta name="twitter:image" content="http://yoursite.com/2019/02/11/深入理解little-endian/1.png">
+<meta name="twitter:title" content="tags">
+<meta name="twitter:description" content="pwn for fun">
 
 
 
@@ -126,13 +123,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2019/02/11/深入理解little-endian/">
+  <link rel="canonical" href="http://yoursite.com/tags/">
 
 
 
 
 
-  <title>深入理解little-endian | ditto's blog</title>
+  <title>tags | ditto's blog</title>
   
 
 
@@ -237,187 +234,33 @@
 
   <div id="posts" class="posts-expand">
     
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/02/11/深入理解little-endian/">
-
-    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="ditto">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.gif">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="ditto's blog">
-    </span>
-
     
+    
+    <div class="post-block page">
       <header class="post-header">
 
-        
-        
-          <h1 class="post-title" itemprop="name headline">深入理解little-endian</h1>
-        
+	<h1 class="post-title" itemprop="name headline">tags</h1>
 
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">Posted on</span>
-              
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2019-02-11T16:59:32+08:00">
-                2019-02-11
-              </time>
-            
 
-            
 
-            
-          </span>
-
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-            <div class="post-wordcount">
-              
-                
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-file-word-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">Words count in article&#58;</span>
-                
-                <span title="Words count in article">
-                  
-                </span>
-              
-
-              
-                <span class="post-meta-divider">|</span>
-              
-
-              
-                <span class="post-meta-item-icon">
-                  <i class="fa fa-clock-o"></i>
-                </span>
-                
-                  <span class="post-meta-item-text">Reading time &asymp;</span>
-                
-                <span title="Reading time">
-                  
-                </span>
-              
-            </div>
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
+</header>
 
       
       
-
       
-        <p>little-endian 简单来说即低位字节排放在内存的低地址端，高位字节排放在内存的高地址端。</p>
-<p>首先，明确一点，最小的单元都是字节；数据在内存中的存放是以字节为单位的。字节内的内容<strong>没有</strong>所谓的高位高址，低位低址。</p>
-<p>在内存中存放数据时，先将这个数据拆分为一个一个的字节。再将高位字节放在高址，低位字节放低址。</p>
-<p>要注意内存数据（数据在内存中实际位置）和 数值数据（实际应用的数值）的区别。真实内存中数据的存放是高位放高址，低位放低址。 而变为数值数据时是从高位到低位连起来的，例如 原本数据是int a=0x12345678，而实际放在内存中是  78 56 34 12 ，将其作为数值应用时，要将高位从低位连起来。更直观点是这样的。</p>
-<p><img src="/2019/02/11/深入理解little-endian/1.png" alt=""></p>
-<p>再来看看数值数据是如何转变的。</p>
-<p><img src="/2019/02/11/深入理解little-endian/2.png" alt=""></p>
-<p>内存中真实存储情况是这样的，但是应用为数据时（即这一格代表的数是多少）要从高址到低址读，即EBP-4这一格代表的数据是12345678。<br>在一些调试器上，例如ollydbg中，显示一格对应的数据时，一般已经转化为应用数据了（例如OD的堆栈窗口），而不是内存中的真实存储情况，这一点要清楚。</p>
-<p>还需要清楚知道的是little-endian的存放机制的对象是<strong>单个元素的数值在内存的存放</strong>。 <em>对数组的元素的存放需要区别。</em></p>
-<p><strong>数组的寻址公式是 ：首元素的地址+ n * 数组单个元素所占字节数。
-</strong>所以数组的存放是高位的<strong>元素</strong>在低址，低位的<strong>元素</strong>在高址。这里要和单个元素的存放区别开。<br>例如 char a[5]=”abcde”;<br>则元素在内存中的存储是</p>
-<p><img src="/2019/02/11/深入理解little-endian/3.png" alt=""></p>
-<p>再例如 int a[3]={0xaabbccdd,0xbbccddee,0xccddeeff};<br>则在内存中存储是</p>
-<p><img src="/2019/02/11/深入理解little-endian/4.png" alt=""></p>
-<p>这两个例子中都是真实存储情况，不是应用数值。<br>后者这个例子中，每个元素的存储方式还是按照little-endian的方式存储。</p>
-
+      <div class="post-body">
+        
+        
+          
+        
+      </div>
+      
+      
       
     </div>
     
     
     
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-      
-      
-
-      
-        <div class="post-nav">
-          <div class="post-nav-next post-nav-item">
-            
-              <a href="/2019/02/11/基本格式化字符串漏洞原理/" rel="next" title="基本格式化字符串漏洞原理">
-                <i class="fa fa-chevron-left"></i> 基本格式化字符串漏洞原理
-              </a>
-            
-          </div>
-
-          <span class="post-nav-divider"></span>
-
-          <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2019/02/11/x86汇编-函数调用/" rel="prev" title="x86汇编 函数调用">
-                x86汇编 函数调用 <i class="fa fa-chevron-right"></i>
-              </a>
-            
-          </div>
-        </div>
-      
-
-      
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-
-    <div class="post-spread">
-      
-    </div>
   </div>
 
 
