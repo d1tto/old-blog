@@ -85,35 +85,35 @@
 <meta name="keywords" content="pwnable,fmtstr">
 <meta property="og:type" content="article">
 <meta property="og:title" content="基本格式化字符串漏洞原理">
-<meta property="og:url" content="http://yoursite.com/2019/02/22/基本格式化字符串漏洞原理/index.html">
+<meta property="og:url" content="http://yoursite.com/2019/02/11/基本格式化字符串漏洞原理/index.html">
 <meta property="og:site_name" content="ditto&#39;s blog">
 <meta property="og:description" content="理解这个漏洞的原理，你需要有汇编层面的函数调用和函数的参数传递知识。如果你不清楚函数的参数是如何传递的，可以看《加密与解密》的逆向分析技术篇。 再说格式化字符串漏洞之前，先了解一下printf函数和利用该漏洞的重要 格式化字符串%n，利用他可以做到几乎任意内存写入。 函数原型int printf (“格式化字符串”,参量… )函数的返回值是正确输出的字符的个数，如果输出失败，返回负值。参量表中参数">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://yoursite.com/2019/02/22/基本格式化字符串漏洞原理/1.png">
-<meta property="og:image" content="http://yoursite.com/2019/02/22/基本格式化字符串漏洞原理/2.png">
-<meta property="og:image" content="http://yoursite.com/2019/02/22/基本格式化字符串漏洞原理/3.png">
-<meta property="og:image" content="http://yoursite.com/2019/02/22/基本格式化字符串漏洞原理/4.png">
-<meta property="og:image" content="http://yoursite.com/2019/02/22/基本格式化字符串漏洞原理/5.png">
-<meta property="og:image" content="http://yoursite.com/2019/02/22/基本格式化字符串漏洞原理/6.png">
-<meta property="og:image" content="http://yoursite.com/2019/02/22/基本格式化字符串漏洞原理/7.png">
-<meta property="og:image" content="http://yoursite.com/2019/02/22/基本格式化字符串漏洞原理/8.png">
-<meta property="og:image" content="http://yoursite.com/2019/02/22/基本格式化字符串漏洞原理/9.png">
-<meta property="og:image" content="http://yoursite.com/2019/02/22/基本格式化字符串漏洞原理/10.png">
-<meta property="og:image" content="http://yoursite.com/2019/02/22/基本格式化字符串漏洞原理/11.png">
-<meta property="og:image" content="http://yoursite.com/2019/02/22/基本格式化字符串漏洞原理/12.png">
-<meta property="og:image" content="http://yoursite.com/2019/02/22/基本格式化字符串漏洞原理/13.png">
-<meta property="og:image" content="http://yoursite.com/2019/02/22/基本格式化字符串漏洞原理/14.png">
-<meta property="og:image" content="http://yoursite.com/2019/02/22/基本格式化字符串漏洞原理/15.png">
-<meta property="og:image" content="http://yoursite.com/2019/02/22/基本格式化字符串漏洞原理/16.png">
-<meta property="og:image" content="http://yoursite.com/2019/02/22/基本格式化字符串漏洞原理/17.png">
-<meta property="og:image" content="http://yoursite.com/2019/02/22/基本格式化字符串漏洞原理/18.png">
-<meta property="og:image" content="http://yoursite.com/2019/02/22/基本格式化字符串漏洞原理/19.png">
-<meta property="og:image" content="http://yoursite.com/2019/02/22/基本格式化字符串漏洞原理/20.png">
-<meta property="og:updated_time" content="2019-02-26T12:19:02.787Z">
+<meta property="og:image" content="http://yoursite.com/2019/02/11/基本格式化字符串漏洞原理/1.png">
+<meta property="og:image" content="http://yoursite.com/2019/02/11/基本格式化字符串漏洞原理/2.png">
+<meta property="og:image" content="http://yoursite.com/2019/02/11/基本格式化字符串漏洞原理/3.png">
+<meta property="og:image" content="http://yoursite.com/2019/02/11/基本格式化字符串漏洞原理/4.png">
+<meta property="og:image" content="http://yoursite.com/2019/02/11/基本格式化字符串漏洞原理/5.png">
+<meta property="og:image" content="http://yoursite.com/2019/02/11/基本格式化字符串漏洞原理/6.png">
+<meta property="og:image" content="http://yoursite.com/2019/02/11/基本格式化字符串漏洞原理/7.png">
+<meta property="og:image" content="http://yoursite.com/2019/02/11/基本格式化字符串漏洞原理/8.png">
+<meta property="og:image" content="http://yoursite.com/2019/02/11/基本格式化字符串漏洞原理/9.png">
+<meta property="og:image" content="http://yoursite.com/2019/02/11/基本格式化字符串漏洞原理/10.png">
+<meta property="og:image" content="http://yoursite.com/2019/02/11/基本格式化字符串漏洞原理/11.png">
+<meta property="og:image" content="http://yoursite.com/2019/02/11/基本格式化字符串漏洞原理/12.png">
+<meta property="og:image" content="http://yoursite.com/2019/02/11/基本格式化字符串漏洞原理/13.png">
+<meta property="og:image" content="http://yoursite.com/2019/02/11/基本格式化字符串漏洞原理/14.png">
+<meta property="og:image" content="http://yoursite.com/2019/02/11/基本格式化字符串漏洞原理/15.png">
+<meta property="og:image" content="http://yoursite.com/2019/02/11/基本格式化字符串漏洞原理/16.png">
+<meta property="og:image" content="http://yoursite.com/2019/02/11/基本格式化字符串漏洞原理/17.png">
+<meta property="og:image" content="http://yoursite.com/2019/02/11/基本格式化字符串漏洞原理/18.png">
+<meta property="og:image" content="http://yoursite.com/2019/02/11/基本格式化字符串漏洞原理/19.png">
+<meta property="og:image" content="http://yoursite.com/2019/02/11/基本格式化字符串漏洞原理/20.png">
+<meta property="og:updated_time" content="2019-02-26T12:26:37.566Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="基本格式化字符串漏洞原理">
 <meta name="twitter:description" content="理解这个漏洞的原理，你需要有汇编层面的函数调用和函数的参数传递知识。如果你不清楚函数的参数是如何传递的，可以看《加密与解密》的逆向分析技术篇。 再说格式化字符串漏洞之前，先了解一下printf函数和利用该漏洞的重要 格式化字符串%n，利用他可以做到几乎任意内存写入。 函数原型int printf (“格式化字符串”,参量… )函数的返回值是正确输出的字符的个数，如果输出失败，返回负值。参量表中参数">
-<meta name="twitter:image" content="http://yoursite.com/2019/02/22/基本格式化字符串漏洞原理/1.png">
+<meta name="twitter:image" content="http://yoursite.com/2019/02/11/基本格式化字符串漏洞原理/1.png">
 
 
 
@@ -143,7 +143,7 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2019/02/22/基本格式化字符串漏洞原理/">
+  <link rel="canonical" href="http://yoursite.com/2019/02/11/基本格式化字符串漏洞原理/">
 
 
 
@@ -266,7 +266,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/02/22/基本格式化字符串漏洞原理/">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/02/11/基本格式化字符串漏洞原理/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
       <meta itemprop="name" content="ditto">
@@ -295,8 +295,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-02-22T16:42:00+08:00">
-                2019-02-22
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-02-11T16:42:00+08:00">
+                2019-02-11
               </time>
             
 
@@ -368,7 +368,7 @@
 <p>再说格式化字符串漏洞之前，先了解一下printf函数和利用该漏洞的重要 格式化字符串%n，利用他可以做到几乎任意内存写入。</p>
 <h3 id="函数原型"><a href="#函数原型" class="headerlink" title="函数原型"></a>函数原型</h3><p>int printf (“格式化字符串”,参量… )<br>函数的返回值是正确输出的字符的个数，如果输出失败，返回负值。<br>参量表中参数的个数是不定的（<em>如何实现参数的个数不定，可以参考《程序员的自我修养》这本书</em>），可以是一个，可以是两个，三个…..，<strong>也可以没有参数</strong>。<br>printf函数的格式化字符串常见的有 %d，%f，%c，%s，%x（输出16进制数，前面没有0x），%p（输出16进制数，前面带有0x）等等。<br>但是有个不常见的格式化字符串 <strong>%n</strong> ，它的功能是将%n之前打印出来的字符个数，赋值给一个变量。</p>
 <p><strong>除了%n,还有%hn，%hhn，%lln，分别为写入目标空间2字节，1字节，8字节。</strong> 注意是指针指向的地方开始起几个字节。不要觉得%lln，取的是8个字节的指针，%n取的就是4个字节的指针，取的是多少字节的指针只跟 程序的位数有关，如果是32位的程序，%n取的就是4字节指针，64位取的就是8字节指针，这是因为不同位数的程序，地址的长度是不同的。</p>
-<p>具体实例：<br><img src="/2019/02/22/基本格式化字符串漏洞原理/1.png" alt=""></p>
+<p>具体实例：<br><img src="/2019/02/11/基本格式化字符串漏洞原理/1.png" alt=""></p>
 <p>%n之前打印了5个a，所以n的值变成了5。</p>
 <p>了解了这些后就可以说下格式化字符串漏洞了。</p>
 <h3 id="漏洞成因和基本原理"><a href="#漏洞成因和基本原理" class="headerlink" title="漏洞成因和基本原理"></a>漏洞成因和基本原理</h3><p>正确使用printf是这样的：</p>
@@ -376,41 +376,41 @@
 <p>但也有人会懒省事，写成这样：</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;bits/stdc++.h&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">char</span> a[]=<span class="string">"neuqcsa"</span>;</span><br><span class="line">  <span class="built_in">printf</span>(a);</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>实参与函数形参的结合顺序是从左往右依次进行的，所以上面的代码也能输出：</p>
-<p><img src="/2019/02/22/基本格式化字符串漏洞原理/2.png" alt=""></p>
+<p><img src="/2019/02/11/基本格式化字符串漏洞原理/2.png" alt=""></p>
 <p>上面的代码不会有什么问题，但是如果将字符串的输入权交给用户就会有问题了。看下面的代码：</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;bits/stdc++.h&gt;</span></span></span><br><span class="line"><span class="keyword">using</span> <span class="keyword">namespace</span> <span class="built_in">std</span>;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">char</span> a[<span class="number">100</span>];</span><br><span class="line">  <span class="built_in">scanf</span>(<span class="string">"%s"</span>,a);</span><br><span class="line">  <span class="built_in">printf</span>(a);</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>如果用户输入的字符串是”%x%x%x”，则会输出以下结果<br><img src="/2019/02/22/基本格式化字符串漏洞原理/3.png" alt=""></p>
+<p>如果用户输入的字符串是”%x%x%x”，则会输出以下结果<br><img src="/2019/02/11/基本格式化字符串漏洞原理/3.png" alt=""></p>
 <p>输出的结果是 内存中的数据。</p>
 <p>看一下调用printf函数后的堆栈图：（cdecl调用方式，参数从右往左依次入栈）</p>
-<p><img src="/2019/02/22/基本格式化字符串漏洞原理/4.png" alt=""></p>
-<p>在OD中可以清晰的看到：<br><img src="/2019/02/22/基本格式化字符串漏洞原理/5.png" alt=""></p>
+<p><img src="/2019/02/11/基本格式化字符串漏洞原理/4.png" alt=""></p>
+<p>在OD中可以清晰的看到：<br><img src="/2019/02/11/基本格式化字符串漏洞原理/5.png" alt=""></p>
 <p><strong>这是因为printf函数并不知道参数个数，它的内部有个指针，用来索检格式化字符串。对于特定类型%，就去取相应参数的值，直到索检到格式化字符串结束。</strong></p>
 <p>所以尽管没有参数，上面的代码也会将format string 后面的内存当做参数以16进制输出。这样就会造成内存泄露。</p>
 <h3 id="任意内存的读取及任意内存写入："><a href="#任意内存的读取及任意内存写入：" class="headerlink" title="任意内存的读取及任意内存写入："></a>任意内存的读取及任意内存写入：</h3><p> 任意的内存的读取需要用到格式化字符串 <strong>%s</strong>，其对应的参量是一个指向字符串首地址的指针，作用是输出这个字符串。</p>
 <p>在说任意内存的读取之前要知道 <strong>局部变量是存储在栈中</strong>，这点很关键。所以一定可以找到我们所输入的格式化字符串。<br>例：</p>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">char</span> a[<span class="number">100</span>];</span><br><span class="line">  <span class="built_in">scanf</span>(<span class="string">"%s"</span>,a);</span><br><span class="line">  <span class="built_in">printf</span>(a);</span><br><span class="line">  system(<span class="string">"pause"</span>);</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>可以得到以下结果<br><img src="/2019/02/22/基本格式化字符串漏洞原理/6.png" alt=""></p>
+<p>可以得到以下结果<br><img src="/2019/02/11/基本格式化字符串漏洞原理/6.png" alt=""></p>
 <p>看下堆栈图：<br>这是调用scanf函数前的堆栈图。</p>
-<p><img src="/2019/02/22/基本格式化字符串漏洞原理/7.png" alt=""></p>
-<p>输入字符串后的堆栈图：<br><img src="/2019/02/22/基本格式化字符串漏洞原理/8.png" alt=""></p>
+<p><img src="/2019/02/11/基本格式化字符串漏洞原理/7.png" alt=""></p>
+<p>输入字符串后的堆栈图：<br><img src="/2019/02/11/基本格式化字符串漏洞原理/8.png" alt=""></p>
 <p>调用printf函数的过程：</p>
 <pre><code>mov eax，数组首地址
 push eax  
 call printf
-</code></pre><p>该过程只是将数组的首地址入栈，此时堆栈图如下。<br><img src="/2019/02/22/基本格式化字符串漏洞原理/9.png" alt=""><br>所以在格式化字符串里用很多的%x 就一定可以找到这个AAAA的位置。我们将这个位置记下来，实例中就是第七个%x的位置，即第7个参数。</p>
+</code></pre><p>该过程只是将数组的首地址入栈，此时堆栈图如下。<br><img src="/2019/02/11/基本格式化字符串漏洞原理/9.png" alt=""><br>所以在格式化字符串里用很多的%x 就一定可以找到这个AAAA的位置。我们将这个位置记下来，实例中就是第七个%x的位置，即第7个参数。</p>
 <p>这里说下可以直接读取第七个参数的方法。（在linux下有用，win下没用）<br>%&lt; number&gt;$x 是直接读取第number个位置的参数，同样可以用在%n，%d等等。<br>但是需要注意64位程序，前6个参数是存在寄存器中的，从第7个参数开始才会出现在栈中，所以栈中从格式化串开始的第一个，应该是%7 $n.</p>
-<p><img src="/2019/02/22/基本格式化字符串漏洞原理/10.png" alt=""></p>
+<p><img src="/2019/02/11/基本格式化字符串漏洞原理/10.png" alt=""></p>
 <p>图中是第六个参数是41414141。</p>
-<p><img src="/2019/02/22/基本格式化字符串漏洞原理/11.png" alt=""></p>
+<p><img src="/2019/02/11/基本格式化字符串漏洞原理/11.png" alt=""></p>
 <p>同样可以得到41414141。这样就方便的多了。</p>
-<h4 id="读取内存"><a href="#读取内存" class="headerlink" title="读取内存"></a>读取内存</h4><p>有了上面内容的铺垫就可以学任意读取了：<br>看下面的代码：<br><img src="/2019/02/22/基本格式化字符串漏洞原理/12.png" alt=""></p>
-<p>从命令行输入字符串后，将该字符串复制到a内，再直接打印a；<br>输入的字符串的前4个字节如果是一个有效的字符串的首地址，就可以用%s将其打印出来，做到任意内存读取。如果不是有效的字符串，会出现段错误。<br><img src="/2019/02/22/基本格式化字符串漏洞原理/13.png" alt=""></p>
-<p><strong>如何写入地址，需要用到linux自带的printf命令，将shellcode编码转义为字符</strong>。（注意用反引号将printf命令括住，反引号在Tab键的上面，反引号内的内容会被当做命令执行。）<br><strong>如果是用scanf输入字符串，则无法使用printf命令，只能对照ascii码表，scanf和命令行输入的shellcode编码不能直接被转义。（所以为了方便演示，后面都使用了命令行输入参数）</strong><br>写入地址实例：<br><img src="/2019/02/22/基本格式化字符串漏洞原理/14.png" alt=""></p>
+<h4 id="读取内存"><a href="#读取内存" class="headerlink" title="读取内存"></a>读取内存</h4><p>有了上面内容的铺垫就可以学任意读取了：<br>看下面的代码：<br><img src="/2019/02/11/基本格式化字符串漏洞原理/12.png" alt=""></p>
+<p>从命令行输入字符串后，将该字符串复制到a内，再直接打印a；<br>输入的字符串的前4个字节如果是一个有效的字符串的首地址，就可以用%s将其打印出来，做到任意内存读取。如果不是有效的字符串，会出现段错误。<br><img src="/2019/02/11/基本格式化字符串漏洞原理/13.png" alt=""></p>
+<p><strong>如何写入地址，需要用到linux自带的printf命令，将shellcode编码转义为字符</strong>。（注意用反引号将printf命令括住，反引号在Tab键的上面，反引号内的内容会被当做命令执行。）<br><strong>如果是用scanf输入字符串，则无法使用printf命令，只能对照ascii码表，scanf和命令行输入的shellcode编码不能直接被转义。（所以为了方便演示，后面都使用了命令行输入参数）</strong><br>写入地址实例：<br><img src="/2019/02/11/基本格式化字符串漏洞原理/14.png" alt=""></p>
 <p>0x41414141这个地址已经成功写入内存，下面只需用%s读取对应位置，就能读取以0x41414141为首地址的字符串。<br>如果用%n就能将0x41414141这个地址指向的值修改，就能造成任意内存的修改，可以将栈中返回地址修改为想要执行的shellcode的首地址等等。</p>
-<h4 id="修改内存"><a href="#修改内存" class="headerlink" title="修改内存"></a>修改内存</h4><p>下面写个修改静态变量的例子<br>例：<br><img src="/2019/02/22/基本格式化字符串漏洞原理/15.png" alt=""></p>
-<p>测试前，请先关闭内存地址随机化（PIE），否者b在内存中的地址是不确定的。<br>先运行下，得到b的地址<br><img src="/2019/02/22/基本格式化字符串漏洞原理/16.png" alt=""></p>
-<p>接着确定偏移量<br><img src="/2019/02/22/基本格式化字符串漏洞原理/17.png" alt=""></p>
-<p>这里是第九个参数。<br>接着用shellcode编码将b的地址写入，并查看能否写入成功。<br><img src="/2019/02/22/基本格式化字符串漏洞原理/18.png" alt=""><br>用%n修改其值。<br><img src="/2019/02/22/基本格式化字符串漏洞原理/19.png" alt=""><br>因为%n之前打印了75个字符，所以这里将b的值从0修改为75<br><strong>你也可以通过%&lt; number &gt;$n 来直接修改第九个参数来修改b的值</strong>。注意在命令行输入字符串参数时，要用 “ \ “将 $ 转义，例如：<br><img src="/2019/02/22/基本格式化字符串漏洞原理/20.png" alt=""></p>
+<h4 id="修改内存"><a href="#修改内存" class="headerlink" title="修改内存"></a>修改内存</h4><p>下面写个修改静态变量的例子<br>例：<br><img src="/2019/02/11/基本格式化字符串漏洞原理/15.png" alt=""></p>
+<p>测试前，请先关闭内存地址随机化（PIE），否者b在内存中的地址是不确定的。<br>先运行下，得到b的地址<br><img src="/2019/02/11/基本格式化字符串漏洞原理/16.png" alt=""></p>
+<p>接着确定偏移量<br><img src="/2019/02/11/基本格式化字符串漏洞原理/17.png" alt=""></p>
+<p>这里是第九个参数。<br>接着用shellcode编码将b的地址写入，并查看能否写入成功。<br><img src="/2019/02/11/基本格式化字符串漏洞原理/18.png" alt=""><br>用%n修改其值。<br><img src="/2019/02/11/基本格式化字符串漏洞原理/19.png" alt=""><br>因为%n之前打印了75个字符，所以这里将b的值从0修改为75<br><strong>你也可以通过%&lt; number &gt;$n 来直接修改第九个参数来修改b的值</strong>。注意在命令行输入字符串参数时，要用 “ \ “将 $ 转义，例如：<br><img src="/2019/02/11/基本格式化字符串漏洞原理/20.png" alt=""></p>
 <p>在%n之前打印了4个字符，所以b的值直接被修改为4了。<br>你可以通过控制打印的字符个数来修改b的值，达到几乎任意修改。<br>例如%0xxxxxd，通过打印数字前面补0，进行简化。</p>
 
       
@@ -444,8 +444,8 @@ call printf
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2019/02/12/格式化串漏洞利用总结/" rel="next" title="格式化串漏洞利用总结">
-                <i class="fa fa-chevron-left"></i> 格式化串漏洞利用总结
+              <a href="/2019/02/11/基本栈溢出/" rel="next" title="基本栈溢出">
+                <i class="fa fa-chevron-left"></i> 基本栈溢出
               </a>
             
           </div>
@@ -453,6 +453,10 @@ call printf
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2019/02/11/深入理解little-endian/" rel="prev" title="深入理解little-endian">
+                深入理解little-endian <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
