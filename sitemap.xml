@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://yoursite.com/2019/03/24/Securinets-CTF-Quals-2019-%E9%83%A8%E5%88%86pwn%E9%A2%98wp/</loc>
+    
+    <lastmod>2019-03-25T09:27:06.258Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://yoursite.com/2019/03/08/i%E6%98%A5%E7%A7%8Bpwnable-writeup/</loc>
     
     <lastmod>2019-03-08T14:37:54.308Z</lastmod>
