@@ -1,0 +1,795 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="https://fonts.loli.net/css?family=Noto Serif SC:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT">
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="ditto's blog" type="application/atom+xml">
+
+
+
+
+
+
+<meta name="description" content="前言：最近的题目(最近两年的国赛，HCTF2018)中出现了很多关于_IO_FILE的利用，不是house of orange中的伪造vtable，而是修改_IO_FILE结构体中的一些指针，达到任意读写的能力。鉴于修改指针这方面的资料很少，只好自己读源码分析了。 部分源码分析:在linux系统中，打开文件的系统调用是open，当使用open函数打开一个文件后，会返回一个整数，这整数就是文件描述符">
+<meta property="og:type" content="article">
+<meta property="og:title" content="_IO_FILE部分源码分析及利用">
+<meta property="og:url" content="http://yoursite.com/2019/04/24/IO-FILE部分源码分析及利用/index.html">
+<meta property="og:site_name" content="ditto&#39;s blog">
+<meta property="og:description" content="前言：最近的题目(最近两年的国赛，HCTF2018)中出现了很多关于_IO_FILE的利用，不是house of orange中的伪造vtable，而是修改_IO_FILE结构体中的一些指针，达到任意读写的能力。鉴于修改指针这方面的资料很少，只好自己读源码分析了。 部分源码分析:在linux系统中，打开文件的系统调用是open，当使用open函数打开一个文件后，会返回一个整数，这整数就是文件描述符">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="https://github.com/Dittozzz/CTF-pwn-writeup/blob/master/_IO_FILE%E9%83%A8%E5%88%86%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/1.png?raw=true">
+<meta property="og:updated_time" content="2019-04-24T09:23:55.769Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="_IO_FILE部分源码分析及利用">
+<meta name="twitter:description" content="前言：最近的题目(最近两年的国赛，HCTF2018)中出现了很多关于_IO_FILE的利用，不是house of orange中的伪造vtable，而是修改_IO_FILE结构体中的一些指针，达到任意读写的能力。鉴于修改指针这方面的资料很少，只好自己读源码分析了。 部分源码分析:在linux系统中，打开文件的系统调用是open，当使用open函数打开一个文件后，会返回一个整数，这整数就是文件描述符">
+<meta name="twitter:image" content="https://github.com/Dittozzz/CTF-pwn-writeup/blob/master/_IO_FILE%E9%83%A8%E5%88%86%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/1.png?raw=true">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/04/24/IO-FILE部分源码分析及利用/">
+
+
+
+
+
+  <title>_IO_FILE部分源码分析及利用 | ditto's blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">ditto's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/04/24/IO-FILE部分源码分析及利用/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="ditto">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ditto's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">_IO_FILE部分源码分析及利用</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-04-24T11:13:36+08:00">
+                2019-04-24
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  3k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  13
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="前言："><a href="#前言：" class="headerlink" title="前言："></a>前言：</h3><p>最近的题目(最近两年的国赛，HCTF2018)中出现了很多关于_IO_FILE的利用，不是house of orange中的伪造vtable，而是修改_IO_FILE结构体中的一些指针，达到任意读写的能力。<br>鉴于修改指针这方面的资料很少，只好自己读源码分析了。</p>
+<h3 id="部分源码分析"><a href="#部分源码分析" class="headerlink" title="部分源码分析:"></a>部分源码分析:</h3><p>在linux系统中，打开文件的系统调用是open，当使用open函数打开一个文件后，会返回一个整数，这整数就是文件描述符。<br>每个进程都有一个叫做task_struct的结构体（即PCB，process control block）来保存进程的一些信息，这个结构体保存了<strong>文件描述符表</strong>指针，来记录该进程打开的文件。而文件描述符就是这个表的索引。<br>当程序启动后，会默认打开三个文件，stdin,stdout,stderr.分别为标准输入，标准输出，标准错误。对应的文件描述符是0,1,2.<br>linux下一切都当做文件对待，显示器，键盘等都当做文件，这里的标准输入对应的就是键盘，标准输出就是对应的显示器。</p>
+<p>而c语言用一个指向_IO_FILE结构体的指针来操作其对应的文件，其中<strong>封装了文件描述符</strong>，这个FILE结构体中保存的有文件描述符，操作文件权限，<strong>_IO_缓冲区信息</strong>等。后面的任意读写漏洞就是出在了IO缓冲区这里。<br>当使用fopen函数打开一个文件后，会返回一个指向FILE结构体的指针。<br>如:<br><figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">FILE *<span class="built_in">fp</span><span class="comment">;</span></span><br><span class="line"><span class="built_in">fp</span>=fopen(<span class="string">"xxx"</span>,<span class="string">"r"</span>)</span><br></pre></td></tr></table></figure></p>
+<h4 id="IO-FILE结构体："><a href="#IO-FILE结构体：" class="headerlink" title="_IO_FILE结构体："></a>_IO_FILE结构体：</h4><figure class="highlight sqf"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br></pre></td><td class="code"><pre><span class="line">truct <span class="variable">_IO_FILE</span> &#123;</span><br><span class="line">  int <span class="variable">_flags</span>;		<span class="comment">/* High-order word is _IO_MAGIC; rest is flags. */</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> _IO_file_flags _flags</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">/* The following pointers correspond to the C++ streambuf protocol. */</span></span><br><span class="line">  <span class="comment">/* Note:  Tk uses the _IO_read_ptr and _IO_read_end fields directly. */</span></span><br><span class="line">  char* <span class="variable">_IO_read_ptr</span>;	<span class="comment">/* Current read pointer */</span></span><br><span class="line">  char* <span class="variable">_IO_read_end</span>;	<span class="comment">/* End of get area. */</span></span><br><span class="line">  char* <span class="variable">_IO_read_base</span>;	<span class="comment">/* Start of putback+get area. */</span></span><br><span class="line">  char* <span class="variable">_IO_write_base</span>;	<span class="comment">/* Start of put area. */</span></span><br><span class="line">  char* <span class="variable">_IO_write_ptr</span>;	<span class="comment">/* Current put pointer. */</span></span><br><span class="line">  char* <span class="variable">_IO_write_end</span>;	<span class="comment">/* End of put area. */</span></span><br><span class="line">  char* <span class="variable">_IO_buf_base</span>;	<span class="comment">/* Start of reserve area. */</span></span><br><span class="line">  char* <span class="variable">_IO_buf_end</span>;	<span class="comment">/* End of reserve area. */</span></span><br><span class="line">  <span class="comment">/* The following fields are used to support backing up and undo. */</span></span><br><span class="line">  char *<span class="variable">_IO_save_base</span>; <span class="comment">/* Pointer to start of non-current get area. */</span></span><br><span class="line">  char *<span class="variable">_IO_backup_base</span>;  <span class="comment">/* Pointer to first valid character of backup area */</span></span><br><span class="line">  char *<span class="variable">_IO_save_end</span>; <span class="comment">/* Pointer to end of non-current get area. */</span></span><br><span class="line">  struct <span class="variable">_IO_marker</span> *<span class="variable">_markers</span>;</span><br><span class="line">  struct <span class="variable">_IO_FILE</span> *<span class="variable">_chain</span>;</span><br><span class="line">  int <span class="variable">_fileno</span>;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">if</span> 0</span></span><br><span class="line">  int <span class="variable">_blksize</span>;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">else</span></span></span><br><span class="line">  int <span class="variable">_flags2</span>;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">  <span class="variable">_IO_off_t</span> <span class="variable">_old_offset</span>; <span class="comment">/* This used to be _offset but it's too small.  */</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> __HAVE_COLUMN <span class="comment">/* temporary */</span></span></span><br><span class="line">  <span class="comment">/* 1+column number of pbase(); 0 is unknown. */</span></span><br><span class="line">  unsigned short <span class="variable">_cur_column</span>;</span><br><span class="line">  signed char <span class="variable">_vtable_offset</span>;</span><br><span class="line">  char <span class="variable">_shortbuf</span>[<span class="number">1</span>];</span><br><span class="line"></span><br><span class="line">  <span class="comment">/*  char* _save_gptr;  char* _save_egptr; */</span></span><br><span class="line"></span><br><span class="line">  <span class="variable">_IO_lock_t</span> *<span class="variable">_lock</span>;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifdef</span> _IO_USE_OLD_IO_FILE</span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line">struct <span class="variable">_IO_FILE_complete</span></span><br><span class="line">&#123;</span><br><span class="line">  struct <span class="variable">_IO_FILE</span> <span class="variable">_file</span>;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">if</span> defined _G_IO_IO_FILE_VERSION &amp;&amp; _G_IO_IO_FILE_VERSION == 0x20001</span></span><br><span class="line">  <span class="variable">_IO_off64_t</span> <span class="variable">_offset</span>;</span><br><span class="line"><span class="meta"># <span class="meta-keyword">if</span> defined _LIBC || defined _GLIBCPP_USE_WCHAR_T</span></span><br><span class="line">  <span class="comment">/* Wide character stream stuff.  */</span></span><br><span class="line">  struct <span class="variable">_IO_codecvt</span> *<span class="variable">_codecvt</span>;</span><br><span class="line">  struct <span class="variable">_IO_wide_data</span> *<span class="variable">_wide_data</span>;</span><br><span class="line">  struct <span class="variable">_IO_FILE</span> *<span class="variable">_freeres_list</span>;</span><br><span class="line">  void *<span class="variable">_freeres_buf</span>;</span><br><span class="line"><span class="meta"># <span class="meta-keyword">else</span></span></span><br><span class="line">  void *<span class="variable">__pad1</span>;</span><br><span class="line">  void *<span class="variable">__pad2</span>;</span><br><span class="line">  void *<span class="variable">__pad3</span>;</span><br><span class="line">  void *<span class="variable">__pad4</span>;</span><br><span class="line"><span class="meta"># <span class="meta-keyword">endif</span></span></span><br><span class="line">  size_t <span class="variable">__pad5</span>;</span><br><span class="line">  int <span class="variable">_mode</span>;</span><br><span class="line">  <span class="comment">/* Make sure we don't get into trouble again.  */</span></span><br><span class="line">  char <span class="variable">_unused2</span>[<span class="number">15</span> * <span class="built_in">sizeof</span> (int) - <span class="number">4</span> * <span class="built_in">sizeof</span> (void *) - <span class="built_in">sizeof</span> (size_t)];</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>FILE结构体中有很多指针，<strong>这里重点关注一下这些指针</strong>:<br><figure class="highlight vbnet"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">char</span>* _IO_read_ptr;	/* Current read pointer */</span><br><span class="line"><span class="built_in">char</span>* _IO_read_end;	/* <span class="keyword">End</span> <span class="keyword">of</span> <span class="keyword">get</span> area. */</span><br><span class="line"><span class="built_in">char</span>* _IO_read_base;	/* Start <span class="keyword">of</span> putback+<span class="keyword">get</span> area. */</span><br><span class="line"><span class="built_in">char</span>* _IO_write_base;	/* Start <span class="keyword">of</span> put area. */</span><br><span class="line"><span class="built_in">char</span>* _IO_write_ptr;	/* Current put pointer. */</span><br><span class="line"><span class="built_in">char</span>* _IO_write_end;	/* <span class="keyword">End</span> <span class="keyword">of</span> put area. */</span><br><span class="line"><span class="built_in">char</span>* _IO_buf_base;	/* Start <span class="keyword">of</span> reserve area. */</span><br><span class="line"><span class="built_in">char</span>* _IO_buf_end;	/* <span class="keyword">End</span> <span class="keyword">of</span> reserve area. */</span><br></pre></td></tr></table></figure></p>
+<p>这些指针记录了IO缓冲区的位置，和当前的读写位置。<br>c语言为了提高效率，为IO提供了缓冲区（这些缓冲区是默认分配在堆中的，也可以使用setbuf，setvbuf函数将输入输出与特定的缓存区相联系），<strong>当第一次对文件读的时候，会以页为单位，将文件中的内容读取到缓冲区中，以供程序后来的使用，避免了多次系统调用，降低了效率(用户态和内核态的切换的消耗很大)。同理，对文件进行写操作的时候，其实是先在缓冲区中写</strong>。如果修改这些指针，则可以达到任意读写的能力，但是需要搞清楚glibc是如何使用这些指针的。</p>
+<p><strong>注意使用缓冲区的情况是使用c标准库的文件操作函数，如果你使用系统调用write，read等函数，是不使用缓冲区的，他直接将内容写入到对应的文件中（或直接从对应的文件中读取），因为write，read函数是直接使用文件描述符的，并不使用FILE结构。</strong></p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> _<span class="title">IO_FILE</span> *_<span class="title">chain</span>;</span></span><br></pre></td></tr></table></figure>
+<p>这个指针指向下个FILE结构，所有的FILE结构体是使用单向链表串起来的，链表头是_IO_list_all.<br>如图所示：<br><img src="https://github.com/Dittozzz/CTF-pwn-writeup/blob/master/_IO_FILE%E9%83%A8%E5%88%86%E6%BA%90%E7%A0%81%E5%88%86%E6%9E%90/1.png?raw=true" alt=""></p>
+<h4 id="IO-FILE-plus结构体："><a href="#IO-FILE-plus结构体：" class="headerlink" title="_IO_FILE_plus结构体："></a>_IO_FILE_plus结构体：</h4><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> _<span class="title">IO_FILE_plus</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">  _IO_FILE file;</span><br><span class="line">  <span class="keyword">const</span> <span class="class"><span class="keyword">struct</span> _<span class="title">IO_jump_t</span> *<span class="title">vtable</span>;</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>_IO_FILE_plus结构体只是对_IO_FILE结构体进行了封装，增加了一个新成员：vtable，这个和c++里的vtable很像。其实fopen返回的是_IO_FILE_plus类型的指针。<br>vtable是指向_IO_jump_t 结构体的指针，_IO_jumpt_t 的定义如下：<br><figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">struct _IO_jump_t</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">JUMP_FIELD(size_t, </span>__dummy)<span class="comment">;</span></span><br><span class="line">    <span class="keyword">JUMP_FIELD(size_t, </span>__dummy2)<span class="comment">;</span></span><br><span class="line">    <span class="keyword">JUMP_FIELD(_IO_finish_t, </span>__finish)<span class="comment">;</span></span><br><span class="line">    <span class="keyword">JUMP_FIELD(_IO_overflow_t, </span>__overflow)<span class="comment">;</span></span><br><span class="line">    <span class="keyword">JUMP_FIELD(_IO_underflow_t, </span>__underflow)<span class="comment">;</span></span><br><span class="line">    <span class="keyword">JUMP_FIELD(_IO_underflow_t, </span>__uflow)<span class="comment">;</span></span><br><span class="line">    <span class="keyword">JUMP_FIELD(_IO_pbackfail_t, </span>__pbackfail)<span class="comment">;</span></span><br><span class="line">    <span class="comment">/* showmany */</span></span><br><span class="line">    <span class="keyword">JUMP_FIELD(_IO_xsputn_t, </span>__xsputn)<span class="comment">;</span></span><br><span class="line">    <span class="keyword">JUMP_FIELD(_IO_xsgetn_t, </span>__xsgetn)<span class="comment">;</span></span><br><span class="line">    <span class="keyword">JUMP_FIELD(_IO_seekoff_t, </span>__seekoff)<span class="comment">;</span></span><br><span class="line">    <span class="keyword">JUMP_FIELD(_IO_seekpos_t, </span>__seekpos)<span class="comment">;</span></span><br><span class="line">    <span class="keyword">JUMP_FIELD(_IO_setbuf_t, </span>__setbuf)<span class="comment">;</span></span><br><span class="line">    <span class="keyword">JUMP_FIELD(_IO_sync_t, </span>__sync)<span class="comment">;</span></span><br><span class="line">    <span class="keyword">JUMP_FIELD(_IO_doallocate_t, </span>__doallocate)<span class="comment">;</span></span><br><span class="line">    <span class="keyword">JUMP_FIELD(_IO_read_t, </span>__read)<span class="comment">;</span></span><br><span class="line">    <span class="keyword">JUMP_FIELD(_IO_write_t, </span>__write)<span class="comment">;</span></span><br><span class="line">    <span class="keyword">JUMP_FIELD(_IO_seek_t, </span>__seek)<span class="comment">;</span></span><br><span class="line">    <span class="keyword">JUMP_FIELD(_IO_close_t, </span>__close)<span class="comment">;</span></span><br><span class="line">    <span class="keyword">JUMP_FIELD(_IO_stat_t, </span>__stat)<span class="comment">;</span></span><br><span class="line">    <span class="keyword">JUMP_FIELD(_IO_showmanyc_t, </span>__showmanyc)<span class="comment">;</span></span><br><span class="line">    <span class="keyword">JUMP_FIELD(_IO_imbue_t, </span>__imbue)<span class="comment">;</span></span><br><span class="line">&#125;<span class="comment">;</span></span><br></pre></td></tr></table></figure></p>
+<p>其中<code>JUMP_FIELD</code>是一个宏：<code>#define JUMP_FIELD(TYPE, NAME) TYPE NAME</code></p>
+<p>可以看出 _IO_jump_t 是一个函数指针表，里面存的是函数指针，用来以后的跳转。libc中的函数指针非常多，可以劫持libc中的函数指针来劫持程序的执行流。<br>house of orange 就是构造 fake vtable 来getshell的，这里只是提下这个技术，本篇重点不在这里，而是修改指向缓冲区的指针。<br>这个函数表中有两个很重要的函数：<strong>overflow，</strong>underflow，在后面分析实例函数的时候会提到。</p>
+<h4 id="getchar函数："><a href="#getchar函数：" class="headerlink" title="getchar函数："></a>getchar函数：</h4><p>这里以getchar函数为例，其他输入函数最终调用的函数是相同的。</p>
+<figure class="highlight sqf"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">int</span><br><span class="line">getchar (void)</span><br><span class="line">&#123;</span><br><span class="line">  int result;</span><br><span class="line">  <span class="variable">_IO_acquire_lock</span> (<span class="variable">_IO_stdin</span>); <span class="comment">//获得锁</span></span><br><span class="line">  result = <span class="variable">_IO_getc_unlocked</span> (<span class="variable">_IO_stdin</span>);</span><br><span class="line">  <span class="variable">_IO_release_lock</span> (<span class="variable">_IO_stdin</span>); <span class="comment">//释放锁</span></span><br><span class="line">  return result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在进行真正的读入操作前，先获得锁，这是因为在多线程的情况下，多个线程公用一个输入缓冲区，如果不加锁，当前线程正在读入的时候，由于调度，切换至另一个线程，如果他也在进行读入，则可能会读到相同的东西。</p>
+<p>getchar 函数调用了函数<code>_IO_getc_unlocked</code>进行输入。<br>其定义如下：<br><figure class="highlight livescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#define _IO_getc_unlocked(_fp) \</span></span><br><span class="line">       <span class="function"><span class="params">(_IO_BE ((_fp)-&gt;_IO_read_ptr &gt;= (_fp)-&gt;_IO_read_end, <span class="number">0</span>) <span class="string">\</span></span></span></span><br><span class="line"><span class="function"><span class="params">	? __uflow (_fp) : *(unsigned char *) (_fp)-&gt;_IO_read_ptr++)</span></span></span><br></pre></td></tr></table></figure></p>
+<figure class="highlight lisp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"># define _IO_BE(<span class="name">expr</span>, res) __builtin_expect ((<span class="name">expr</span>), res)</span><br></pre></td></tr></table></figure>
+<p>__builtin_expect在标准库中使用的地方很多，他并不改变比较的结果，只是表明这个比较结果很有可能是 true还是false，以便来优化汇编代码。详情可以百度下。</p>
+<p><code>_IO_BE ((_fp)-&gt;_IO_read_ptr &gt;= (_fp)-&gt;_IO_read_end, 0)</code> 这段代码只是表明<code>(_fp)-&gt;_IO_read_ptr &gt;= (_fp)-&gt;_IO_read_end</code>很可能是false。<br>如果<code>(_fp)-&gt;_IO_read_ptr &gt;= (_fp)-&gt;_IO_read_end</code>为true则执行<code>__uflow (_fp)</code>，否者执行<code>*(unsigned char *) (_fp)-&gt;_IO_read_ptr++)</code></p>
+<p>看一下_IO_FILE结构中定义的_IO_read_ptr的注释:<code>Current read pointer</code>，<strong>他指的是当前的读入位置，即在输入缓冲区中的位置</strong>。<br>_IO_read_ptr的注释为<code>char* _IO_read_end;    /* End of get area. */</code> 读取缓冲区结束的位置。<br>之前已经说过，我们输入的东西其实是先保存在输入缓冲区中，如果_IO_read_ptr小于_IO_read_end则说明，并没有到输入缓冲区的尽头，则只需返回_IO_read_ptr所指向的一字节的内容，然后_IO_read_ptr的大小增加1，指向下一个字节。<br>如果_IO_read_ptr大于等于_IO_read_end，则说明已经读取到尽头，则需要重新从设备中读取数据到缓冲区，从这里可以看出，最初的时候，_IO_read_ptr是和_IO_read_end相等的，因为这样才会从键盘中进行读取，否者缓冲区中是没有内容的。</p>
+<p>看一下__uflow的定义:<br><figure class="highlight sqf"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">int</span><br><span class="line"><span class="variable">__uflow</span> (<span class="variable">_IO_FILE</span> *fp)</span><br><span class="line">&#123;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">if</span> defined _LIBC || defined _GLIBCPP_USE_WCHAR_T</span></span><br><span class="line">  <span class="keyword">if</span> (<span class="variable">_IO_vtable_offset</span> (fp) == <span class="number">0</span> &amp;&amp; <span class="variable">_IO_fwide</span> (fp, -<span class="number">1</span>) != -<span class="number">1</span>)</span><br><span class="line">    return EOF;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (fp-&gt;<span class="variable">_mode</span> == <span class="number">0</span>)</span><br><span class="line">    <span class="variable">_IO_fwide</span> (fp, -<span class="number">1</span>);</span><br><span class="line">  <span class="keyword">if</span> (<span class="variable">_IO_in_put_mode</span> (fp))</span><br><span class="line">    <span class="keyword">if</span> (<span class="variable">_IO_switch_to_get_mode</span> (fp) == EOF)</span><br><span class="line">      return EOF;</span><br><span class="line">  <span class="keyword">if</span> (fp-&gt;<span class="variable">_IO_read_ptr</span> &lt; fp-&gt;<span class="variable">_IO_read_end</span>)</span><br><span class="line">    return *(unsigned char *) fp-&gt;<span class="variable">_IO_read_ptr</span>++;</span><br><span class="line">  <span class="keyword">if</span> (<span class="variable">_IO_in_backup</span> (fp))</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="variable">_IO_switch_to_main_get_area</span> (fp);</span><br><span class="line">      <span class="keyword">if</span> (fp-&gt;<span class="variable">_IO_read_ptr</span> &lt; fp-&gt;<span class="variable">_IO_read_end</span>)</span><br><span class="line">	return *(unsigned char *) fp-&gt;<span class="variable">_IO_read_ptr</span>++;</span><br><span class="line">    &#125;</span><br><span class="line">  <span class="keyword">if</span> (<span class="variable">_IO_have_markers</span> (fp))</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="keyword">if</span> (save_for_backup (fp, fp-&gt;<span class="variable">_IO_read_end</span>))</span><br><span class="line">	return EOF;</span><br><span class="line">    &#125;</span><br><span class="line">  <span class="keyword">else</span> <span class="keyword">if</span> (<span class="variable">_IO_have_backup</span> (fp))</span><br><span class="line">    <span class="variable">_IO_free_backup_area</span> (fp);</span><br><span class="line">  return <span class="variable">_IO_UFLOW</span> (fp);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>前面的操作在干啥我也不太清楚，但是最终调用了<code>return _IO_UFLOW (fp);</code><br><code>#define _IO_UFLOW(FP) JUMP0 (__uflow, FP)</code><br><code>#define JUMP0(FUNC, THIS) (_IO_JUMPS_FUNC(THIS)-&gt;FUNC) (THIS)</code><br>宏特别多，这些宏都是一套套一套，只说下最后的功能是：在其对应的vtable中调用了 <strong>uflow。不太清楚这个 </strong>uflow是啥，于是动态调试一波:<br>以stdin为例：<br><figure class="highlight sqf"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">pwndbg&gt; p <span class="variable">_IO_2_1_stdin_</span> </span><br><span class="line">$<span class="number">7</span> = &#123;</span><br><span class="line">  file = &#123;</span><br><span class="line">    <span class="variable">_flags</span> = -<span class="number">72540024</span>, </span><br><span class="line">    <span class="variable">_IO_read_ptr</span> = <span class="number">0</span>x0, </span><br><span class="line">    <span class="variable">_IO_read_end</span> = <span class="number">0</span>x0, </span><br><span class="line">    <span class="variable">_IO_read_base</span> = <span class="number">0</span>x0, </span><br><span class="line">    <span class="variable">_IO_write_base</span> = <span class="number">0</span>x0, </span><br><span class="line">    <span class="variable">_IO_write_ptr</span> = <span class="number">0</span>x0, </span><br><span class="line">    <span class="variable">_IO_write_end</span> = <span class="number">0</span>x0, </span><br><span class="line">    <span class="variable">_IO_buf_base</span> = <span class="number">0</span>x0, </span><br><span class="line">    <span class="variable">_IO_buf_end</span> = <span class="number">0</span>x0, </span><br><span class="line">    <span class="variable">_IO_save_base</span> = <span class="number">0</span>x0, </span><br><span class="line">    <span class="variable">_IO_backup_base</span> = <span class="number">0</span>x0, </span><br><span class="line">    <span class="variable">_IO_save_end</span> = <span class="number">0</span>x0, </span><br><span class="line">    <span class="variable">_markers</span> = <span class="number">0</span>x0, </span><br><span class="line">    <span class="variable">_chain</span> = <span class="number">0</span>x0, </span><br><span class="line">    <span class="variable">_fileno</span> = <span class="number">0</span>, </span><br><span class="line">    <span class="variable">_flags2</span> = <span class="number">0</span>, </span><br><span class="line">    <span class="variable">_old_offset</span> = -<span class="number">1</span>, </span><br><span class="line">    <span class="variable">_cur_column</span> = <span class="number">0</span>, </span><br><span class="line">    <span class="variable">_vtable_offset</span> = <span class="number">0</span> <span class="string">'\000'</span>, </span><br><span class="line">    <span class="variable">_shortbuf</span> = <span class="string">""</span>, </span><br><span class="line">    <span class="variable">_lock</span> = <span class="number">0</span>x7ffff7dd3790 &lt;<span class="variable">_IO_stdfile_0_lock</span>&gt;, </span><br><span class="line">    <span class="variable">_offset</span> = -<span class="number">1</span>, </span><br><span class="line">    <span class="variable">_codecvt</span> = <span class="number">0</span>x0, </span><br><span class="line">    <span class="variable">_wide_data</span> = <span class="number">0</span>x7ffff7dd19c0 &lt;<span class="variable">_IO_wide_data_0</span>&gt;, </span><br><span class="line">    <span class="variable">_freeres_list</span> = <span class="number">0</span>x0, </span><br><span class="line">    <span class="variable">_freeres_buf</span> = <span class="number">0</span>x0, </span><br><span class="line">    <span class="variable">__pad5</span> = <span class="number">0</span>, </span><br><span class="line">    <span class="variable">_mode</span> = <span class="number">0</span>, </span><br><span class="line">    <span class="variable">_unused2</span> = <span class="string">'\000'</span> &lt;repeats <span class="number">19</span> times&gt;</span><br><span class="line">  &#125;, </span><br><span class="line">  vtable = <span class="number">0</span>x7ffff7dd06e0 &lt;<span class="variable">_IO_file_jumps</span>&gt;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>vtable是_IO_file_jumps<br><code>extern const struct _IO_jump_t _IO_file_jumps;</code></p>
+<p>他里面的内容是<br><figure class="highlight sqf"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">pwndbg&gt; p <span class="variable">_IO_file_jumps</span></span><br><span class="line">$<span class="number">6</span> = &#123;</span><br><span class="line">  <span class="variable">__dummy</span> = <span class="number">0</span>, </span><br><span class="line">  <span class="variable">__dummy2</span> = <span class="number">0</span>, </span><br><span class="line">  <span class="variable">__finish</span> = <span class="number">0</span>x7ffff7a869c0 &lt;<span class="variable">_IO_new_file_finish</span>&gt;, </span><br><span class="line">  <span class="variable">__overflow</span> = <span class="number">0</span>x7ffff7a87730 &lt;<span class="variable">_IO_new_file_overflow</span>&gt;, </span><br><span class="line">  <span class="variable">__underflow</span> = <span class="number">0</span>x7ffff7a874a0 &lt;<span class="variable">_IO_new_file_underflow</span>&gt;, </span><br><span class="line">  <span class="variable">__uflow</span> = <span class="number">0</span>x7ffff7a88600 &lt;<span class="variable">__GI__IO_default_uflow</span>&gt;, </span><br><span class="line">  <span class="variable">__pbackfail</span> = <span class="number">0</span>x7ffff7a89980 &lt;<span class="variable">__GI__IO_default_pbackfail</span>&gt;, </span><br><span class="line">  <span class="variable">__xsputn</span> = <span class="number">0</span>x7ffff7a861e0 &lt;<span class="variable">_IO_new_file_xsputn</span>&gt;, </span><br><span class="line">  <span class="variable">__xsgetn</span> = <span class="number">0</span>x7ffff7a85ec0 &lt;<span class="variable">__GI__IO_file_xsgetn</span>&gt;, </span><br><span class="line">  <span class="variable">__seekoff</span> = <span class="number">0</span>x7ffff7a854c0 &lt;<span class="variable">_IO_new_file_seekoff</span>&gt;, </span><br><span class="line">  <span class="variable">__seekpos</span> = <span class="number">0</span>x7ffff7a88a00 &lt;<span class="variable">_IO_default_seekpos</span>&gt;, </span><br><span class="line">  <span class="variable">__setbuf</span> = <span class="number">0</span>x7ffff7a85430 &lt;<span class="variable">_IO_new_file_setbuf</span>&gt;, </span><br><span class="line">  <span class="variable">__sync</span> = <span class="number">0</span>x7ffff7a85370 &lt;<span class="variable">_IO_new_file_sync</span>&gt;, </span><br><span class="line">  <span class="variable">__doallocate</span> = <span class="number">0</span>x7ffff7a7a180 &lt;<span class="variable">__GI__IO_file_doallocate</span>&gt;, </span><br><span class="line">  <span class="variable">__read</span> = <span class="number">0</span>x7ffff7a861a0 &lt;<span class="variable">__GI__IO_file_read</span>&gt;, </span><br><span class="line">  <span class="variable">__write</span> = <span class="number">0</span>x7ffff7a85b70 &lt;<span class="variable">_IO_new_file_write</span>&gt;, </span><br><span class="line">  <span class="variable">__seek</span> = <span class="number">0</span>x7ffff7a85970 &lt;<span class="variable">__GI__IO_file_seek</span>&gt;, </span><br><span class="line">  <span class="variable">__close</span> = <span class="number">0</span>x7ffff7a85340 &lt;<span class="variable">__GI__IO_file_close</span>&gt;, </span><br><span class="line">  <span class="variable">__stat</span> = <span class="number">0</span>x7ffff7a85b60 &lt;<span class="variable">__GI__IO_file_stat</span>&gt;, </span><br><span class="line">  <span class="variable">__showmanyc</span> = <span class="number">0</span>x7ffff7a89af0 &lt;<span class="variable">_IO_default_showmanyc</span>&gt;, </span><br><span class="line">  <span class="variable">__imbue</span> = <span class="number">0</span>x7ffff7a89b00 &lt;<span class="variable">_IO_default_imbue</span>&gt;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>所以最终调用的函数其实是:<code>__GI__IO_default_uflow.</code></p>
+<p>看下他的定义:<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span></span><br><span class="line">_IO_default_uflow (_IO_FILE *fp)</span><br><span class="line">&#123;</span><br><span class="line">  <span class="keyword">int</span> ch = _IO_UNDERFLOW (fp);</span><br><span class="line">  <span class="keyword">if</span> (ch == EOF)</span><br><span class="line">    <span class="keyword">return</span> EOF;</span><br><span class="line">  <span class="keyword">return</span> *(<span class="keyword">unsigned</span> <span class="keyword">char</span> *) fp-&gt;_IO_read_ptr++;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>他又调用了<code>_IO_UNDERFLOW (fp)</code></p>
+<p><code>#define _IO_UNDERFLOW(FP) JUMP0 (__underflow, FP)</code><br>同理，这个是调用了<code>_IO_new_file_underflow</code><br>追了这么久，这个函数就是最底层的操作了，用来读取你的键盘输入.<br>看下他的定义：<br><figure class="highlight sqf"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br></pre></td><td class="code"><pre><span class="line">int</span><br><span class="line"><span class="variable">_IO_new_file_underflow</span> (<span class="variable">_IO_FILE</span> *fp) <span class="comment">//最底层的输入操作</span></span><br><span class="line">&#123;</span><br><span class="line">  <span class="variable">_IO_ssize_t</span> <span class="built_in">count</span>;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">if</span> 0</span></span><br><span class="line">  <span class="comment">/* SysV does not make this test; take it out for compatibility */</span></span><br><span class="line">  <span class="keyword">if</span> (fp-&gt;<span class="variable">_flags</span> &amp; <span class="variable">_IO_EOF_SEEN</span>)</span><br><span class="line">    return (EOF);</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (fp-&gt;<span class="variable">_flags</span> &amp; <span class="variable">_IO_NO_READS</span>)</span><br><span class="line">    &#123;</span><br><span class="line">      fp-&gt;<span class="variable">_flags</span> |= <span class="variable">_IO_ERR_SEEN</span>;</span><br><span class="line">      <span class="variable">__set_errno</span> (EBADF);</span><br><span class="line">      return EOF;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (fp-&gt;<span class="variable">_IO_read_ptr</span> &lt; fp-&gt;<span class="variable">_IO_read_end</span>)</span><br><span class="line">    return *(unsigned char *) fp-&gt;<span class="variable">_IO_read_ptr</span>;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (fp-&gt;<span class="variable">_IO_buf_base</span> == NULL)</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="comment">/* Maybe we already have a push back pointer.  */</span></span><br><span class="line">      <span class="keyword">if</span> (fp-&gt;<span class="variable">_IO_save_base</span> != NULL)</span><br><span class="line">	&#123;</span><br><span class="line">	  free (fp-&gt;<span class="variable">_IO_save_base</span>);</span><br><span class="line">	  fp-&gt;<span class="variable">_flags</span> &amp;= ~<span class="variable">_IO_IN_BACKUP</span>;</span><br><span class="line">	&#125;</span><br><span class="line">      <span class="variable">_IO_doallocbuf</span> (fp);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">  <span class="comment">/* Flush all line buffered files before reading. */</span></span><br><span class="line">  <span class="comment">/* FIXME This can/should be moved to genops ?? */</span></span><br><span class="line">  <span class="keyword">if</span> (fp-&gt;<span class="variable">_flags</span> &amp; (<span class="variable">_IO_LINE_BUF</span>|<span class="variable">_IO_UNBUFFERED</span>))</span><br><span class="line">    &#123;</span><br><span class="line"><span class="meta">#<span class="meta-keyword">if</span> 0</span></span><br><span class="line">      <span class="variable">_IO_flush_all_linebuffered</span> ();</span><br><span class="line"><span class="meta">#<span class="meta-keyword">else</span></span></span><br><span class="line">      <span class="comment">/* We used to flush all line-buffered stream.  This really isn't</span></span><br><span class="line"><span class="comment">	 required by any standard.  My recollection is that</span></span><br><span class="line"><span class="comment">	 traditional Unix systems did this for stdout.  stderr better</span></span><br><span class="line"><span class="comment">	 not be line buffered.  So we do just that here</span></span><br><span class="line"><span class="comment">	 explicitly.  --drepper */</span></span><br><span class="line">      <span class="variable">_IO_acquire_lock</span> (<span class="variable">_IO_stdout</span>);</span><br><span class="line"></span><br><span class="line">      <span class="keyword">if</span> ((<span class="variable">_IO_stdout</span>-&gt;<span class="variable">_flags</span> &amp; (<span class="variable">_IO_LINKED</span> | <span class="variable">_IO_NO_WRITES</span> | <span class="variable">_IO_LINE_BUF</span>))</span><br><span class="line">	  == (<span class="variable">_IO_LINKED</span> | <span class="variable">_IO_LINE_BUF</span>))</span><br><span class="line">	<span class="variable">_IO_OVERFLOW</span> (<span class="variable">_IO_stdout</span>, EOF);</span><br><span class="line"></span><br><span class="line">      <span class="variable">_IO_release_lock</span> (<span class="variable">_IO_stdout</span>);</span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">  <span class="variable">_IO_switch_to_get_mode</span> (fp);</span><br><span class="line"></span><br><span class="line">  <span class="comment">/* This is very tricky. We have to adjust those</span></span><br><span class="line"><span class="comment">     pointers before we call _IO_SYSREAD () since</span></span><br><span class="line"><span class="comment">     we may longjump () out while waiting for</span></span><br><span class="line"><span class="comment">     input. Those pointers may be screwed up. H.J. */</span></span><br><span class="line">  fp-&gt;<span class="variable">_IO_read_base</span> = fp-&gt;<span class="variable">_IO_read_ptr</span> = fp-&gt;<span class="variable">_IO_buf_base</span>;</span><br><span class="line">  fp-&gt;<span class="variable">_IO_read_end</span> = fp-&gt;<span class="variable">_IO_buf_base</span>;</span><br><span class="line">  fp-&gt;<span class="variable">_IO_write_base</span> = fp-&gt;<span class="variable">_IO_write_ptr</span> = fp-&gt;<span class="variable">_IO_write_end</span> <span class="comment">//都等于了_IO_buf_base</span></span><br><span class="line">    = fp-&gt;<span class="variable">_IO_buf_base</span>;</span><br><span class="line"></span><br><span class="line">  <span class="built_in">count</span> = <span class="variable">_IO_SYSREAD</span> (fp, fp-&gt;<span class="variable">_IO_buf_base</span>,</span><br><span class="line">		       fp-&gt;<span class="variable">_IO_buf_end</span> - fp-&gt;<span class="variable">_IO_buf_base</span>); <span class="comment">//从这里知道 _IO_buf_base是读入起始位置，_IO_buf_end是结束位置。</span></span><br><span class="line">  <span class="keyword">if</span> (<span class="built_in">count</span> &lt;= <span class="number">0</span>) <span class="comment">//读入时出错</span></span><br><span class="line">    &#123;</span><br><span class="line">      <span class="keyword">if</span> (<span class="built_in">count</span> == <span class="number">0</span>)</span><br><span class="line">	fp-&gt;<span class="variable">_flags</span> |= <span class="variable">_IO_EOF_SEEN</span>;</span><br><span class="line">      <span class="keyword">else</span></span><br><span class="line">	fp-&gt;<span class="variable">_flags</span> |= <span class="variable">_IO_ERR_SEEN</span>, <span class="built_in">count</span> = <span class="number">0</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  fp-&gt;<span class="variable">_IO_read_end</span> += <span class="built_in">count</span>;</span><br><span class="line">  <span class="keyword">if</span> (<span class="built_in">count</span> == <span class="number">0</span>)</span><br><span class="line">    &#123;</span><br><span class="line">      <span class="comment">/* If a stream is read to EOF, the calling application may switch active</span></span><br><span class="line"><span class="comment">	 handles.  As a result, our offset cache would no longer be valid, so</span></span><br><span class="line"><span class="comment">	 unset it.  */</span></span><br><span class="line">      fp-&gt;<span class="variable">_offset</span> = <span class="variable">_IO_pos_BAD</span>;</span><br><span class="line">      return EOF;</span><br><span class="line">    &#125;</span><br><span class="line">  <span class="keyword">if</span> (fp-&gt;<span class="variable">_offset</span> != <span class="variable">_IO_pos_BAD</span>)</span><br><span class="line">    <span class="variable">_IO_pos_adjust</span> (fp-&gt;<span class="variable">_offset</span>, <span class="built_in">count</span>);</span><br><span class="line">  return *(unsigned char *) fp-&gt;<span class="variable">_IO_read_ptr</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>关键看这些<br><figure class="highlight xl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">  ....</span><br><span class="line"></span><br><span class="line"> <span class="function"><span class="title">if</span> (fp-&gt;</span>_IO_<span class="function"><span class="title">read_ptr</span> &lt; fp-&gt;</span>_IO_read_end)</span><br><span class="line">   <span class="function"><span class="title">return</span> *(unsigned char *) fp-&gt;</span>_IO_read_ptr;</span><br><span class="line"></span><br><span class="line">  ....</span><br><span class="line"><span class="function"><span class="title">fp</span>-&gt;</span>_IO_<span class="function"><span class="title">read_base</span> = fp-&gt;</span>_IO_<span class="function"><span class="title">read_ptr</span> = fp-&gt;</span>_IO_buf_base;</span><br><span class="line">   <span class="function"><span class="title">fp</span>-&gt;</span>_IO_<span class="function"><span class="title">read_end</span> = fp-&gt;</span>_IO_buf_base;</span><br><span class="line">   <span class="function"><span class="title">fp</span>-&gt;</span>_IO_<span class="function"><span class="title">write_base</span> = fp-&gt;</span>_IO_<span class="function"><span class="title">write_ptr</span> = fp-&gt;</span>_IO_write_end <span class="comment">//都等于了_IO_buf_base</span></span><br><span class="line">   = <span class="function"><span class="title">fp</span>-&gt;</span>_IO_buf_base;</span><br><span class="line"> <span class="function"><span class="title">count</span> = _IO_SYSREAD (fp, fp-&gt;</span>_IO_buf_base,</span><br><span class="line">	       <span class="function"><span class="title">fp</span>-&gt;</span>_IO_<span class="function"><span class="title">buf_end</span> - fp-&gt;</span>_IO_buf_base); <span class="comment">//从这里知道 _IO_buf_base是读入起始位置，_IO_buf_end是结束位置。</span></span><br><span class="line"><span class="function"><span class="title">fp</span>-&gt;</span>_IO_read_end += count;</span><br></pre></td></tr></table></figure></p>
+<p>这里的_IO_SYSREAD最终会调用read，从你的键盘读入数据。且_IO_read_ptr等于了_IO_buf_base,_IO_read_endd等于了_IO_buf_base+count.再次调用getchar时又可以读取正常读取缓冲区了。<strong>从这里可以知道，如果控制了_IO_buf_base，就可以造成任意写的能力。</strong></p>
+<p>总结一下：getchar函数会先判断是否已经读完了输入缓冲区（_IO_read_ptr&gt;=_IO_read_end?),如果输入缓冲区还没有读完，则返回_IO_read_ptr指向的一字节内容，并自增1，如果输入缓冲区已经读完了，则最终调用_IO_new_file_underflow 重新进行读取，填充缓冲区，并调整_IO_read_ptr和_IO_read_end指针的位置。</p>
+<h4 id="putchar："><a href="#putchar：" class="headerlink" title="putchar："></a>putchar：</h4>
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/03/24/Securinets-CTF-Quals-2019-部分pwn题wp/" rel="next" title="Securinets CTF Quals 2019 部分pwn题wp">
+                <i class="fa fa-chevron-left"></i> Securinets CTF Quals 2019 部分pwn题wp
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">ditto</p>
+              <p class="site-description motion-element" itemprop="description">pwn for fun</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">8</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">3</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#前言："><span class="nav-number">1.</span> <span class="nav-text">前言：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#部分源码分析"><span class="nav-number">2.</span> <span class="nav-text">部分源码分析:</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#IO-FILE结构体："><span class="nav-number">2.1.</span> <span class="nav-text">_IO_FILE结构体：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#IO-FILE-plus结构体："><span class="nav-number">2.2.</span> <span class="nav-text">_IO_FILE_plus结构体：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#getchar函数："><span class="nav-number">2.3.</span> <span class="nav-text">getchar函数：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#putchar："><span class="nav-number">2.4.</span> <span class="nav-text">putchar：</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">ditto</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count">13.6k</span>
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.4</div>
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
