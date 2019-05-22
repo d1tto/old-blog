@@ -94,7 +94,7 @@
 
 
 
-  <meta name="keywords" content="pwnable,StackOverflow,">
+  <meta name="keywords" content="Hexo, NexT">
 
 
 
@@ -107,24 +107,16 @@
 
 
 
-<meta name="description" content="ret2addr和ret2arg这两种利用手法在《黑手缓冲区溢出教程》里有所提及。这两种只是基本的利用手法，如果开启了NX（堆栈代码不可执行）或者ASLR就无用武之地了，需要更高级的利用手法，例如ret2libc，ret2plt，和ROP等高级利用手法，这篇笔记就只说下基本的利用手法及漏洞原理。 了解栈溢出漏洞，需要对汇编里的call指令（相当于push eip和jmp 函数首地址 ），ret指令">
-<meta name="keywords" content="pwnable,StackOverflow">
-<meta property="og:type" content="article">
-<meta property="og:title" content="基本栈溢出">
-<meta property="og:url" content="http://yoursite.com/2019/02/11/基本栈溢出/index.html">
+<meta name="description" content="pwn for fun">
+<meta property="og:type" content="website">
+<meta property="og:title" content="ditto&#39;s blog">
+<meta property="og:url" content="http://yoursite.com/page/2/index.html">
 <meta property="og:site_name" content="ditto&#39;s blog">
-<meta property="og:description" content="ret2addr和ret2arg这两种利用手法在《黑手缓冲区溢出教程》里有所提及。这两种只是基本的利用手法，如果开启了NX（堆栈代码不可执行）或者ASLR就无用武之地了，需要更高级的利用手法，例如ret2libc，ret2plt，和ROP等高级利用手法，这篇笔记就只说下基本的利用手法及漏洞原理。 了解栈溢出漏洞，需要对汇编里的call指令（相当于push eip和jmp 函数首地址 ），ret指令">
+<meta property="og:description" content="pwn for fun">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://yoursite.com/2019/02/11/基本栈溢出/1.png">
-<meta property="og:image" content="http://yoursite.com/2019/02/11/基本栈溢出/2.png">
-<meta property="og:image" content="http://yoursite.com/2019/02/11/基本栈溢出/3.png">
-<meta property="og:image" content="http://yoursite.com/2019/02/11/基本栈溢出/4.png">
-<meta property="og:image" content="http://yoursite.com/2019/02/11/基本栈溢出/5.png">
-<meta property="og:updated_time" content="2019-02-26T12:15:05.978Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="基本栈溢出">
-<meta name="twitter:description" content="ret2addr和ret2arg这两种利用手法在《黑手缓冲区溢出教程》里有所提及。这两种只是基本的利用手法，如果开启了NX（堆栈代码不可执行）或者ASLR就无用武之地了，需要更高级的利用手法，例如ret2libc，ret2plt，和ROP等高级利用手法，这篇笔记就只说下基本的利用手法及漏洞原理。 了解栈溢出漏洞，需要对汇编里的call指令（相当于push eip和jmp 函数首地址 ），ret指令">
-<meta name="twitter:image" content="http://yoursite.com/2019/02/11/基本栈溢出/1.png">
+<meta name="twitter:title" content="ditto&#39;s blog">
+<meta name="twitter:description" content="pwn for fun">
 
 
 
@@ -154,13 +146,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/2019/02/11/基本栈溢出/">
+  <link rel="canonical" href="http://yoursite.com/page/2/">
 
 
 
 
 
-  <title>基本栈溢出 | ditto's blog</title>
+  <title>ditto's blog</title>
   
 
 
@@ -179,7 +171,8 @@
     
   
 
-  <div class="container sidebar-position-left page-post-detail">
+  <div class="container sidebar-position-left 
+  page-home">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
@@ -282,9 +275,9 @@
         <div class="content-wrap">
           <div id="content" class="content">
             
-
-  <div id="posts" class="posts-expand">
+  <section id="posts" class="posts-expand">
     
+      
 
   
 
@@ -314,7 +307,9 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">基本栈溢出</h1>
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/02/11/基本栈溢出/" itemprop="url">基本栈溢出</a></h1>
         
 
         <div class="post-meta">
@@ -395,7 +390,9 @@
       
 
       
-        <p>ret2addr和ret2arg这两种利用手法在《黑手缓冲区溢出教程》里有所提及。这两种只是基本的利用手法，如果开启了NX（堆栈代码不可执行）或者ASLR就无用武之地了，需要更高级的利用手法，例如ret2libc，ret2plt，和ROP等高级利用手法，这篇笔记就只说下基本的利用手法及漏洞原理。</p>
+        
+          
+            <p>ret2addr和ret2arg这两种利用手法在《黑手缓冲区溢出教程》里有所提及。这两种只是基本的利用手法，如果开启了NX（堆栈代码不可执行）或者ASLR就无用武之地了，需要更高级的利用手法，例如ret2libc，ret2plt，和ROP等高级利用手法，这篇笔记就只说下基本的利用手法及漏洞原理。</p>
 <p>了解栈溢出漏洞，需要对汇编里的call指令（相当于push eip和jmp 函数首地址 ），ret指令（相当于pop eip），函数的调用过程有所了解。《加密与解密》的逆向分析技术篇中函数部分说的很清楚。下面也会有所介绍。</p>
 <h5 id="简介"><a href="#简介" class="headerlink" title="简介"></a><strong>简介</strong></h5><p>栈溢出是向栈中写入超过原本长度限制的数据，使栈中的其他数据被覆盖，常见的是覆盖栈中返回地址，改变程序的执行流程。<br>栈溢出漏洞成立需要两个条件，其一是：有向栈中写入数据的行为，另一个是：使用了gets，strcpy，strcat等 不限制数据输入长度或者不检查数组长度的函数。</p>
 <h4 id="预备知识"><a href="#预备知识" class="headerlink" title="预备知识"></a><strong>预备知识</strong></h4><p>函数的调用和返回等过程都是在栈中完成的，栈中也保存着局部变量和函数的参数。<br>说之前先复习下函数调用的知识。<br>调用函数前，如果函数有参数，需要先将参数传入栈中（值传递本质是将变量复制一份压入堆栈，而地址传递，是将变量的地址直接压入栈中，通过加上中括号[]，直接访问）<br><strong>一般情况下参数的入栈是从右往左依次入栈的（cdecl调用约定，stdcall，fastcall等）。</strong><br>值传递模板（非fastcall调用约定，fastcall调用约定前两个参数会直接用寄存器，不用堆栈，后面的参数仍然用堆栈传参）如下：</p>
@@ -416,6 +413,8 @@
 <p><strong>基本利用之ret2arg</strong><br>与ret2addr不同的之处是 shellcode在返回地址的下面，而不是在栈帧里。同时返回地址被覆盖为JMP ESP这个指令的首地址。利用后的堆栈图如下：<br><img src="/2019/02/11/基本栈溢出/5.png" alt=""></p>
 <p>原来的返回地址被覆盖为JMP ESP指令的首地址。<br>因为<strong>ret后 ，ESP加4</strong>，则此时ESP指向shellcode的首地址，而EIP指向了JMP ESP指令的首地址，执行JMP ESP后，EIP就指向了shellcode的首地址，这样就会执行你的shellcode了。</p>
 
+          
+        
       
     </div>
     
@@ -430,38 +429,14 @@
 
     <footer class="post-footer">
       
-        <div class="post-tags">
-          
-            <a href="/tags/pwnable/" rel="tag"># pwnable</a>
-          
-            <a href="/tags/StackOverflow/" rel="tag"># StackOverflow</a>
-          
-        </div>
+
+      
+
       
 
       
       
-      
-
-      
-        <div class="post-nav">
-          <div class="post-nav-next post-nav-item">
-            
-          </div>
-
-          <span class="post-nav-divider"></span>
-
-          <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2019/02/11/基本格式化字符串漏洞原理/" rel="prev" title="基本格式化字符串漏洞原理">
-                基本格式化字符串漏洞原理 <i class="fa fa-chevron-right"></i>
-              </a>
-            
-          </div>
-        </div>
-      
-
-      
+        <div class="post-eof"></div>
       
     </footer>
   </div>
@@ -471,11 +446,14 @@
   </article>
 
 
+    
+  </section>
 
-    <div class="post-spread">
-      
-    </div>
-  </div>
+  
+  <nav class="pagination">
+    <a class="extend prev" rel="prev" href="/"><i class="fa fa-angle-left"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span>
+  </nav>
+
 
 
           </div>
@@ -483,10 +461,6 @@
 
 
           
-
-  
-
-
 
         </div>
         
@@ -507,17 +481,8 @@
       
 
       
-        <ul class="sidebar-nav motion-element">
-          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
-            文章目录
-          </li>
-          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
-            站点概览
-          </li>
-        </ul>
-      
 
-      <section class="site-overview-wrap sidebar-panel">
+      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
             
@@ -577,22 +542,6 @@
         </div>
       </section>
 
-      
-      <!--noindex-->
-        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
-          <div class="post-toc">
-
-            
-              
-            
-
-            
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-5"><a class="nav-link" href="#简介"><span class="nav-number">1.</span> <span class="nav-text">简介</span></a></li></ol><li class="nav-item nav-level-4"><a class="nav-link" href="#预备知识"><span class="nav-number"></span> <span class="nav-text">预备知识</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#漏洞原理"><span class="nav-number">1.</span> <span class="nav-text">漏洞原理</span></a></li></ol></li></div>
-            
-
-          </div>
-        </section>
-      <!--/noindex-->
       
 
       
@@ -748,10 +697,6 @@
 
 
   
-  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
-<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
-
-
 
   
 
