@@ -107,16 +107,17 @@
 
 
 
-<meta name="description" content="pwn for fun">
-<meta property="og:type" content="website">
-<meta property="og:title" content="ditto&#39;s blog">
-<meta property="og:url" content="http://yoursite.com/archives/2019/04/index.html">
+<meta name="description" content="前言：利用setcontext函数从*ctf 2019的heap_master就有了，之前比较忙就没有研究，抽时间看了下是如何利用的.  参考了:https://blog.csdn.net/mrpre/article/details/78699865http://blog.eonew.cn/archives/1000#i-5https://n132.github.io/2019/05/10/201">
+<meta property="og:type" content="article">
+<meta property="og:title" content="setcontext利用">
+<meta property="og:url" content="http://yoursite.com/2019/06/03/setcontext利用/index.html">
 <meta property="og:site_name" content="ditto&#39;s blog">
-<meta property="og:description" content="pwn for fun">
+<meta property="og:description" content="前言：利用setcontext函数从*ctf 2019的heap_master就有了，之前比较忙就没有研究，抽时间看了下是如何利用的.  参考了:https://blog.csdn.net/mrpre/article/details/78699865http://blog.eonew.cn/archives/1000#i-5https://n132.github.io/2019/05/10/201">
 <meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2019-06-03T09:00:50.179Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="ditto&#39;s blog">
-<meta name="twitter:description" content="pwn for fun">
+<meta name="twitter:title" content="setcontext利用">
+<meta name="twitter:description" content="前言：利用setcontext函数从*ctf 2019的heap_master就有了，之前比较忙就没有研究，抽时间看了下是如何利用的.  参考了:https://blog.csdn.net/mrpre/article/details/78699865http://blog.eonew.cn/archives/1000#i-5https://n132.github.io/2019/05/10/201">
 
 
 
@@ -146,13 +147,13 @@
 
 
 
-  <link rel="canonical" href="http://yoursite.com/archives/2019/04/">
+  <link rel="canonical" href="http://yoursite.com/2019/06/03/setcontext利用/">
 
 
 
 
 
-  <title>归档 | ditto's blog</title>
+  <title>setcontext利用 | ditto's blog</title>
   
 
 
@@ -171,7 +172,7 @@
     
   
 
-  <div class="container sidebar-position-left page-archive">
+  <div class="container sidebar-position-left page-post-detail">
     <div class="headband"></div>
 
     <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
@@ -275,72 +276,177 @@
           <div id="content" class="content">
             
 
+  <div id="posts" class="posts-expand">
+    
+
+  
+
   
   
   
-  <div class="post-block archive">
-    <div id="posts" class="posts-collapse">
-      <span class="archive-move-on"></span>
-
-      <span class="archive-page-counter">
-        
-        
-        
-          
-        
-        嗯..! 目前共计 12 篇日志。 继续努力。
-      </span>
-
-      
-
-        
-        
-        
-
-        
-          
-          <div class="collection-title">
-            <h1 class="archive-year" id="archive-year-2019">2019</h1>
-          </div>
-        
-        
-
-        
 
   <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
-    <header class="post-header">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/06/03/setcontext利用/">
 
-      <h2 class="post-title">
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="ditto">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/my.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ditto's blog">
+    </span>
+
+    
+      <header class="post-header">
+
         
-            <a class="post-title-link" href="/2019/04/24/IO-FILE部分源码分析及利用/" itemprop="url">
-              
-                <span itemprop="name">_IO_FILE部分源码分析及利用</span>
-              
-            </a>
         
-      </h2>
+          <h1 class="post-title" itemprop="name headline">setcontext利用</h1>
+        
 
-      <div class="post-meta">
-        <time class="post-time" itemprop="dateCreated" datetime="2019-04-24T11:13:36+08:00" content="2019-04-24">
-          04-24
-        </time>
-      </div>
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-06-03T16:48:43+08:00">
+                2019-06-03
+              </time>
+            
 
-    </header>
-  </article>
+            
 
+            
+          </span>
 
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  191
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  1
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
 
       
+      
 
+      
+        <h4 id="前言："><a href="#前言：" class="headerlink" title="前言："></a>前言：</h4><p>利用setcontext函数从*ctf 2019的heap_master就有了，之前比较忙就没有研究，抽时间看了下是如何利用的.</p>
+<blockquote>
+<p>参考了:<br><a href="https://blog.csdn.net/mrpre/article/details/78699865" target="_blank" rel="noopener">https://blog.csdn.net/mrpre/article/details/78699865</a><br><a href="http://blog.eonew.cn/archives/1000#i-5" target="_blank" rel="noopener">http://blog.eonew.cn/archives/1000#i-5</a><br><a href="https://n132.github.io/2019/05/10/2019-05-08-Startctf2019-Heap-master/#setcontext" target="_blank" rel="noopener">https://n132.github.io/2019/05/10/2019-05-08-Startctf2019-Heap-master/#setcontext</a><br><a href="https://github.com/sixstars/starctf2019/blob/master/pwn-heap_master/readMe.Md" target="_blank" rel="noopener">https://github.com/sixstars/starctf2019/blob/master/pwn-heap_master/readMe.Md</a></p>
+</blockquote>
+<h4 id="setcontext："><a href="#setcontext：" class="headerlink" title="setcontext："></a>setcontext：</h4><p>手册上是这样描述的:<br><figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">SYNOPSIS</span><br><span class="line">       #include &lt;ucontext.h&gt;</span><br><span class="line">       int getcontext(ucontext_t *ucp);</span><br><span class="line">       int setcontext(const ucontext_t *ucp);</span><br><span class="line">DESCRIPTION</span><br><span class="line">       <span class="keyword">In</span>  a <span class="built_in"> System </span>V-like environment, one has the two types mcontext_t <span class="keyword">and</span> ucontext_t defined <span class="keyword">in</span> &lt;ucontext.h&gt; </span><br><span class="line">       <span class="keyword">and</span> the four functions getcontext(), setcontext(), makecontext(3), <span class="keyword">and</span> swapcontext(3) </span><br><span class="line">       that allow user-level context switching between multiple threads of control within a process.</span><br><span class="line">       The mcontext_t<span class="built_in"> type </span>is machine-dependent <span class="keyword">and</span> opaque.  The ucontext_t<span class="built_in"> type </span>is a structure that has at least the following fields:</span><br><span class="line"></span><br><span class="line">           typedef struct ucontext &#123;</span><br><span class="line">               struct ucontext *uc_link;</span><br><span class="line">               sigset_t         uc_sigmask;</span><br><span class="line">               stack_t          uc_stack;</span><br><span class="line">               mcontext_t       uc_mcontext;</span><br><span class="line">               <span class="built_in">..</span>.</span><br><span class="line">           &#125; ucontext_t;</span><br></pre></td></tr></table></figure></p>
+<p>这几个函数允许</p>
+
+      
     </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/05/22/RCTF2019-babyheap/" rel="next" title="RCTF2019 babyheap">
+                <i class="fa fa-chevron-left"></i> RCTF2019 babyheap
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
   </div>
   
   
   
+  </article>
 
-  
 
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
 
 
           </div>
@@ -348,6 +454,10 @@
 
 
           
+
+  
+
+
 
         </div>
         
@@ -368,8 +478,17 @@
       
 
       
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
 
-      <section class="site-overview-wrap sidebar-panel sidebar-panel-active">
+      <section class="site-overview-wrap sidebar-panel">
         <div class="site-overview">
           <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
             
@@ -429,6 +548,22 @@
         </div>
       </section>
 
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#前言："><span class="nav-number">1.</span> <span class="nav-text">前言：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#setcontext："><span class="nav-number">2.</span> <span class="nav-text">setcontext：</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
       
 
       
@@ -584,6 +719,10 @@
 
 
   
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
 
   
 

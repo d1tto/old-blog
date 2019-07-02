@@ -6,7 +6,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://yoursite.com/"/>
-  <updated>2019-05-24T01:23:38.635Z</updated>
+  <updated>2019-06-03T09:00:50.179Z</updated>
   <id>http://yoursite.com/</id>
   
   <author>
@@ -15,6 +15,27 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>setcontext利用</title>
+    <link href="http://yoursite.com/2019/06/03/setcontext%E5%88%A9%E7%94%A8/"/>
+    <id>http://yoursite.com/2019/06/03/setcontext利用/</id>
+    <published>2019-06-03T08:48:43.000Z</published>
+    <updated>2019-06-03T09:00:50.179Z</updated>
+    
+    <content type="html"><![CDATA[<h4 id="前言："><a href="#前言：" class="headerlink" title="前言："></a>前言：</h4><p>利用setcontext函数从*ctf 2019的heap_master就有了，之前比较忙就没有研究，抽时间看了下是如何利用的.</p><blockquote><p>参考了:<br><a href="https://blog.csdn.net/mrpre/article/details/78699865" target="_blank" rel="noopener">https://blog.csdn.net/mrpre/article/details/78699865</a><br><a href="http://blog.eonew.cn/archives/1000#i-5" target="_blank" rel="noopener">http://blog.eonew.cn/archives/1000#i-5</a><br><a href="https://n132.github.io/2019/05/10/2019-05-08-Startctf2019-Heap-master/#setcontext" target="_blank" rel="noopener">https://n132.github.io/2019/05/10/2019-05-08-Startctf2019-Heap-master/#setcontext</a><br><a href="https://github.com/sixstars/starctf2019/blob/master/pwn-heap_master/readMe.Md" target="_blank" rel="noopener">https://github.com/sixstars/starctf2019/blob/master/pwn-heap_master/readMe.Md</a></p></blockquote><h4 id="setcontext："><a href="#setcontext：" class="headerlink" title="setcontext："></a>setcontext：</h4><p>手册上是这样描述的:<br><figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">SYNOPSIS</span><br><span class="line">       #include &lt;ucontext.h&gt;</span><br><span class="line">       int getcontext(ucontext_t *ucp);</span><br><span class="line">       int setcontext(const ucontext_t *ucp);</span><br><span class="line">DESCRIPTION</span><br><span class="line">       <span class="keyword">In</span>  a <span class="built_in"> System </span>V-like environment, one has the two types mcontext_t <span class="keyword">and</span> ucontext_t defined <span class="keyword">in</span> &lt;ucontext.h&gt; </span><br><span class="line">       <span class="keyword">and</span> the four functions getcontext(), setcontext(), makecontext(3), <span class="keyword">and</span> swapcontext(3) </span><br><span class="line">       that allow user-level context switching between multiple threads of control within a process.</span><br><span class="line">       The mcontext_t<span class="built_in"> type </span>is machine-dependent <span class="keyword">and</span> opaque.  The ucontext_t<span class="built_in"> type </span>is a structure that has at least the following fields:</span><br><span class="line"></span><br><span class="line">           typedef struct ucontext &#123;</span><br><span class="line">               struct ucontext *uc_link;</span><br><span class="line">               sigset_t         uc_sigmask;</span><br><span class="line">               stack_t          uc_stack;</span><br><span class="line">               mcontext_t       uc_mcontext;</span><br><span class="line">               <span class="built_in">..</span>.</span><br><span class="line">           &#125; ucontext_t;</span><br></pre></td></tr></table></figure></p><p>这几个函数允许</p>]]></content>
+    
+    <summary type="html">
+    
+      
+      
+        &lt;h4 id=&quot;前言：&quot;&gt;&lt;a href=&quot;#前言：&quot; class=&quot;headerlink&quot; title=&quot;前言：&quot;&gt;&lt;/a&gt;前言：&lt;/h4&gt;&lt;p&gt;利用setcontext函数从*ctf 2019的heap_master就有了，之前比较忙就没有研究，抽时间看了下是如何利用的.&lt;/
+      
+    
+    </summary>
+    
+    
+  </entry>
   
   <entry>
     <title>RCTF2019 babyheap</title>

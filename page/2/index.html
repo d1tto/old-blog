@@ -290,6 +290,165 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/02/11/基本格式化字符串漏洞原理/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="ditto">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/my.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ditto's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2019/02/11/基本格式化字符串漏洞原理/" itemprop="url">基本格式化字符串漏洞原理</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-02-11T16:42:00+08:00">
+                2019-02-11
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  1.8k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  6
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+          理解这个漏洞的原理，你需要有汇编层面的函数调用和函数的参数传递知识。如果你不清楚函数的参数是如何传递的，可以看《加密与解密》的逆向分析技术篇。
+再说格式化字符串漏洞之前，先了解一下printf函数和利用该漏洞的重要 格式化字符串%n，利用他可以做到几乎任意内存写入。
+函数原型int printf (
+          ...
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2019/02/11/基本格式化字符串漏洞原理/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/02/11/基本栈溢出/">
 
     <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
@@ -392,28 +551,16 @@
       
         
           
-            <p>ret2addr和ret2arg这两种利用手法在《黑手缓冲区溢出教程》里有所提及。这两种只是基本的利用手法，如果开启了NX（堆栈代码不可执行）或者ASLR就无用武之地了，需要更高级的利用手法，例如ret2libc，ret2plt，和ROP等高级利用手法，这篇笔记就只说下基本的利用手法及漏洞原理。</p>
-<p>了解栈溢出漏洞，需要对汇编里的call指令（相当于push eip和jmp 函数首地址 ），ret指令（相当于pop eip），函数的调用过程有所了解。《加密与解密》的逆向分析技术篇中函数部分说的很清楚。下面也会有所介绍。</p>
-<h5 id="简介"><a href="#简介" class="headerlink" title="简介"></a><strong>简介</strong></h5><p>栈溢出是向栈中写入超过原本长度限制的数据，使栈中的其他数据被覆盖，常见的是覆盖栈中返回地址，改变程序的执行流程。<br>栈溢出漏洞成立需要两个条件，其一是：有向栈中写入数据的行为，另一个是：使用了gets，strcpy，strcat等 不限制数据输入长度或者不检查数组长度的函数。</p>
-<h4 id="预备知识"><a href="#预备知识" class="headerlink" title="预备知识"></a><strong>预备知识</strong></h4><p>函数的调用和返回等过程都是在栈中完成的，栈中也保存着局部变量和函数的参数。<br>说之前先复习下函数调用的知识。<br>调用函数前，如果函数有参数，需要先将参数传入栈中（值传递本质是将变量复制一份压入堆栈，而地址传递，是将变量的地址直接压入栈中，通过加上中括号[]，直接访问）<br><strong>一般情况下参数的入栈是从右往左依次入栈的（cdecl调用约定，stdcall，fastcall等）。</strong><br>值传递模板（非fastcall调用约定，fastcall调用约定前两个参数会直接用寄存器，不用堆栈，后面的参数仍然用堆栈传参）如下：</p>
-<figure class="highlight x86asm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">mov</span> <span class="built_in">eax</span>,<span class="built_in">dword</span> <span class="built_in">ptr</span> [<span class="built_in">EBP</span>-xxx]  //<span class="keyword">push</span> 后无法直接接内存单元,需要先传给寄存器</span><br><span class="line"><span class="keyword">push</span> <span class="built_in">eax</span> //压入堆栈传参</span><br><span class="line"><span class="keyword">mov</span> <span class="built_in">eax</span>，<span class="built_in">dword</span> <span class="built_in">ptr</span> [xxx]</span><br><span class="line"><span class="keyword">push</span> <span class="built_in">eax</span></span><br><span class="line">.....</span><br></pre></td></tr></table></figure>
-<p>传完参数后会call 函数（call 会将调用函数即母函数的call指令的下一条要执行的指令的地址压入堆栈，然后再跳转到函数代码段的首地址，这和cpu执行指令的过程有关，cpu执行指令的过程如下：1。读取EIP指向的指令，将其放入指令缓冲器，2。EIP指向下一条指令，3。执行指令缓冲器里的指令，然后返回 1。）</p>
-<figure class="highlight autoit"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">call</span> 函数代码首地址</span><br></pre></td></tr></table></figure>
-<p>函数内容有个模板（下面为debug版，release版会有所不同）如下：</p>
-<figure class="highlight x86asm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">push</span> <span class="built_in">ebp</span></span><br><span class="line"><span class="keyword">mov</span> <span class="built_in">ebp</span>,<span class="built_in">esp</span></span><br><span class="line">//这里提升堆栈</span><br><span class="line"><span class="keyword">sub</span> <span class="built_in">esp</span>,<span class="number">0x40</span>  </span><br><span class="line">//这里是开辟缓冲区，不同编译器开辟的缓冲区大小不同（会根据你所用的变量的多少和大小来开辟）。</span><br><span class="line"><span class="keyword">push</span> <span class="built_in">edi</span></span><br><span class="line"><span class="keyword">push</span> <span class="built_in">esi</span></span><br><span class="line"><span class="keyword">push</span> <span class="built_in">ebx</span></span><br><span class="line">//保留现场</span><br><span class="line"><span class="keyword">lea</span> <span class="built_in">edi</span>, <span class="built_in">dword</span> <span class="built_in">ptr</span> <span class="built_in">ss</span>:[<span class="built_in">ebp</span>-<span class="number">0x40</span>]</span><br><span class="line"><span class="keyword">mov</span> <span class="built_in">ecx</span>,<span class="number">0x10</span></span><br><span class="line"><span class="keyword">mov</span> <span class="built_in">eax</span>,<span class="number">0xcccccccc</span></span><br><span class="line"><span class="keyword">rep</span> stos dowrd <span class="built_in">ptr</span> <span class="built_in">es</span>:[<span class="built_in">edi</span>]</span><br><span class="line">//填充缓冲区（清除垃圾数据），用于存放局部变量</span><br><span class="line">----------------</span><br><span class="line">这里是写函数的功能</span><br><span class="line">----------------</span><br><span class="line">    <span class="keyword">pop</span> <span class="built_in">ebx</span></span><br><span class="line">    <span class="keyword">pop</span> <span class="built_in">esi</span></span><br><span class="line">    <span class="keyword">pop</span> <span class="built_in">edi</span></span><br><span class="line">    //恢复现场</span><br><span class="line">    <span class="keyword">mov</span> <span class="built_in">esp</span>,<span class="built_in">ebp</span></span><br><span class="line">    <span class="keyword">pop</span> <span class="built_in">ebp</span></span><br><span class="line">    <span class="keyword">ret</span></span><br></pre></td></tr></table></figure>
-<p>执行完call函数后的堆栈图如下（下面是高址，上面是低址）：<br><img src="/2019/02/11/基本栈溢出/1.png" alt=""></p>
-<p>此时，EBP的位置就很关键了，使用EBP+xxx，可以访问到传入栈中的参数，向上EBP-xxx，可以访问局部变量。<br>当函数的代码执行到</p>
-<figure class="highlight x86asm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">mov</span> <span class="built_in">esp</span>，<span class="built_in">ebp</span></span><br><span class="line"><span class="keyword">pop</span> <span class="built_in">ebp</span></span><br><span class="line"><span class="keyword">ret</span></span><br></pre></td></tr></table></figure>
-<p>此时ESP指向栈中的返回地址，执行ret执行（相当于pop eip）后就会将返回地址赋值给EIP，函数就执行完毕了，此时EIP重新指向母函数。</p>
-<h5 id="漏洞原理"><a href="#漏洞原理" class="headerlink" title="漏洞原理"></a><strong>漏洞原理</strong></h5><p>漏洞的关键就是利用gets，strcpy，strcat 等函数，<strong>输入或者拼接超过字符数组原先规定的长度的字符串</strong>。<br>例如原先定义的字符数组 a[8]，你使用gets函数，输入了”AAAAAAAAAAAABBBB”,原先编译器编译成汇编时并没有预留足够的空间，例如前面函数模板中的 <code>sub esp，0x40</code>，他只开辟了0x40的空间，那么多输入的字符串就会将堆栈中的其他内容覆盖掉。<br>调用gets前的堆栈图如下：<br><img src="/2019/02/11/基本栈溢出/2.png" alt=""></p>
-<p>调用gets，输入”AAAAAAAAAAAABBBB”后的堆栈图如下：<br><img src="/2019/02/11/基本栈溢出/3.png" alt=""></p>
-<p>起始EBP值，和返回地址以及后面的堆栈空间都可以被输入的字符串所覆盖，这就是缓冲区溢出漏洞。</p>
-<p><strong>基本利用之ret2addr</strong><br>ret2addr就是 return to address ，就是将堆栈里的返回地址覆盖为你所编写的shellcode的首地址上，ret2addr特指的是缓冲区里的shellcode。<br>利用缓冲区溢出后的堆栈图如下：<br><img src="/2019/02/11/基本栈溢出/4.png" alt=""></p>
-<p>当ret后 ，EIP就会指向shellcode的首地址，这样就能执行你的shellcode了。如何找到shellcode的首地址，在下篇笔记再提及。</p>
-<p><strong>基本利用之ret2arg</strong><br>与ret2addr不同的之处是 shellcode在返回地址的下面，而不是在栈帧里。同时返回地址被覆盖为JMP ESP这个指令的首地址。利用后的堆栈图如下：<br><img src="/2019/02/11/基本栈溢出/5.png" alt=""></p>
-<p>原来的返回地址被覆盖为JMP ESP指令的首地址。<br>因为<strong>ret后 ，ESP加4</strong>，则此时ESP指向shellcode的首地址，而EIP指向了JMP ESP指令的首地址，执行JMP ESP后，EIP就指向了shellcode的首地址，这样就会执行你的shellcode了。</p>
-
-          
+          ret2addr和ret2arg这两种利用手法在《黑手缓冲区溢出教程》里有所提及。这两种只是基本的利用手法，如果开启了NX（堆栈代码不可执行）或者ASLR就无用武之地了，需要更高级的利用手法，例如ret2libc，ret2plt，和ROP等高级利用手法，这篇笔记就只说下基本的利用手法及漏洞原理。
+了
+          ...
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2019/02/11/基本栈溢出/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
@@ -499,7 +646,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">11</span>
+                  <span class="site-state-item-count">12</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -570,7 +717,7 @@
     
       <span class="post-meta-item-text">Site words total count&#58;</span>
     
-    <span title="Site words total count">21.9k</span>
+    <span title="Site words total count">22.1k</span>
   
 </div>
 
