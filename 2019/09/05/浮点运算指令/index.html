@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+
+  
+    
+    
+    <link href="https://fonts.loli.net/css?family=Comic Neue:300,300italic,400,400italic,700,700italic|Comic Neue:300,300italic,400,400italic,700,700italic|Comic Neue:300,300italic,400,400italic,700,700italic|Comic Neue:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/x32.ico?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/x16.ico?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT">
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="ditto's blog" type="application/atom+xml">
+
+
+
+
+
+
+<meta name="description" content="前言出某道招新题因为对浮点寄存器及其指令不了解导致自己也不会做了，同时复现qwb的restaurant也遇到了浮点数就补了补习…参考了以下文章:SSE学习笔记汇编语言学习笔记(十二)-浮点指令浮点寄存器概述《深入理解计算机系统》 图片我也是直接截图了… 反汇编发现32位和64使用的浮点数指令不相同，64位使用SSE指令，32位使用FPU进行浮点运算 FPU FPU：(Float Point Uni">
+<meta property="og:type" content="article">
+<meta property="og:title" content="浮点运算指令">
+<meta property="og:url" content="http://yoursite.com/2019/09/05/浮点运算指令/index.html">
+<meta property="og:site_name" content="ditto&#39;s blog">
+<meta property="og:description" content="前言出某道招新题因为对浮点寄存器及其指令不了解导致自己也不会做了，同时复现qwb的restaurant也遇到了浮点数就补了补习…参考了以下文章:SSE学习笔记汇编语言学习笔记(十二)-浮点指令浮点寄存器概述《深入理解计算机系统》 图片我也是直接截图了… 反汇编发现32位和64使用的浮点数指令不相同，64位使用SSE指令，32位使用FPU进行浮点运算 FPU FPU：(Float Point Uni">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://yoursite.com/2019/09/05/浮点运算指令/1.png">
+<meta property="og:image" content="http://yoursite.com/2019/09/05/浮点运算指令/2.png">
+<meta property="og:image" content="http://yoursite.com/2019/09/05/浮点运算指令/3.png">
+<meta property="og:image" content="http://yoursite.com/2019/09/05/浮点运算指令/4.png">
+<meta property="og:image" content="http://yoursite.com/2019/09/05/浮点运算指令/5.png">
+<meta property="og:updated_time" content="2019-09-05T12:34:54.006Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="浮点运算指令">
+<meta name="twitter:description" content="前言出某道招新题因为对浮点寄存器及其指令不了解导致自己也不会做了，同时复现qwb的restaurant也遇到了浮点数就补了补习…参考了以下文章:SSE学习笔记汇编语言学习笔记(十二)-浮点指令浮点寄存器概述《深入理解计算机系统》 图片我也是直接截图了… 反汇编发现32位和64使用的浮点数指令不相同，64位使用SSE指令，32位使用FPU进行浮点运算 FPU FPU：(Float Point Uni">
+<meta name="twitter:image" content="http://yoursite.com/2019/09/05/浮点运算指令/1.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/09/05/浮点运算指令/">
+
+
+
+
+
+  <title>浮点运算指令 | ditto's blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">ditto's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br>
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/09/05/浮点运算指令/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="ditto">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/my.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ditto's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">浮点运算指令</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-09-05T19:32:45+08:00">
+                2019-09-05
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  1k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  4
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>出某道招新题因为对浮点寄存器及其指令不了解导致自己也不会做了，同时复现qwb的restaurant也遇到了浮点数就补了补习…<br>参考了以下文章:<br><a href="https://blog.csdn.net/fuxiaoxiaoyue/article/details/82663827" target="_blank" rel="noopener">SSE学习笔记</a><br><a href="https://blog.csdn.net/q_l_s/article/details/54909328" target="_blank" rel="noopener">汇编语言学习笔记(十二)-浮点指令</a><br><a href="https://www.iteye.com/blog/aisxyz-2440913" target="_blank" rel="noopener">浮点寄存器概述</a><br>《深入理解计算机系统》</p>
+<p>图片我也是直接截图了…</p>
+<p>反汇编发现32位和64使用的浮点数指令不相同，64位使用SSE指令，32位使用FPU进行浮点运算</p>
+<h3 id="FPU"><a href="#FPU" class="headerlink" title="FPU"></a>FPU</h3><blockquote>
+<p>FPU：(Float Point Unit，浮点运算单元)FPU是专用于浮点运算的处理器，以前的FPU是一种单独芯片，在486之后，英特尔把FPU集成在CPU之内。</p>
+</blockquote>
+<h4 id="常用指令"><a href="#常用指令" class="headerlink" title="常用指令:"></a>常用指令:</h4><figure class="highlight avrasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">fld:</span> 将数据压入寄存器堆栈</span><br><span class="line"><span class="symbol">fst:</span> 将数据从寄存器堆栈弹出</span><br><span class="line"><span class="symbol">fstp:</span> 取栈顶的值，但是不弹出</span><br></pre></td></tr></table></figure>
+<p>指令的最前面f表示FPU，ld表示load，st表示store</p>
+<p>FPU有8个独立寻址的80位寄存器 st0 - st7 ，他们形成寄存器堆栈.<strong>新放入的浮点数先存放在st0中，原本st0中的浮点数放入到st1中</strong>，以此类推。</p>
+<h4 id="测试"><a href="#测试" class="headerlink" title="测试:"></a>测试:</h4><p>实验代码:<br><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">float</span> a;</span><br><span class="line">    <span class="built_in">scanf</span>(<span class="string">"%f"</span>,&amp;a);</span><br><span class="line">    <span class="keyword">if</span> (a==<span class="number">3.15</span>)&#123;</span><br><span class="line">        system(<span class="string">"/bin/sh"</span>);</span><br><span class="line">    &#125;    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<figure class="highlight x86asm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">► <span class="number">0x80484eb</span> &lt;main+<span class="number">48</span>&gt;    <span class="keyword">fld</span>    <span class="built_in">dword</span> <span class="built_in">ptr</span> [<span class="built_in">ebp</span> - <span class="number">0x10</span>]</span><br></pre></td></tr></table></figure>
+<p>执行这条指令之前st0寄存器为:<br><figure class="highlight gams"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">pwndbg&gt; p <span class="symbol">$</span>st0</span><br><span class="line"><span class="meta"><span class="meta-keyword">$1</span> = 0</span></span><br></pre></td></tr></table></figure></p>
+<p>执行后:<br><figure class="highlight gams"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">pwndbg&gt; p <span class="symbol">$</span>st0</span><br><span class="line"><span class="meta"><span class="meta-keyword">$2</span> = 1</span></span><br></pre></td></tr></table></figure></p>
+<figure class="highlight x86asm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">► <span class="number">0x80484ee</span> &lt;main+<span class="number">51</span>&gt;    <span class="keyword">fld</span>    <span class="built_in">qword</span> <span class="built_in">ptr</span> [<span class="number">0x80485d0</span>]</span><br></pre></td></tr></table></figure>
+<p>执行这条指令后,st1寄存器变为1，st0寄存器变为3.15:<br><figure class="highlight gams"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">pwndbg&gt; p <span class="symbol">$</span>st0</span><br><span class="line"><span class="meta"><span class="meta-keyword">$3</span> = 3.1499999999999999111821580299874768</span></span><br><span class="line">pwndbg&gt; p <span class="symbol">$</span>st1</span><br><span class="line"><span class="meta"><span class="meta-keyword">$4</span> = 1</span></span><br></pre></td></tr></table></figure></p>
+<h3 id="SSE指令"><a href="#SSE指令" class="headerlink" title="SSE指令"></a>SSE指令</h3><p>SSE有八个个128位计算器，xmm0 - xmm7。 每个128位的寄存器，可以存放四个32位的单精度浮点数。<br><img src="/2019/09/05/浮点运算指令/1.png" alt=""><a href="https://blog.csdn.net/fuxiaoxiaoyue/article/details/82663827" target="_blank" rel="noopener">图源</a></p>
+<figure class="highlight lsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">pwndbg&gt; p $xmm0</span><br><span class="line">$<span class="number">1</span> = &#123;</span><br><span class="line">  v4_float = &#123;<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>&#125;, </span><br><span class="line">  v2_double = &#123;<span class="number">0</span>, <span class="number">0</span>&#125;, </span><br><span class="line">  v16_int8 = &#123;<span class="number">0</span> &lt;repeats <span class="number">16</span> times&gt;&#125;, </span><br><span class="line">  v8_int16 = &#123;<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>&#125;, </span><br><span class="line">  v4_int32 = &#123;<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>&#125;, </span><br><span class="line">  v2_int64 = &#123;<span class="number">0</span>, <span class="number">0</span>&#125;, </span><br><span class="line">  uint128 = <span class="number">0</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>SSE的浮点运算指令有两个类型：packed 和 scalar。<br>packed指令是一次对xmm寄存器中的四个浮点数均进行计算，而scalar类型的则会根据指令的最后一位来对xmm寄存器中的低位进行计算。如下图所示：<br><img src="/2019/09/05/浮点运算指令/2.png" alt=""><a href="https://blog.csdn.net/fuxiaoxiaoyue/article/details/82663827" target="_blank" rel="noopener">图源</a></p>
+<h4 id="SSE指令的构成："><a href="#SSE指令的构成：" class="headerlink" title="SSE指令的构成："></a>SSE指令的构成：</h4><p>第一部分表示指令的作用，比如加法add,mov,com等；<br>中间的即是上面说到的两种类型:p或者s，分别表示为packed或者scalar；<br>第三部分为s或者d，s(single)表示单精度浮点数, d(double)表示双精度浮点数</p>
+<p>例如指令movss value , xmm0 ，是将value这个单精度浮点数放入xmm0寄存器低位的第一个浮点数槽中.</p>
+<h4 id="常用的指令"><a href="#常用的指令" class="headerlink" title="常用的指令:"></a>常用的指令:</h4><p>值转移指令:<br><img src="/2019/09/05/浮点运算指令/3.png" alt=""></p>
+<p>浮点数和整形之间的转换:</p>
+<p><img src="/2019/09/05/浮点运算指令/4.png" alt=""></p>
+<p>比较指令:</p>
+<p><img src="/2019/09/05/浮点运算指令/5.png" alt=""></p>
+<h3 id="遇到的问题…"><a href="#遇到的问题…" class="headerlink" title="遇到的问题…"></a>遇到的问题…</h3><p>原本出的题的源码如下:</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">float</span> a;</span><br><span class="line">    <span class="keyword">char</span> b[<span class="number">10</span>];</span><br><span class="line">    read(<span class="number">0</span>,b,<span class="number">0x20</span>);</span><br><span class="line">    <span class="keyword">if</span> (a==<span class="number">3.15</span>)&#123;</span><br><span class="line">        system(<span class="string">"/bin/sh"</span>);</span><br><span class="line">    &#125;    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>想通过溢出改变a的值，然后执行system(“/bin/sh”)，但是实际操作时，将a覆盖为3.15对应的float底层表示，但是仍然不能比较通过.<br>原因是 3.15因为float精度不够，编译器将他编译成double类型的3.15<br>对应的汇编代码如下:</p>
+<figure class="highlight x86asm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"> ► <span class="number">0x804845f</span> &lt;main+<span class="number">36</span>&gt;    <span class="keyword">fld</span>    <span class="built_in">dword</span> <span class="built_in">ptr</span> [<span class="built_in">ebp</span> - <span class="number">0xc</span>]</span><br><span class="line">   <span class="number">0x8048462</span> &lt;main+<span class="number">39</span>&gt;    <span class="keyword">fld</span>    <span class="built_in">qword</span> <span class="built_in">ptr</span> [<span class="number">0x8048528</span>]</span><br><span class="line">   <span class="number">0x8048468</span> &lt;main+<span class="number">45</span>&gt;    <span class="keyword">fucomip</span> <span class="built_in">st</span>(<span class="number">1</span>)</span><br><span class="line">   <span class="number">0x804846a</span> &lt;main+<span class="number">47</span>&gt;    <span class="keyword">jp</span>     main+<span class="number">79</span> &lt;<span class="number">0x804848a</span>&gt;</span><br><span class="line"> </span><br><span class="line">   <span class="number">0x804846c</span> &lt;main+<span class="number">49</span>&gt;    <span class="keyword">fld</span>    <span class="built_in">qword</span> <span class="built_in">ptr</span> [<span class="number">0x8048528</span>]</span><br><span class="line">   <span class="number">0x8048472</span> &lt;main+<span class="number">55</span>&gt;    <span class="keyword">fucomip</span> <span class="built_in">st</span>(<span class="number">1</span>)</span><br><span class="line">   <span class="number">0x8048474</span> &lt;main+<span class="number">57</span>&gt;    <span class="keyword">fstp</span>   <span class="built_in">st</span>(<span class="number">0</span>)</span><br><span class="line">   <span class="number">0x8048476</span> &lt;main+<span class="number">59</span>&gt;    <span class="keyword">jne</span>    main+<span class="number">81</span> &lt;<span class="number">0x804848c</span>&gt;</span><br><span class="line"></span><br><span class="line"><span class="symbol">.rodata:</span><span class="number">08048528</span> byte_8048528    <span class="built_in">db</span> <span class="number">33h</span>                  <span class="comment">; DATA XREF: main+27↑r</span></span><br><span class="line"><span class="symbol">.rodata:</span><span class="number">08048528</span>                                         <span class="comment">; main+31↑r</span></span><br><span class="line"><span class="symbol">.rodata:</span><span class="number">08048529</span>                 <span class="built_in">db</span>  <span class="number">33h</span> <span class="comment">; 3</span></span><br><span class="line"><span class="symbol">.rodata:</span>0804852A                 <span class="built_in">db</span>  <span class="number">33h</span> <span class="comment">; 3</span></span><br><span class="line"><span class="symbol">.rodata:</span>0804852B                 <span class="built_in">db</span>  <span class="number">33h</span> <span class="comment">; 3</span></span><br><span class="line"><span class="symbol">.rodata:</span>0804852C                 <span class="built_in">db</span>  <span class="number">33h</span> <span class="comment">; 3</span></span><br><span class="line"><span class="symbol">.rodata:</span><span class="number">0804852D</span>                 <span class="built_in">db</span>  <span class="number">33h</span> <span class="comment">; 3</span></span><br><span class="line"><span class="symbol">.rodata:</span>0804852E                 <span class="built_in">db</span>    <span class="number">9</span></span><br><span class="line"><span class="symbol">.rodata:</span>0804852F                 <span class="built_in">db</span>  <span class="number">40h</span> <span class="comment">; @</span></span><br></pre></td></tr></table></figure>
+<p>将32位的float和64位的double比较肯定不会通过比较…</p>
+<p>解决办法是强制类型转化下:<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdlib.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">float</span> a;</span><br><span class="line">    <span class="keyword">char</span> b[<span class="number">10</span>];</span><br><span class="line">    read(<span class="number">0</span>,b,<span class="number">0x20</span>);</span><br><span class="line">    <span class="keyword">if</span> (a==(<span class="keyword">float</span>)<span class="number">3.15</span>)&#123;</span><br><span class="line">        system(<span class="string">"/bin/sh"</span>);</span><br><span class="line">    &#125;    </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/09/03/QWB2019-babyjs/" rel="next" title="QWB2019-babyjs">
+                <i class="fa fa-chevron-left"></i> QWB2019-babyjs
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/my.jpg" alt="ditto">
+            
+              <p class="site-author-name" itemprop="name">ditto</p>
+              <p class="site-description motion-element" itemprop="description">pwn for fun</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">17</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">4</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/Dittozzz" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#FPU"><span class="nav-number">2.</span> <span class="nav-text">FPU</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#常用指令"><span class="nav-number">2.1.</span> <span class="nav-text">常用指令:</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#测试"><span class="nav-number">2.2.</span> <span class="nav-text">测试:</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SSE指令"><span class="nav-number">3.</span> <span class="nav-text">SSE指令</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#SSE指令的构成："><span class="nav-number">3.1.</span> <span class="nav-text">SSE指令的构成：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#常用的指令"><span class="nav-number">3.2.</span> <span class="nav-text">常用的指令:</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#遇到的问题…"><span class="nav-number">4.</span> <span class="nav-text">遇到的问题…</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">ditto</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count">35.5k</span>
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.4</div>
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
