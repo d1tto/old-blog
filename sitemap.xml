@@ -2,6 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://yoursite.com/2019/09/28/VM-pwn-%E5%88%9D%E6%8E%A2/</loc>
+    
+    <lastmod>2019-09-29T03:37:39.250Z</lastmod>
+    
+  </url>
+  
+  <url>
     <loc>http://yoursite.com/2019/09/25/KCTF-2019-Q3-V8-exploit/</loc>
     
     <lastmod>2019-09-25T14:55:18.217Z</lastmod>
