@@ -125,19 +125,19 @@
 
 
 
-<meta name="description" content="前言:之前花了一段时间学习解释器原理，然后开始学习js引擎的利用.分析一下plaidctf中的roll a d8，虽说是ctf题，但是是真实的漏洞. 由于我也是菜鸡初学者，理解和分析的会有偏差.主要参考了以下文章:v8 exploit入门 PlaidCTF roll a d8p4nda师傅的Plaid CTF 2018 roll a d8扔个骰子学v8 - 从Plaid CTF roll a d8">
+<meta name="description" content="前言:之前花了一段时间学习解释器原理，然后开始学习js引擎的利用.分析一下plaidctf中的roll a d8，虽说是ctf题，但是是真实的漏洞. 由于我也是菜鸡初学者，理解和分析的会有偏差.主要参考了以下文章:v8 exploit入门 PlaidCTF roll a d8p4nda师傅的Plaid CTF 2018 roll a d8扔个骰子学v8 - 从Plaid CTF roll a d">
 <meta name="keywords" content="v8_exploit">
 <meta property="og:type" content="article">
 <meta property="og:title" content="roll_a_d8-v8利用学习">
 <meta property="og:url" content="http://yoursite.com/2019/07/02/roll-a-d8-v8利用学习/index.html">
 <meta property="og:site_name" content="ditto&#39;s blog">
-<meta property="og:description" content="前言:之前花了一段时间学习解释器原理，然后开始学习js引擎的利用.分析一下plaidctf中的roll a d8，虽说是ctf题，但是是真实的漏洞. 由于我也是菜鸡初学者，理解和分析的会有偏差.主要参考了以下文章:v8 exploit入门 PlaidCTF roll a d8p4nda师傅的Plaid CTF 2018 roll a d8扔个骰子学v8 - 从Plaid CTF roll a d8">
+<meta property="og:description" content="前言:之前花了一段时间学习解释器原理，然后开始学习js引擎的利用.分析一下plaidctf中的roll a d8，虽说是ctf题，但是是真实的漏洞. 由于我也是菜鸡初学者，理解和分析的会有偏差.主要参考了以下文章:v8 exploit入门 PlaidCTF roll a d8p4nda师傅的Plaid CTF 2018 roll a d8扔个骰子学v8 - 从Plaid CTF roll a d">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="http://yoursite.com/2019/07/02/roll-a-d8-v8利用学习/1.png">
-<meta property="og:updated_time" content="2019-09-22T02:09:51.972Z">
+<meta property="og:updated_time" content="2019-10-26T01:02:18.832Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="roll_a_d8-v8利用学习">
-<meta name="twitter:description" content="前言:之前花了一段时间学习解释器原理，然后开始学习js引擎的利用.分析一下plaidctf中的roll a d8，虽说是ctf题，但是是真实的漏洞. 由于我也是菜鸡初学者，理解和分析的会有偏差.主要参考了以下文章:v8 exploit入门 PlaidCTF roll a d8p4nda师傅的Plaid CTF 2018 roll a d8扔个骰子学v8 - 从Plaid CTF roll a d8">
+<meta name="twitter:description" content="前言:之前花了一段时间学习解释器原理，然后开始学习js引擎的利用.分析一下plaidctf中的roll a d8，虽说是ctf题，但是是真实的漏洞. 由于我也是菜鸡初学者，理解和分析的会有偏差.主要参考了以下文章:v8 exploit入门 PlaidCTF roll a d8p4nda师傅的Plaid CTF 2018 roll a d8扔个骰子学v8 - 从Plaid CTF roll a d">
 <meta name="twitter:image" content="http://yoursite.com/2019/07/02/roll-a-d8-v8利用学习/1.png">
 
 
@@ -409,7 +409,8 @@
       
 
       
-        <h4 id="前言"><a href="#前言" class="headerlink" title="前言:"></a>前言:</h4><p>之前花了一段时间学习解释器原理，然后开始学习js引擎的利用.分析一下plaidctf中的roll a d8，虽说是ctf题，但是是真实的漏洞. 由于我也是菜鸡初学者，理解和分析的会有偏差.<br>主要参考了以下文章:<br><a href="https://xz.aliyun.com/t/5190" target="_blank" rel="noopener">v8 exploit入门 PlaidCTF roll a d8</a><br>p4nda师傅的<a href="https://github.com/ret2p4nda/browser-pwn/tree/master/roll%20a%20d8" target="_blank" rel="noopener">Plaid CTF 2018 roll a d8</a><br><a href="https://www.anquanke.com/post/id/147829#h3-12" target="_blank" rel="noopener">扔个骰子学v8 - 从Plaid CTF roll a d8开始</a></p>
+        <a id="more"></a>
+<h4 id="前言"><a href="#前言" class="headerlink" title="前言:"></a>前言:</h4><p>之前花了一段时间学习解释器原理，然后开始学习js引擎的利用.分析一下plaidctf中的roll a d8，虽说是ctf题，但是是真实的漏洞. 由于我也是菜鸡初学者，理解和分析的会有偏差.<br>主要参考了以下文章:<br><a href="https://xz.aliyun.com/t/5190" target="_blank" rel="noopener">v8 exploit入门 PlaidCTF roll a d8</a><br>p4nda师傅的<a href="https://github.com/ret2p4nda/browser-pwn/tree/master/roll%20a%20d8" target="_blank" rel="noopener">Plaid CTF 2018 roll a d8</a><br><a href="https://www.anquanke.com/post/id/147829#h3-12" target="_blank" rel="noopener">扔个骰子学v8 - 从Plaid CTF roll a d8开始</a></p>
 <h4 id="环境搭建"><a href="#环境搭建" class="headerlink" title="环境搭建:"></a>环境搭建:</h4><p>最好科学上网,或者在国外服务器上编译好然后打包拷到本地.<br>题目给了 issue: <a href="https://crbug.com/821137" target="_blank" rel="noopener">https://crbug.com/821137</a> , 找到修复漏洞的commit，然后将版本回退到打补丁之前.<br><figure class="highlight jboss-cli"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">cd</span> v8</span><br><span class="line">git reset <span class="params">--hard</span> 1dab065bb4025bdd663ba12e2e976c34c3fa6599</span><br><span class="line"><span class="keyword">cd</span> <span class="string">..</span></span><br><span class="line">gclient sync</span><br><span class="line"><span class="keyword">cd</span> v8</span><br></pre></td></tr></table></figure></p>
 <p>编译release版本:<br><figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">tools/dev/v8gen<span class="selector-class">.py</span> x64.release</span><br><span class="line">ninja -C out.gn/x64<span class="selector-class">.release</span> d8</span><br></pre></td></tr></table></figure></p>
 <p>这里在编译参数<code>args.gn</code>中加上了:<code>v8_enable_object_print = true</code>，但编译出来的release版本仍然不能用job,v8print等…,可能是版本问题吧，调试起来不方便，于是又编译了debug版本，方便使用job，v8print等查看对象布局:<br><figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">tools/dev/v8gen<span class="selector-class">.py</span> x64.debug</span><br><span class="line">ninja -C out.gn/x64<span class="selector-class">.debug</span> d8</span><br></pre></td></tr></table></figure></p>
