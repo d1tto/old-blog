@@ -125,17 +125,17 @@
 
 
 
-<meta name="description" content="前言太远了没有去…赛后别的师傅给的题目.做了三道vm类的题目，json解析的做不来… RHVM1234567fd = open(&quot;/flag&quot;, 0);if ( fd == -1 )&amp;#123;  puts(&quot;What?&quot;);  exit(-1);&amp;#125;dup2(fd, 563); 初始化函数这里打开了flag文件，并将文件描述符重定向到563.程序结束后:12345printf(&quot;Coul">
+<meta name="description" content="太远了没有去…赛后别的师傅给的题目.做了三道vm类的题目，json解析的做不来…">
 <meta property="og:type" content="article">
 <meta property="og:title" content="2019红帽杯final三道pwn的wp">
 <meta property="og:url" content="http://yoursite.com/2019/11/25/2019红帽杯final三道pwn的wp/index.html">
 <meta property="og:site_name" content="ditto&#39;s blog">
-<meta property="og:description" content="前言太远了没有去…赛后别的师傅给的题目.做了三道vm类的题目，json解析的做不来… RHVM1234567fd = open(&quot;/flag&quot;, 0);if ( fd == -1 )&amp;#123;  puts(&quot;What?&quot;);  exit(-1);&amp;#125;dup2(fd, 563); 初始化函数这里打开了flag文件，并将文件描述符重定向到563.程序结束后:12345printf(&quot;Coul">
+<meta property="og:description" content="太远了没有去…赛后别的师傅给的题目.做了三道vm类的题目，json解析的做不来…">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2019-11-26T02:16:59.774Z">
+<meta property="og:updated_time" content="2019-11-26T02:27:39.041Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="2019红帽杯final三道pwn的wp">
-<meta name="twitter:description" content="前言太远了没有去…赛后别的师傅给的题目.做了三道vm类的题目，json解析的做不来… RHVM1234567fd = open(&quot;/flag&quot;, 0);if ( fd == -1 )&amp;#123;  puts(&quot;What?&quot;);  exit(-1);&amp;#125;dup2(fd, 563); 初始化函数这里打开了flag文件，并将文件描述符重定向到563.程序结束后:12345printf(&quot;Coul">
+<meta name="twitter:description" content="太远了没有去…赛后别的师傅给的题目.做了三道vm类的题目，json解析的做不来…">
 
 
 
@@ -406,7 +406,7 @@
       
 
       
-        <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><p>太远了没有去…赛后别的师傅给的题目.做了三道vm类的题目，json解析的做不来…</p>
+        <p>太远了没有去…赛后别的师傅给的题目.做了三道vm类的题目，json解析的做不来…<br><a id="more"></a></p>
 <h3 id="RHVM"><a href="#RHVM" class="headerlink" title="RHVM"></a>RHVM</h3><figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">fd = open(<span class="string">"/flag"</span>, <span class="number">0</span>);</span><br><span class="line"><span class="keyword">if</span> ( fd == -<span class="number">1</span> )</span><br><span class="line">&#123;</span><br><span class="line">  puts(<span class="string">"What?"</span>);</span><br><span class="line">  <span class="keyword">exit</span>(-<span class="number">1</span>);</span><br><span class="line">&#125;</span><br><span class="line">dup2(fd, <span class="number">563</span>);</span><br></pre></td></tr></table></figure>
 <p>初始化函数这里打开了flag文件，并将文件描述符重定向到563.程序结束后:<br><figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">printf(<span class="string">"Could you tell me your name?"</span>);</span><br><span class="line">__isoc99_scanf(<span class="string">"%99s"</span>, &amp;v0);</span><br><span class="line">printf(<span class="string">"Goodbye~ %s\n"</span>, &amp;v0);</span><br><span class="line">puts(<span class="string">"See you next time."</span>);</span><br><span class="line"><span class="keyword">exit</span>(<span class="number">0</span>);</span><br></pre></td></tr></table></figure></p>
 <p>根据国赛决赛的一道题类似，将stdin的fileno修改为563,这里scanf的时候就会读取到flag，然后打印出来.</p>
@@ -605,7 +605,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#RHVM"><span class="nav-number">2.</span> <span class="nav-text">RHVM</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#字节码分析"><span class="nav-number">2.1.</span> <span class="nav-text">字节码分析</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#利用思路"><span class="nav-number">2.2.</span> <span class="nav-text">利用思路</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#VM"><span class="nav-number">3.</span> <span class="nav-text">VM</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#利用思路-1"><span class="nav-number">3.1.</span> <span class="nav-text">利用思路:</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#PVP-GAME"><span class="nav-number">4.</span> <span class="nav-text">PVP GAME</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#RHVM"><span class="nav-number">1.</span> <span class="nav-text">RHVM</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#字节码分析"><span class="nav-number">1.1.</span> <span class="nav-text">字节码分析</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#利用思路"><span class="nav-number">1.2.</span> <span class="nav-text">利用思路</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#VM"><span class="nav-number">2.</span> <span class="nav-text">VM</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#利用思路-1"><span class="nav-number">2.1.</span> <span class="nav-text">利用思路:</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#PVP-GAME"><span class="nav-number">3.</span> <span class="nav-text">PVP GAME</span></a></li></ol></div>
             
 
           </div>
