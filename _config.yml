@@ -1,7 +1,0 @@
-theme: jekyll-theme-time-machine
-source: ./post/
-incremental: false
-highlighter: rouge
-gist:
-  noscript: false
-markdown: GFM
